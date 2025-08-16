@@ -84,7 +84,7 @@ public class InstanceService {
      * @param expectTriggerTime 预期执行时间
      * @return 任务实例ID
      */
-    public InstanceInfoDO create(Long jobId, Long appId, String jobParams, String instanceParams, Long wfInstanceId, Long expectTriggerTime) {
+    public InstanceInfoDO create(Long jobId, Long appId, String jobParams, String instanceParams, Long wfInstanceId, Long expectTriggerTime, String outerKey, String extendValue) {
 
         Long instanceId = idGenerateService.allocate();
         Date now = new Date();
@@ -102,6 +102,8 @@ public class InstanceService {
         newInstanceInfo.setRunningTimes(0L);
         newInstanceInfo.setExpectedTriggerTime(expectTriggerTime);
         newInstanceInfo.setLastReportTime(-1L);
+        newInstanceInfo.setOuterKey(outerKey);
+        newInstanceInfo.setExtendValue(extendValue);
         newInstanceInfo.setGmtCreate(now);
         newInstanceInfo.setGmtModified(now);
 

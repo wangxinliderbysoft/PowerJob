@@ -20,6 +20,11 @@ public class InstancePageQuery extends PowerPageQuery {
     private Long instanceIdLt;
     private Long instanceIdGt;
 
+    /**
+     * 根据业务外建查询
+     */
+    private String outerKeyEq;
+
     private Long jobIdEq;
 
     private List<Integer> statusIn;

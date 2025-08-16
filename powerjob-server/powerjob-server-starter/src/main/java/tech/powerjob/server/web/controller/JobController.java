@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import tech.powerjob.common.enums.ErrorCodes;
 import tech.powerjob.common.enums.SwitchableStatus;
 import tech.powerjob.common.exception.PowerJobException;
+import tech.powerjob.common.request.http.RunJobRequest;
 import tech.powerjob.common.request.http.SaveJobInfoRequest;
 import tech.powerjob.common.response.ResultDTO;
 import tech.powerjob.server.auth.Permission;
@@ -87,8 +88,8 @@ public class JobController {
     @ApiPermission(name = "Job-Run", roleScope = RoleScope.APP, requiredPermission = Permission.OPS)
     public ResultDTO<Long> runImmediately(String jobId, @RequestParam(required = false) String instanceParams, HttpServletRequest hsr) {
         preCheck(jobId, hsr);
-        String appId = AuthHeaderUtils.fetchAppId(hsr);
-        return ResultDTO.success(jobService.runJob(Long.valueOf(appId), Long.valueOf(jobId), instanceParams, 0L));
+        RunJobRequest request = new RunJobRequest().setAppId(AuthHeaderUtils.fetchAppIdL(hsr)).setJobId(Long.valueOf(jobId)).setInstanceParams(instanceParams);
+        return ResultDTO.success(jobService.runJob(request.getAppId(), request));
     }
 
     @PostMapping("/list")

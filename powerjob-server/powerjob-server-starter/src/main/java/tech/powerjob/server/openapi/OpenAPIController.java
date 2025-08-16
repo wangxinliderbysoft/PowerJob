@@ -10,6 +10,7 @@ import tech.powerjob.common.OpenAPIConstant;
 import tech.powerjob.common.enums.ErrorCodes;
 import tech.powerjob.common.enums.InstanceStatus;
 import tech.powerjob.common.exception.PowerJobException;
+import tech.powerjob.common.request.http.RunJobRequest;
 import tech.powerjob.common.request.http.SaveJobInfoRequest;
 import tech.powerjob.common.request.http.SaveWorkflowNodeRequest;
 import tech.powerjob.common.request.http.SaveWorkflowRequest;
@@ -144,8 +145,14 @@ public class OpenAPIController {
 
     @PostMapping(OpenAPIConstant.RUN_JOB)
     public ResultDTO<Long> runJob(Long appId, Long jobId, @RequestParam(required = false) String instanceParams, @RequestParam(required = false) Long delay) {
-        checkJobIdValid(jobId, appId);
-        return ResultDTO.success(jobService.runJob(appId, jobId, instanceParams, delay));
+        RunJobRequest request = new RunJobRequest().setAppId(appId).setJobId(jobId).setInstanceParams(instanceParams).setDelay(delay);
+        return runJob2(request);
+    }
+
+    @PostMapping(OpenAPIConstant.RUN_JOB2)
+    public ResultDTO<Long> runJob2(@RequestBody RunJobRequest runJobRequest) {
+        checkJobIdValid(runJobRequest.getJobId(), runJobRequest.getAppId());
+        return ResultDTO.success(jobService.runJob(runJobRequest.getAppId(), runJobRequest));
     }
 
     /* ************* Instance 区 ************* */
