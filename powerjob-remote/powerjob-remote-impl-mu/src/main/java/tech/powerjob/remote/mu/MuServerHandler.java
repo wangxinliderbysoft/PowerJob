@@ -1,5 +1,6 @@
 package tech.powerjob.remote.mu;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2025/1/1
  */
 @Slf4j
+@ChannelHandler.Sharable
 public class MuServerHandler extends SimpleChannelInboundHandler<MuMessage> {
 
     private final ChannelManager channelManager;
