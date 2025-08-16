@@ -1,9 +1,10 @@
 package tech.powerjob.remote.mu;
 
-import com.alibaba.fastjson.JSONObject;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.remote.framework.actor.ActorInfo;
 import tech.powerjob.remote.framework.actor.HandlerInfo;
 import tech.powerjob.remote.framework.utils.RemoteUtils;
@@ -153,6 +154,7 @@ public class MuWorkerHandler extends SimpleChannelInboundHandler<MuMessage> {
         }
     }
 
+    @SneakyThrows
     private Object convertPayload(Object payload, Class<?> targetClass) {
         if (payload == null) {
             return null;
@@ -162,14 +164,7 @@ public class MuWorkerHandler extends SimpleChannelInboundHandler<MuMessage> {
             return payload;
         }
 
-        if (payload instanceof Map) {
-            Map<String, Object> mapPayLoad = (Map<String, Object>) payload;
-            return new JSONObject(mapPayLoad).toJavaObject(targetClass);
-        }
-        
-        // TODO: Add proper payload conversion logic if needed
-        // For now, assume the payload is already in the correct format
-        return payload;
+        return JsonUtils.toJavaObject(payload, targetClass);
     }
 
     @Override

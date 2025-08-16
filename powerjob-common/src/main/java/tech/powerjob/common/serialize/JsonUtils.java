@@ -134,4 +134,8 @@ public class JsonUtils {
         }
         throw new PowerJobException("impossible");
     }
+
+    public static <T> T toJavaObject(Object o, Class<T> clz) {
+        return JSON_MAPPER.convertValue(o, clz);
+    }
 }

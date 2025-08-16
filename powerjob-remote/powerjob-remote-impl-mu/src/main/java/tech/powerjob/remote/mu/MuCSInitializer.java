@@ -92,11 +92,48 @@ public class MuCSInitializer implements CSInitializer {
     }
 
     private void initWorker() {
-        // Worker只初始化handler，不立即连接到server
-        // 连接将在第一次发送请求时建立
-        workerHandler = new MuWorkerHandler(channelManager);
-        connectionManager = new MuConnectionManager(workerGroup, channelManager, workerHandler, config.getBindAddress());
-        log.info("[MuCSInitializer] Worker initialized, ready to connect when needed");
+        try {
+            // Worker需要同时具备服务端和客户端能力
+            // 服务端：接受其他Worker的连接
+            // 客户端：连接到Server或其他Worker
+            
+            // 初始化handler
+            workerHandler = new MuWorkerHandler(channelManager);
+            
+            // 启动服务端，接受其他Worker的连接
+            ServerBootstrap serverBootstrap = new ServerBootstrap();
+            serverBootstrap.group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .option(ChannelOption.SO_BACKLOG, 128)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) {
+                        ch.pipeline()
+                            .addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS))
+                            .addLast(new MuMessageCodec())
+                            .addLast(workerHandler);
+                    }
+                });
+
+            ChannelFuture serverFuture = serverBootstrap.bind(
+                config.getBindAddress().getHost(),
+                config.getBindAddress().getPort()
+            ).sync();
+            
+            serverChannel = serverFuture.channel();
+            log.info("[MuCSInitializer] Worker server started on {}:{}", 
+                config.getBindAddress().getHost(), 
+                config.getBindAddress().getPort());
+            
+            // 初始化连接管理器，用于连接到其他节点
+            connectionManager = new MuConnectionManager(workerGroup, channelManager, workerHandler, config.getBindAddress());
+            log.info("[MuCSInitializer] Worker initialized with server and client capabilities");
+        } catch (Exception e) {
+            log.error("[MuCSInitializer] Failed to initialize worker", e);
+            throw new RuntimeException("Failed to initialize Mu worker", e);
+        }
     }
 
     @Override

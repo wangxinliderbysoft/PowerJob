@@ -55,7 +55,7 @@ public class MuTransporter implements Transporter {
             );
 
             if (serverType == ServerType.WORKER) {
-                // Worker to server: use connection manager for lazy connection
+                // Worker to server/worker: use connection manager for lazy connection
                 connectionManager.getOrCreateConnection(url.getAddress())
                     .thenAccept(channel -> {
                         if (channel.isActive()) {
@@ -93,7 +93,7 @@ public class MuTransporter implements Transporter {
             CompletableFuture<T> future = new CompletableFuture<>();
 
             // Register the future for response handling
-            channelManager.registerPendingRequest(requestId, (CompletableFuture<Object>) future);
+            channelManager.registerPendingRequest(requestId, (CompletableFuture<Object>) future, clz);
 
             // Set timeout for the request (JDK8 compatible)
             future.whenComplete((result, throwable) -> {
@@ -120,7 +120,7 @@ public class MuTransporter implements Transporter {
             );
 
             if (serverType == ServerType.WORKER) {
-                // Worker to server: use connection manager for lazy connection
+                // Worker to server/worker: use connection manager for lazy connection
                 connectionManager.getOrCreateConnection(url.getAddress())
                     .thenAccept(channel -> {
                         if (channel.isActive()) {

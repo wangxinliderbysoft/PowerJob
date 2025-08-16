@@ -2,6 +2,7 @@ package tech.powerjob.remote.mu;
 
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.remote.framework.base.Address;
 
 import java.util.concurrent.CompletableFuture;
@@ -20,6 +21,7 @@ public class ChannelManager {
 
     private final ConcurrentMap<String, Channel> workerChannels = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, CompletableFuture<Object>> pendingRequests = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Class<?>> requestResponseTypes = new ConcurrentHashMap<>();
 
     /**
      * Register a worker channel
@@ -52,9 +54,11 @@ public class ChannelManager {
      * Store pending request for ask mode
      * @param requestId request ID
      * @param future future to complete when response received
+     * @param responseType expected response type
      */
-    public void registerPendingRequest(String requestId, CompletableFuture<Object> future) {
+    public void registerPendingRequest(String requestId, CompletableFuture<Object> future, Class<?> responseType) {
         pendingRequests.put(requestId, future);
+        requestResponseTypes.put(requestId, responseType);
     }
 
     /**
@@ -64,8 +68,11 @@ public class ChannelManager {
      */
     public void completePendingRequest(String requestId, Object response) {
         CompletableFuture<Object> future = pendingRequests.remove(requestId);
+        Class<?> responseType = requestResponseTypes.remove(requestId);
+        
         if (future != null) {
-            future.complete(response);
+            Object convertedResponse = convertResponse(response, responseType);
+            future.complete(convertedResponse);
         } else {
             log.warn("[ChannelManager] No pending request found for ID: {}", requestId);
         }
@@ -78,6 +85,7 @@ public class ChannelManager {
      */
     public void completePendingRequestExceptionally(String requestId, Throwable exception) {
         CompletableFuture<Object> future = pendingRequests.remove(requestId);
+        requestResponseTypes.remove(requestId); // Clean up response type mapping
         if (future != null) {
             future.completeExceptionally(exception);
         } else {
@@ -91,5 +99,24 @@ public class ChannelManager {
      */
     public void removePendingRequest(String requestId) {
         pendingRequests.remove(requestId);
+        requestResponseTypes.remove(requestId);
+    }
+
+    /**
+     * Convert response to expected type
+     * @param response raw response object
+     * @param responseType expected response type
+     * @return converted response
+     */
+    private Object convertResponse(Object response, Class<?> responseType) {
+        if (response == null || responseType == null) {
+            return response;
+        }
+        
+        if (responseType.isInstance(response)) {
+            return response;
+        }
+
+        return JsonUtils.toJavaObject(response, responseType);
     }
 }
