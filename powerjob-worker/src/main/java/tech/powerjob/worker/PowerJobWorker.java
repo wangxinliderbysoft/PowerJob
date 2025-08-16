@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.common.PowerJobDKey;
 import tech.powerjob.common.model.WorkerAppInfo;
 import tech.powerjob.common.utils.CommonUtils;
+import tech.powerjob.common.utils.NetUtils;
 import tech.powerjob.common.utils.PropertyUtils;
 import tech.powerjob.remote.framework.base.Address;
 import tech.powerjob.remote.framework.base.ServerType;
@@ -150,6 +151,12 @@ public class PowerJobWorker {
     private PowerJobWorkerConfig reConfig(PowerJobWorkerConfig config) {
         CommonUtils.requireNonNull(config.getServerAddress(), "ServerAddress can't be null or empty!");
         Collections.shuffle(config.getServerAddress());
+
+        // 使用随机端口
+        if (config.getPort() < 0) {
+            config.setPort(NetUtils.getRandomPort());
+        }
+
         return config;
     }
 
