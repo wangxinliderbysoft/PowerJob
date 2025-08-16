@@ -27,6 +27,7 @@ import tech.powerjob.server.auth.Permission;
 import tech.powerjob.server.auth.Role;
 import tech.powerjob.server.auth.RoleScope;
 import tech.powerjob.server.auth.common.AuthConstants;
+import tech.powerjob.server.auth.common.utils.AuthHeaderUtils;
 import tech.powerjob.server.auth.interceptor.ApiPermission;
 import tech.powerjob.server.auth.plugin.ModifyOrCreateDynamicPermission;
 import tech.powerjob.server.auth.plugin.SaveAppGrantPermissionPlugin;
@@ -51,6 +52,7 @@ import tech.powerjob.server.web.service.NamespaceWebService;
 import tech.powerjob.server.web.service.UserWebService;
 
 import javax.persistence.criteria.Predicate;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,11 +82,15 @@ public class AppInfoController {
 
     @PostMapping("/save")
     @ApiPermission(name = "App-Save", roleScope = RoleScope.APP, dynamicPermissionPlugin = ModifyOrCreateDynamicPermission.class, grandPermissionPlugin = SaveAppGrantPermissionPlugin.class)
-    public ResultDTO<AppInfoVO> saveAppInfo(@RequestBody ModifyAppInfoRequest req) {
+    public ResultDTO<AppInfoVO> saveAppInfo(@RequestBody ModifyAppInfoRequest req, HttpServletRequest hsr) {
 
         // 根据 ns code 填充 namespaceId（自动化创建过程中，固定的 namespace-code 对用户更友好）
         if (StringUtils.isNotEmpty(req.getNamespaceCode())) {
             namespaceWebService.findByCode(req.getNamespaceCode()).ifPresent(x -> req.setNamespaceId(x.getId()));
+        }
+        // 安全注入攻击的场景，不信任传参
+        if (req.getId() != null) {
+            req.setId(Long.valueOf(AuthHeaderUtils.fetchAppId(hsr)));
         }
 
         req.valid();
@@ -129,8 +135,9 @@ public class AppInfoController {
 
     @PostMapping("/delete")
     @ApiPermission(name = "App-Delete", roleScope = RoleScope.APP, requiredPermission = Permission.SU)
-    public ResultDTO<Void> deleteApp(Long appId) {
+    public ResultDTO<Void> deleteApp(HttpServletRequest hsr) {
 
+        Long appId = Long.valueOf(AuthHeaderUtils.fetchAppId(hsr));
         log.warn("[AppInfoController] try to delete app: {}", appId);
 
         List<WorkerInfo> allAliveWorkers = workerClusterQueryService.getAllAliveWorkers(appId);
