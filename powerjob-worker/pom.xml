@@ -25,6 +25,7 @@
         <powerjob-remote-framework.version>5.1.1</powerjob-remote-framework.version>
         <powerjob-remote-impl-akka.version>5.1.1</powerjob-remote-impl-akka.version>
         <powerjob-remote-impl-http.version>5.1.1</powerjob-remote-impl-http.version>
+        <powerjob-remote-impl-mu.version>5.1.1</powerjob-remote-impl-mu.version>
     </properties>
 
     <dependencies>
@@ -54,6 +55,11 @@
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-remote-impl-http</artifactId>
             <version>${powerjob-remote-impl-http.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tech.powerjob</groupId>
+            <artifactId>powerjob-remote-impl-mu</artifactId>
+            <version>${powerjob-remote-impl-mu.version}</version>
         </dependency>
 
         <!-- h2 database -->
