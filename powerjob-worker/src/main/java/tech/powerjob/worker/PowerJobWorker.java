@@ -19,7 +19,8 @@ import tech.powerjob.worker.actors.ProcessorTrackerActor;
 import tech.powerjob.worker.actors.TaskTrackerActor;
 import tech.powerjob.worker.actors.WorkerActor;
 import tech.powerjob.worker.background.OmsLogHandler;
-import tech.powerjob.worker.background.WorkerHealthReporter;
+import tech.powerjob.worker.background.heartbeat.DefaultSystemMetricsCollector;
+import tech.powerjob.worker.background.heartbeat.WorkerHealthReporter;
 import tech.powerjob.worker.background.discovery.PowerJobServerDiscoveryService;
 import tech.powerjob.worker.background.discovery.ServerDiscoveryService;
 import tech.powerjob.worker.common.PowerBannerPrinter;
@@ -155,6 +156,11 @@ public class PowerJobWorker {
         // 使用随机端口
         if (config.getPort() < 0) {
             config.setPort(NetUtils.getRandomPort());
+        }
+
+        // 系统指标收集器
+        if (config.getSystemMetricsCollector() == null) {
+            config.setSystemMetricsCollector(new DefaultSystemMetricsCollector());
         }
 
         return config;

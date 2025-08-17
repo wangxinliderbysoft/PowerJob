@@ -1,4 +1,4 @@
-package tech.powerjob.worker.background;
+package tech.powerjob.worker.background.heartbeat;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +8,6 @@ import tech.powerjob.common.model.SystemMetrics;
 import tech.powerjob.common.request.WorkerHeartbeat;
 import tech.powerjob.worker.common.PowerJobWorkerVersion;
 import tech.powerjob.worker.common.WorkerRuntime;
-import tech.powerjob.worker.common.utils.SystemInfoUtils;
 import tech.powerjob.worker.common.utils.TransportUtils;
 import tech.powerjob.worker.container.OmsContainerFactory;
 import tech.powerjob.worker.core.tracker.manager.HeavyTaskTrackerManager;
@@ -39,11 +38,7 @@ public class WorkerHealthReporter extends SafeRunnable {
 
         SystemMetrics systemMetrics;
 
-        if (workerRuntime.getWorkerConfig().getSystemMetricsCollector() == null) {
-            systemMetrics = SystemInfoUtils.getSystemMetrics();
-        } else {
-            systemMetrics = workerRuntime.getWorkerConfig().getSystemMetricsCollector().collect();
-        }
+        systemMetrics = workerRuntime.getWorkerConfig().getSystemMetricsCollector().collect();
 
         WorkerHeartbeat heartbeat = new WorkerHeartbeat();
 
