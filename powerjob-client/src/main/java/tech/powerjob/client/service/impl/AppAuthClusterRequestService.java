@@ -46,6 +46,11 @@ abstract class AppAuthClusterRequestService extends ClusterRequestService {
 
         // 如果 auth 成功，则代表请求有效，直接返回
         String authStatus = MapUtils.getString(httpResponse.getHeaders(), OpenAPIConstant.RESPONSE_HEADER_AUTH_STATUS);
+        // 继续尝试获取转为小写之后的 auth header (Nginx代理默认会将自定义header转为纯小写, 实现针对该情况的兼容)
+        if (StringUtils.isEmpty(authStatus)) {
+            authStatus = MapUtils.getString(httpResponse.getHeaders(),
+                    OpenAPIConstant.RESPONSE_HEADER_AUTH_STATUS.toLowerCase());
+        }
         if (Boolean.TRUE.toString().equalsIgnoreCase(authStatus)) {
             return httpResponse.getResponse();
         }
