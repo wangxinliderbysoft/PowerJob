@@ -97,9 +97,9 @@ public class QueryConvertUtils {
         if (StringUtils.isNoneEmpty(sortBy)) {
             sorter = Sort.by(sortBy);
             if (powerPageQuery.isAsc()) {
-                sorter.ascending();
+                sorter = sorter.ascending();
             } else {
-                sorter.descending();
+                sorter = sorter.descending();
             }
         }
 
