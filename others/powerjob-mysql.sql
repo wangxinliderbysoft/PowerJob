@@ -10,13 +10,13 @@
  Source Server Type    : MySQL
  Source Server Version : 80300 (8.3.0)
  Source Host           : localhost:3306
- Source Schema         : powerjob5
+ Source Schema         : powerjob5g
 
  Target Server Type    : MySQL
  Target Server Version : 80300 (8.3.0)
  File Encoding         : 65001
 
- Date: 11/08/2024 23:23:30
+ Date: 17/08/2025 21:58:30
 */
 
 SET NAMES utf8mb4;
@@ -71,6 +71,7 @@ CREATE TABLE `instance_info` (
                                  `actual_trigger_time` bigint DEFAULT NULL,
                                  `app_id` bigint DEFAULT NULL,
                                  `expected_trigger_time` bigint DEFAULT NULL,
+                                 `extend_value` varchar(255) DEFAULT NULL,
                                  `finished_time` bigint DEFAULT NULL,
                                  `gmt_create` datetime(6) DEFAULT NULL,
                                  `gmt_modified` datetime(6) DEFAULT NULL,
@@ -79,6 +80,8 @@ CREATE TABLE `instance_info` (
                                  `job_id` bigint DEFAULT NULL,
                                  `job_params` longtext,
                                  `last_report_time` bigint DEFAULT NULL,
+                                 `meta` varchar(255) DEFAULT NULL,
+                                 `outer_key` varchar(255) DEFAULT NULL,
                                  `result` longtext,
                                  `running_times` bigint DEFAULT NULL,
                                  `status` int DEFAULT NULL,
@@ -88,7 +91,8 @@ CREATE TABLE `instance_info` (
                                  PRIMARY KEY (`id`),
                                  KEY `idx01_instance_info` (`job_id`,`status`),
                                  KEY `idx02_instance_info` (`app_id`,`status`),
-                                 KEY `idx03_instance_info` (`instance_id`,`status`)
+                                 KEY `idx03_instance_info` (`instance_id`,`status`),
+                                 KEY `idx04_instance_info_outer_key` (`outer_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ----------------------------
@@ -167,7 +171,7 @@ CREATE TABLE `oms_lock` (
                             `ownerip` varchar(255) DEFAULT NULL,
                             PRIMARY KEY (`id`),
                             UNIQUE KEY `uidx01_oms_lock` (`lock_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ----------------------------
 -- Table structure for pwjb_user_info
@@ -212,7 +216,7 @@ CREATE TABLE `sundry` (
                           `skey` varchar(255) DEFAULT NULL,
                           PRIMARY KEY (`id`),
                           UNIQUE KEY `uidx01_sundry` (`pkey`,`skey`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ----------------------------
 -- Table structure for user_info
