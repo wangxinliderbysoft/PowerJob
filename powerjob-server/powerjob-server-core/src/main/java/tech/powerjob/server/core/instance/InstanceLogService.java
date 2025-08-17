@@ -409,31 +409,30 @@ public class InstanceLogService {
      * @return void
      */
     public void removeOldFile(Long instanceId) {
-        //删除之前的数据库日志
+        // 库中的数据不删，删了就会丢失全部的历史日志
         try {
-            localInstanceLogRepository.deleteByInstanceId(instanceId);
-        } catch (Exception e) {
-            log.warn("[InstanceLogService] delete old logs for instance: "+instanceId+"failed.", e);
-        }
-        //删除本地缓存
-        String s = genLogFilePath(instanceId, true);
-        File file = new File(s);
-        if(!file.exists()){
-            return;
-        }
-        boolean delete = file.delete();
-        if(!delete){
-            log.warn("[InstanceLogService] delete old logs{} for instance: {} failed.", s,instanceId);
-        }
-        //删除临时文件
-        String tempFilePath = genLogFilePath(instanceId, false);
-        File tempFile = new File(tempFilePath);
-        if(!tempFile.exists()){
-            return;
-        }
-        delete = tempFile.delete();
-        if(!delete){
-            log.warn("[InstanceLogService] delete old temp logs{} for instance: {} failed.", s,instanceId);
+            //删除本地缓存
+            String s = genLogFilePath(instanceId, true);
+            File file = new File(s);
+            if(!file.exists()){
+                return;
+            }
+            boolean delete = file.delete();
+            if(!delete){
+                log.warn("[InstanceLogService] delete old logs{} for instance: {} failed.", s,instanceId);
+            }
+            //删除临时文件
+            String tempFilePath = genLogFilePath(instanceId, false);
+            File tempFile = new File(tempFilePath);
+            if(!tempFile.exists()){
+                return;
+            }
+            delete = tempFile.delete();
+            if(!delete){
+                log.warn("[InstanceLogService] delete old temp logs{} for instance: {} failed.", s,instanceId);
+            }
+        } catch (Throwable t) {
+            log.error("[InstanceLogService] delete old logs for instance[{}] failed.", instanceId, t);
         }
 
     }

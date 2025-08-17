@@ -192,12 +192,8 @@ public class InstanceService {
         Long jobId = instanceInfo.getJobId();
         JobInfoDO jobInfo = jobInfoRepository.findById(jobId).orElseThrow(() -> new PowerJobException("can't find job info by jobId: " + jobId));
         //删除掉之前的日志文件
-        try {
-            instanceLogService.removeOldFile(instanceId);
-        } catch (Exception e) {
-            //不能影响主流程 若删除失败
-            log.error("[InstanceLogService] delete old logs for instance: "+instanceId+" failed.",e);
-        }
+        instanceLogService.removeOldFile(instanceId);
+
         dispatchService.dispatch(jobInfo, instanceId,Optional.of(instanceInfo),Optional.empty());
     }
 
