@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.beans.BeanUtils;
@@ -77,6 +78,11 @@ public class InstanceLogService {
 
     @Resource(name = PJThreadPool.BACKGROUND_POOL)
     private AsyncTaskExecutor powerJobBackgroundPool;
+
+    @Value("${server.servlet.context-path:#{null}}")
+    private String servletContextPath;
+
+    private static final String DOWNLOAD_URL_PATTERN = "http://%s:%d%s/instance/downloadLog?instanceId=%d";
 
     /**
      *  分段锁
@@ -173,7 +179,8 @@ public class InstanceLogService {
      */
     @DesignateServer
     public String fetchDownloadUrl(Long appId, Long instanceId) {
-        String url = "http://" + NetUtils.getLocalHost() + ":" + port + "/instance/downloadLog?instanceId=" + instanceId;
+        String path = Optional.ofNullable(servletContextPath).orElse(StringUtils.EMPTY);
+        String url = String.format(DOWNLOAD_URL_PATTERN, NetUtils.getLocalHost(), port, path, instanceId);
         log.info("[InstanceLog-{}] downloadURL for appId[{}]: {}", instanceId, appId, url);
         return url;
     }
@@ -390,6 +397,44 @@ public class InstanceLogService {
     }
     private static String genMongoFileName(long instanceId) {
         return String.format("oms-%d.log", instanceId);
+    }
+
+    /**
+     * description  在重跑之前移除老的文件，避免重跑后还看到的是之前的示例日志。
+     * 因为当重跑完读取稳定日志的时候 目前逻辑会先判断本地文件是否存在 若存在则直接返回了 故需要先移除掉
+     * 参考：tech.powerjob.server.core.instance.InstanceLogService#genStableLogFile(long)
+     * @author jian chen jiang
+     * date 2024/2/5 17:01
+     * @param instanceId
+     * @return void
+     */
+    public void removeOldFile(Long instanceId) {
+        // 库中的数据不删，删了就会丢失全部的历史日志
+        try {
+            //删除本地缓存
+            String s = genLogFilePath(instanceId, true);
+            File file = new File(s);
+            if(!file.exists()){
+                return;
+            }
+            boolean delete = file.delete();
+            if(!delete){
+                log.warn("[InstanceLogService] delete old logs{} for instance: {} failed.", s,instanceId);
+            }
+            //删除临时文件
+            String tempFilePath = genLogFilePath(instanceId, false);
+            File tempFile = new File(tempFilePath);
+            if(!tempFile.exists()){
+                return;
+            }
+            delete = tempFile.delete();
+            if(!delete){
+                log.warn("[InstanceLogService] delete old temp logs{} for instance: {} failed.", s,instanceId);
+            }
+        } catch (Throwable t) {
+            log.error("[InstanceLogService] delete old logs for instance[{}] failed.", instanceId, t);
+        }
+
     }
 
 }

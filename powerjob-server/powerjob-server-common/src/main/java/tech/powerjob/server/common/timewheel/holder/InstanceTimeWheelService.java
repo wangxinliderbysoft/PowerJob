@@ -1,5 +1,6 @@
 package tech.powerjob.server.common.timewheel.holder;
 
+import tech.powerjob.common.utils.SysUtils;
 import tech.powerjob.server.common.timewheel.HashedWheelTimer;
 import tech.powerjob.server.common.timewheel.Timer;
 import tech.powerjob.server.common.timewheel.TimerFuture;
@@ -22,7 +23,7 @@ public class InstanceTimeWheelService {
     /**
      * 精确调度时间轮，每 1MS 走一格
      */
-    private static final Timer TIMER = new HashedWheelTimer(1, 4096, Runtime.getRuntime().availableProcessors() * 4);
+    private static final Timer TIMER = new HashedWheelTimer(1, 4096, SysUtils.availableProcessors() * 4);
     /**
      * 非精确调度时间轮，用于处理高延迟任务，每 10S 走一格
      */

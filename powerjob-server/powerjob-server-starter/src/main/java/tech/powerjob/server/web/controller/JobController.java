@@ -1,26 +1,31 @@
 package tech.powerjob.server.web.controller;
 
-import org.apache.commons.lang3.StringUtils;
-import tech.powerjob.common.request.http.SaveJobInfoRequest;
-import tech.powerjob.common.response.ResultDTO;
-import tech.powerjob.server.auth.Permission;
-import tech.powerjob.server.auth.RoleScope;
-import tech.powerjob.server.auth.interceptor.ApiPermission;
-import tech.powerjob.common.enums.SwitchableStatus;
-import tech.powerjob.server.persistence.PageResult;
-import tech.powerjob.server.persistence.remote.model.JobInfoDO;
-import tech.powerjob.server.persistence.remote.repository.JobInfoRepository;
-import tech.powerjob.server.core.service.JobService;
-import tech.powerjob.server.web.request.QueryJobInfoRequest;
-import tech.powerjob.server.web.response.JobInfoVO;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+import tech.powerjob.common.enums.ErrorCodes;
+import tech.powerjob.common.enums.SwitchableStatus;
+import tech.powerjob.common.exception.PowerJobException;
+import tech.powerjob.common.request.http.RunJobRequest;
+import tech.powerjob.common.request.http.SaveJobInfoRequest;
+import tech.powerjob.common.response.ResultDTO;
+import tech.powerjob.server.auth.Permission;
+import tech.powerjob.server.auth.RoleScope;
+import tech.powerjob.server.auth.common.utils.AuthHeaderUtils;
+import tech.powerjob.server.auth.interceptor.ApiPermission;
+import tech.powerjob.server.core.service.JobService;
+import tech.powerjob.server.persistence.PageResult;
+import tech.powerjob.server.persistence.remote.model.JobInfoDO;
+import tech.powerjob.server.persistence.remote.repository.JobInfoRepository;
+import tech.powerjob.server.web.request.QueryJobInfoRequest;
+import tech.powerjob.server.web.response.JobInfoVO;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,46 +48,55 @@ public class JobController {
 
     @PostMapping("/save")
     @ApiPermission(name = "Job-Save", roleScope = RoleScope.APP, requiredPermission = Permission.WRITE)
-    public ResultDTO<Void> saveJobInfo(@RequestBody SaveJobInfoRequest request) {
+    public ResultDTO<Void> saveJobInfo(@RequestBody SaveJobInfoRequest request, HttpServletRequest hsr) {
+        request.setAppId(Long.valueOf(AuthHeaderUtils.fetchAppId(hsr)));
         jobService.saveJob(request);
         return ResultDTO.success(null);
     }
 
     @PostMapping("/copy")
     @ApiPermission(name = "Job-Copy", roleScope = RoleScope.APP, requiredPermission = Permission.WRITE)
-    public ResultDTO<JobInfoVO> copyJob(String jobId) {
+    public ResultDTO<JobInfoVO> copyJob(String jobId, HttpServletRequest hsr) {
+        preCheck(jobId, hsr);
         return ResultDTO.success(JobInfoVO.from(jobService.copyJob(Long.valueOf(jobId))));
     }
 
     @GetMapping("/export")
     @ApiPermission(name = "Job-Export", roleScope = RoleScope.APP, requiredPermission = Permission.READ)
-    public ResultDTO<SaveJobInfoRequest> exportJob(String jobId) {
+    public ResultDTO<SaveJobInfoRequest> exportJob(String jobId, HttpServletRequest hsr) {
+        preCheck(jobId, hsr);
         return ResultDTO.success(jobService.exportJob(Long.valueOf(jobId)));
     }
 
     @GetMapping("/disable")
     @ApiPermission(name = "Job-Disable", roleScope = RoleScope.APP, requiredPermission = Permission.WRITE)
-    public ResultDTO<Void> disableJob(String jobId) {
+    public ResultDTO<Void> disableJob(String jobId, HttpServletRequest hsr) {
+        preCheck(jobId, hsr);
         jobService.disableJob(Long.valueOf(jobId));
         return ResultDTO.success(null);
     }
 
     @GetMapping("/delete")
     @ApiPermission(name = "Job-Delete", roleScope = RoleScope.APP, requiredPermission = Permission.WRITE)
-    public ResultDTO<Void> deleteJob(String jobId) {
+    public ResultDTO<Void> deleteJob(String jobId, HttpServletRequest hsr) {
+        preCheck(jobId, hsr);
         jobService.deleteJob(Long.valueOf(jobId));
         return ResultDTO.success(null);
     }
 
     @GetMapping("/run")
-    @ApiPermission(name = "Job-Copy", roleScope = RoleScope.APP, requiredPermission = Permission.OPS)
-    public ResultDTO<Long> runImmediately(String appId, String jobId, @RequestParam(required = false) String instanceParams) {
-        return ResultDTO.success(jobService.runJob(Long.valueOf(appId), Long.valueOf(jobId), instanceParams, 0L));
+    @ApiPermission(name = "Job-Run", roleScope = RoleScope.APP, requiredPermission = Permission.OPS)
+    public ResultDTO<Long> runImmediately(String jobId, @RequestParam(required = false) String instanceParams, HttpServletRequest hsr) {
+        preCheck(jobId, hsr);
+        RunJobRequest request = new RunJobRequest().setAppId(AuthHeaderUtils.fetchAppIdL(hsr)).setJobId(Long.valueOf(jobId)).setInstanceParams(instanceParams);
+        return ResultDTO.success(jobService.runJob(request.getAppId(), request));
     }
 
     @PostMapping("/list")
-    @ApiPermission(name = "Job-Copy", roleScope = RoleScope.APP, requiredPermission = Permission.READ)
-    public ResultDTO<PageResult<JobInfoVO>> listJobs(@RequestBody QueryJobInfoRequest request) {
+    @ApiPermission(name = "Job-List", roleScope = RoleScope.APP, requiredPermission = Permission.READ)
+    public ResultDTO<PageResult<JobInfoVO>> listJobs(@RequestBody QueryJobInfoRequest request, HttpServletRequest hsr) {
+
+        request.setAppId(Long.valueOf(AuthHeaderUtils.fetchAppId(hsr)));
 
         Sort sort = Sort.by(Sort.Direction.ASC, "id");
         PageRequest pageRequest = PageRequest.of(request.getIndex(), request.getPageSize(), sort);
@@ -135,6 +149,20 @@ public class JobController {
         PageResult<JobInfoVO> pageResult = new PageResult<>(jobInfoPage);
         pageResult.setData(jobInfoVOList);
         return pageResult;
+    }
+
+    private void preCheck(String jobId, HttpServletRequest hsr) {
+        Long appId = Long.valueOf(AuthHeaderUtils.fetchAppId(hsr));
+        Optional<JobInfoDO> jobInfoOpt = jobInfoRepository.findById(Long.valueOf(jobId));
+        if (!jobInfoOpt.isPresent()) {
+            throw new PowerJobException(ErrorCodes.ILLEGAL_ARGS_ERROR, "JobNotExist");
+        }
+
+        JobInfoDO jobInfoDO = jobInfoOpt.get();
+
+        if (!jobInfoDO.getAppId().equals(appId)) {
+            throw new PowerJobException(ErrorCodes.INVALID_REQUEST, String.format("AppIdNotMatch(%d!=%d)", jobInfoDO.getAppId(), appId));
+        }
     }
 
 }

@@ -1,12 +1,13 @@
 package tech.powerjob.worker.core.processor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import tech.powerjob.worker.common.PowerJobWorkerConfig;
-import tech.powerjob.worker.log.OmsLogger;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import tech.powerjob.common.model.InstanceMeta;
+import tech.powerjob.worker.common.PowerJobWorkerConfig;
+import tech.powerjob.worker.log.OmsLogger;
 
 /**
  * 任务上下文
@@ -71,5 +72,9 @@ public class TaskContext {
      * 工作流上下文数据
      */
     private WorkflowContext workflowContext;
+    /**
+     * 调度元信息
+     */
+    private InstanceMeta instanceMeta;
 
 }

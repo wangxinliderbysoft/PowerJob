@@ -26,6 +26,7 @@ class CSInitializerFactory {
      */
     private static final String OFFICIAL_HTTP_CS_INITIALIZER2 = "tech.powerjob.remote.http.HttpCSInitializer";
     private static final String OFFICIAL_AKKA_CS_INITIALIZER = "tech.powerjob.remote.akka.AkkaCSInitializer";
+    private static final String OFFICIAL_MU_CS_INITIALIZER = "tech.powerjob.remote.mu.MuCSInitializer";
 
     private static final String EXTEND_CS_INITIALIZER_PATTERN = "tech.powerjob.remote.%s.CSInitializer";
 
@@ -83,6 +84,13 @@ class CSInitializerFactory {
             Optional<CSInitializer> akkaCSIOpt = tryLoadCSInitializerByClzName(OFFICIAL_AKKA_CS_INITIALIZER);
             if (akkaCSIOpt.isPresent()) {
                 return akkaCSIOpt.get();
+            }
+        }
+
+        if (Protocol.MU.name().equalsIgnoreCase(targetType)) {
+            Optional<CSInitializer> muCSIOpt = tryLoadCSInitializerByClzName(OFFICIAL_MU_CS_INITIALIZER);
+            if (muCSIOpt.isPresent()) {
+                return muCSIOpt.get();
             }
         }
 

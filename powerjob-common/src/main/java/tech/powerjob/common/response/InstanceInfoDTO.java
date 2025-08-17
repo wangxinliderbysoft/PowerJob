@@ -72,6 +72,15 @@ public class InstanceInfoDTO {
      */
     private Long runningTimes;
 
+    /**
+     * “外键”，用于 OPENAPI 场景业务场景与 PowerJob 实例的绑定
+     */
+    private String outerKey;
+    /**
+     * 扩展属性，用于 OPENAPI 场景上下文参数的透传
+     */
+    private String extendValue;
+
     private Date gmtCreate;
     private Date gmtModified;
 }

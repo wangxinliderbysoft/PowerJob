@@ -5,6 +5,7 @@ import com.google.common.collect.Queues;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import tech.powerjob.common.utils.SysUtils;
 import tech.powerjob.server.extension.alarm.Alarm;
 import tech.powerjob.server.extension.alarm.AlarmTarget;
 import tech.powerjob.server.extension.alarm.Alarmable;
@@ -30,7 +31,7 @@ public class AlarmCenter {
     private final List<Alarmable> BEANS = Lists.newLinkedList();
 
     public AlarmCenter(List<Alarmable> alarmables) {
-        int cores = Runtime.getRuntime().availableProcessors();
+        int cores = SysUtils.availableProcessors();
         ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("AlarmPool-%d").build();
         POOL = new ThreadPoolExecutor(cores, cores, 5, TimeUnit.MINUTES, Queues.newLinkedBlockingQueue(), factory);
 

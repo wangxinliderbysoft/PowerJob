@@ -14,6 +14,7 @@ import tech.powerjob.common.enums.TimeExpressionType;
 import tech.powerjob.common.exception.PowerJobException;
 import tech.powerjob.common.model.AlarmConfig;
 import tech.powerjob.common.model.LifeCycle;
+import tech.powerjob.common.request.http.RunJobRequest;
 import tech.powerjob.common.request.http.SaveJobInfoRequest;
 import tech.powerjob.common.response.JobInfoDTO;
 import tech.powerjob.common.serialize.JsonUtils;
@@ -169,23 +170,23 @@ public class JobServiceImpl implements JobService {
         return jobInfoRepository.findAll(specification).stream().map(JobConverter::convertJobInfoDO2JobInfoDTO).collect(Collectors.toList());
     }
 
-    /**
-     * 手动立即运行某个任务
-     *
-     * @param jobId          任务ID
-     * @param instanceParams 任务实例参数（仅 OpenAPI 存在）
-     * @param delay          延迟时间，单位 毫秒
-     * @return 任务实例ID
-     */
+
     @Override
     @DesignateServer
-    public long runJob(Long appId, Long jobId, String instanceParams, Long delay) {
+    public long runJob(Long appId, RunJobRequest runJobRequest) {
+        Long jobId = runJobRequest.getJobId();
+        String instanceParams = runJobRequest.getInstanceParams();
+        String outerKey = runJobRequest.getOuterKey();
+        long delay = runJobRequest.getDelay() == null ? 0 : runJobRequest.getDelay();
 
-        delay = delay == null ? 0 : delay;
         JobInfoDO jobInfo = jobInfoRepository.findById(jobId).orElseThrow(() -> new IllegalArgumentException("can't find job by id:" + jobId));
 
-        log.info("[Job-{}] try to run job in app[{}], instanceParams={},delay={} ms.", jobInfo.getId(), appId, instanceParams, delay);
-        final InstanceInfoDO instanceInfo = instanceService.create(jobInfo.getId(), jobInfo.getAppId(), jobInfo.getJobParams(), instanceParams, null, System.currentTimeMillis() + Math.max(delay, 0));
+        log.info("[Job-{}] try to run job in app[{}], instanceParams={},delay={} ms,outerKey={}", jobInfo.getId(), appId, instanceParams, delay, outerKey);
+
+        final InstanceInfoDO instanceInfo = instanceService.create(jobInfo.getId(), jobInfo.getAppId(), jobInfo.getJobParams(),
+                instanceParams, null, System.currentTimeMillis() + Math.max(delay, 0),
+                outerKey, runJobRequest.getExtendValue()
+        );
         instanceInfoRepository.flush();
         if (delay <= 0) {
             dispatchService.dispatch(jobInfo, instanceInfo.getInstanceId(), Optional.of(instanceInfo),Optional.empty());
@@ -195,7 +196,6 @@ public class JobServiceImpl implements JobService {
         log.info("[Job-{}|{}] execute 'runJob' successfully, params={}", jobInfo.getId(), instanceInfo.getInstanceId(), instanceParams);
         return instanceInfo.getInstanceId();
     }
-
 
     /**
      * 删除某个任务

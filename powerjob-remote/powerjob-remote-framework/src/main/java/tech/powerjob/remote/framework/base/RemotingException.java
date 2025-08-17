@@ -1,7 +1,5 @@
 package tech.powerjob.remote.framework.base;
 
-import java.io.IOException;
-
 /**
  * RemotingException
  *
@@ -12,5 +10,9 @@ public class RemotingException extends RuntimeException {
 
     public RemotingException(String message) {
         super(message);
+    }
+
+    public RemotingException(String message, Throwable throwable) {
+        super(message, throwable);
     }
 }

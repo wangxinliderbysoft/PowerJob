@@ -1,5 +1,6 @@
 package tech.powerjob.official.processors.impl.script;
 
+import tech.powerjob.common.utils.SysUtils;
 import tech.powerjob.worker.common.utils.PowerFileUtils;
 import tech.powerjob.worker.core.processor.ProcessResult;
 import tech.powerjob.worker.core.processor.TaskContext;
@@ -31,7 +32,7 @@ import java.util.concurrent.ForkJoinTask;
 @Slf4j
 public abstract class AbstractScriptProcessor extends CommonBasicProcessor {
 
-    private static final ForkJoinPool POOL = new ForkJoinPool(4 * Runtime.getRuntime().availableProcessors());
+    private static final ForkJoinPool POOL = new ForkJoinPool(4 * SysUtils.availableProcessors());
     private static final Set<String> DOWNLOAD_PROTOCOL = Sets.newHashSet("http", "https", "ftp");
     protected static final String SH_SHELL = "/bin/sh";
     protected static final String CMD_SHELL = "cmd.exe";

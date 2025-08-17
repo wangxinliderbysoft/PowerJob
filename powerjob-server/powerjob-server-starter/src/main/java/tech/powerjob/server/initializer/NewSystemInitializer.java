@@ -40,16 +40,11 @@ public class NewSystemInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        initSystemAdmin();
-        initDefaultNamespace();
-    }
-
-    private void initSystemAdmin() {
-        clusterInit(SystemInitializeService.GOAL_INIT_ADMIN, Void -> systemInitializeService.initAdmin());
-    }
-
-    private void initDefaultNamespace() {
-        clusterInit(SystemInitializeService.GOAL_INIT_NAMESPACE, Void -> systemInitializeService.initNamespace());
+        clusterInit(SystemInitializeService.GOAL_INIT_LOCK, V -> {
+            clusterInit(SystemInitializeService.GOAL_INIT_ADMIN, Void -> systemInitializeService.initAdmin());
+            clusterInit(SystemInitializeService.GOAL_INIT_NAMESPACE, Void -> systemInitializeService.initNamespace());
+            clusterInit(SystemInitializeService.GOAL_INIT_TEST_ENV, Void -> systemInitializeService.initTrialEnv());
+        });
     }
 
     private void clusterInit(String name, Consumer<Void> initFunc) {

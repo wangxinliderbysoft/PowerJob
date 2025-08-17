@@ -16,6 +16,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import tech.powerjob.common.exception.PowerJobException;
 import tech.powerjob.remote.framework.actor.ActorInfo;
 import tech.powerjob.remote.framework.actor.HandlerInfo;
@@ -126,8 +127,10 @@ public class HttpVertxCSInitializer implements CSInitializer {
         Optional<Class<?>> powerSerializeClz = RemoteUtils.findPowerSerialize(method.getParameterTypes());
 
         // 内部框架，严格模式，绑定失败直接报错
-        if (!powerSerializeClz.isPresent()) {
-            throw new PowerJobException("can't find any 'PowerSerialize' object in handler args: " + handlerInfo.getLocation());
+        if (ArrayUtils.isNotEmpty(method.getParameterTypes())) {
+            if (!powerSerializeClz.isPresent()) {
+                throw new PowerJobException("can't find any 'PowerSerialize' object in handler args: " + handlerInfo.getLocation());
+            }
         }
 
         return ctx -> {

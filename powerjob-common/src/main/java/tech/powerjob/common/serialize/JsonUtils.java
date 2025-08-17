@@ -127,11 +127,21 @@ public class JsonUtils {
     }
 
     public static <T> T parseObjectUnsafe(String json, Class<T> clz) {
+        if (json == null) {
+            return null;
+        }
         try {
             return JSON_MAPPER.readValue(json, clz);
         }catch (Exception e) {
             ExceptionUtils.rethrow(e);
         }
         throw new PowerJobException("impossible");
+    }
+
+    public static <T> T toJavaObject(Object o, Class<T> clz) {
+        if (o == null) {
+            return null;
+        }
+        return JSON_MAPPER.convertValue(o, clz);
     }
 }

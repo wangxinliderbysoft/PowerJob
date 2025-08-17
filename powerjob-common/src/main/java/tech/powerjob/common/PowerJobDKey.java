@@ -55,6 +55,12 @@ public class PowerJobDKey {
      */
     public static final String FREQUENCY_JOB_MAX_INTERVAL = "powerjob.server.frequency-job.max-interval";
 
+    /* ******************* 系统纬度参数，低频使用 ******************* */
+    /**
+     * 自行指定可用CPU核数
+     */
+    public static final String SYS_AVAILABLE_PROCESSORS = "powerjob.system.available-processors";
+
     /* ******************* 不太可能有人用的参数，主要方便内部测试 ******************* */
 
     /**
@@ -65,5 +71,10 @@ public class PowerJobDKey {
     public static final String WORKER_RUNTIME_SWAP_TASK_SCHEDULE_INTERVAL_MS = "powerjob.worker.swap.scan-interval";
 
     public static final String SERVER_TEST_ACCOUNT_USERNAME = "powerjob.server.test-accounts";
+
+    /**
+     * 特殊环境，test 代表测试环境，trial 代表试用环境
+     */
+    public static final String SP_ENV = "powerjob.sp-env";
 
 }

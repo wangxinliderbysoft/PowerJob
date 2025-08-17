@@ -11,6 +11,7 @@ import com.typesafe.config.ConfigFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.common.serialize.JsonUtils;
+import tech.powerjob.common.utils.SysUtils;
 import tech.powerjob.remote.framework.actor.ActorInfo;
 import tech.powerjob.remote.framework.base.Address;
 import tech.powerjob.remote.framework.cs.CSInitializer;
@@ -88,7 +89,7 @@ public class AkkaCSInitializer implements CSInitializer {
 
     @Override
     public void bindHandlers(List<ActorInfo> actorInfos) {
-        int cores = Runtime.getRuntime().availableProcessors();
+        int cores = SysUtils.availableProcessors();
         actorInfos.forEach(actorInfo -> {
             String rootPath = actorInfo.getAnno().path();
             AkkaMappingService.ActorConfig actorConfig = AkkaMappingService.parseActorName(rootPath);

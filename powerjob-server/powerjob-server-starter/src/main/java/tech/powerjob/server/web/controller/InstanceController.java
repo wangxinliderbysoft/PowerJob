@@ -1,35 +1,37 @@
 package tech.powerjob.server.web.controller;
 
-import tech.powerjob.common.OmsConstant;
-import tech.powerjob.common.enums.InstanceStatus;
-import tech.powerjob.common.response.ResultDTO;
-import tech.powerjob.server.auth.Permission;
-import tech.powerjob.server.auth.RoleScope;
-import tech.powerjob.server.auth.interceptor.ApiPermission;
-import tech.powerjob.server.common.utils.OmsFileUtils;
-import tech.powerjob.server.persistence.PageResult;
-import tech.powerjob.server.persistence.StringPage;
-import tech.powerjob.server.persistence.remote.model.InstanceInfoDO;
-import tech.powerjob.server.persistence.remote.repository.InstanceInfoRepository;
-import tech.powerjob.server.core.service.CacheService;
-import tech.powerjob.server.core.instance.InstanceLogService;
-import tech.powerjob.server.core.instance.InstanceService;
-import tech.powerjob.server.web.request.QueryInstanceDetailRequest;
-import tech.powerjob.server.web.request.QueryInstanceRequest;
-import tech.powerjob.server.web.response.InstanceDetailVO;
-import tech.powerjob.server.web.response.InstanceInfoVO;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import tech.powerjob.common.OmsConstant;
+import tech.powerjob.common.enums.InstanceStatus;
+import tech.powerjob.common.response.ResultDTO;
+import tech.powerjob.server.auth.Permission;
+import tech.powerjob.server.auth.RoleScope;
+import tech.powerjob.server.auth.common.utils.AuthHeaderUtils;
+import tech.powerjob.server.auth.interceptor.ApiPermission;
+import tech.powerjob.server.common.utils.OmsFileUtils;
+import tech.powerjob.server.core.instance.InstanceLogService;
+import tech.powerjob.server.core.instance.InstanceService;
+import tech.powerjob.server.core.service.CacheService;
+import tech.powerjob.server.persistence.PageResult;
+import tech.powerjob.server.persistence.StringPage;
+import tech.powerjob.server.persistence.remote.model.InstanceInfoDO;
+import tech.powerjob.server.persistence.remote.repository.InstanceInfoRepository;
+import tech.powerjob.server.web.request.QueryInstanceDetailRequest;
+import tech.powerjob.server.web.request.QueryInstanceRequest;
+import tech.powerjob.server.web.response.InstanceDetailVO;
+import tech.powerjob.server.web.response.InstanceInfoVO;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.net.URL;
@@ -61,29 +63,31 @@ public class InstanceController {
 
     @GetMapping("/stop")
     @ApiPermission(name = "Instance-Stop", roleScope = RoleScope.APP, requiredPermission = Permission.OPS)
-    public ResultDTO<Void> stopInstance(Long appId,Long instanceId) {
-        instanceService.stopInstance(appId,instanceId);
+    public ResultDTO<Void> stopInstance(Long instanceId, HttpServletRequest hsr) {
+        instanceService.stopInstance(AuthHeaderUtils.fetchAppIdL(hsr), instanceId);
         return ResultDTO.success(null);
     }
 
     @GetMapping("/retry")
     @ApiPermission(name = "Instance-Retry", roleScope = RoleScope.APP, requiredPermission = Permission.OPS)
-    public ResultDTO<Void> retryInstance(String appId, Long instanceId) {
-        instanceService.retryInstance(Long.valueOf(appId), instanceId);
+    public ResultDTO<Void> retryInstance(Long instanceId, HttpServletRequest hsr) {
+        instanceService.retryInstance(AuthHeaderUtils.fetchAppIdL(hsr), instanceId);
         return ResultDTO.success(null);
     }
 
     @GetMapping("/detail")
     @ApiPermission(name = "Instance-Detail", roleScope = RoleScope.APP, requiredPermission = Permission.READ)
-    public ResultDTO<InstanceDetailVO> getInstanceDetail(Long appId, Long instanceId) {
+    public ResultDTO<InstanceDetailVO> getInstanceDetail(Long instanceId, HttpServletRequest hsr) {
         QueryInstanceDetailRequest queryInstanceDetailRequest = new QueryInstanceDetailRequest();
-        queryInstanceDetailRequest.setAppId(appId);
+        queryInstanceDetailRequest.setAppId(AuthHeaderUtils.fetchAppIdL(hsr));
         queryInstanceDetailRequest.setInstanceId(instanceId);
-        return getInstanceDetailPlus(queryInstanceDetailRequest);
+        return getInstanceDetailPlus(queryInstanceDetailRequest, hsr);
     }
 
     @PostMapping("/detailPlus")
-    public ResultDTO<InstanceDetailVO> getInstanceDetailPlus(@RequestBody QueryInstanceDetailRequest req) {
+    public ResultDTO<InstanceDetailVO> getInstanceDetailPlus(@RequestBody QueryInstanceDetailRequest req, HttpServletRequest hsr) {
+
+        req.setAppId(AuthHeaderUtils.fetchAppIdL(hsr));
 
         // 非法请求参数校验
         String customQuery = req.getCustomQuery();
@@ -102,26 +106,26 @@ public class InstanceController {
 
     @GetMapping("/log")
     @ApiPermission(name = "Instance-Log", roleScope = RoleScope.APP, requiredPermission = Permission.OPS)
-    public ResultDTO<StringPage> getInstanceLog(Long appId, Long instanceId, Long index) {
-        return ResultDTO.success(instanceLogService.fetchInstanceLog(appId, instanceId, index));
+    public ResultDTO<StringPage> getInstanceLog(Long instanceId, Long index, HttpServletRequest hsr) {
+        return ResultDTO.success(instanceLogService.fetchInstanceLog(AuthHeaderUtils.fetchAppIdL(hsr), instanceId, index));
     }
 
     @GetMapping("/downloadLogUrl")
     @ApiPermission(name = "Instance-FetchDownloadLogUrl", roleScope = RoleScope.APP, requiredPermission = Permission.READ)
-    public ResultDTO<String> getDownloadUrl(Long appId, Long instanceId) {
-        return ResultDTO.success(instanceLogService.fetchDownloadUrl(appId, instanceId));
+    public ResultDTO<String> getDownloadUrl(Long instanceId, HttpServletRequest hsr) {
+        return ResultDTO.success(instanceLogService.fetchDownloadUrl(AuthHeaderUtils.fetchAppIdL(hsr), instanceId));
     }
 
     @GetMapping("/downloadLog")
     public void downloadLogFile(Long instanceId , HttpServletResponse response) throws Exception {
-
         File file = instanceLogService.downloadInstanceLog(instanceId);
         OmsFileUtils.file2HttpResponse(file, response);
     }
 
     @GetMapping("/downloadLog4Console")
     @SneakyThrows
-    public void downloadLog4Console(Long appId, Long instanceId , HttpServletResponse response) {
+    public void downloadLog4Console(Long instanceId , HttpServletResponse response, HttpServletRequest hsr) {
+        Long appId = AuthHeaderUtils.fetchAppIdL(hsr);
         // 获取内部下载链接
         String downloadUrl = instanceLogService.fetchDownloadUrl(appId, instanceId);
         // 先下载到本机
@@ -140,7 +144,9 @@ public class InstanceController {
 
     @PostMapping("/list")
     @ApiPermission(name = "Instance-List", roleScope = RoleScope.APP, requiredPermission = Permission.READ)
-    public ResultDTO<PageResult<InstanceInfoVO>> list(@RequestBody QueryInstanceRequest request) {
+    public ResultDTO<PageResult<InstanceInfoVO>> list(@RequestBody QueryInstanceRequest request, HttpServletRequest hsr) {
+
+        request.setAppId(AuthHeaderUtils.fetchAppIdL(hsr));
 
         Sort sort = Sort.by(Sort.Direction.DESC, "gmtModified");
         PageRequest pageable = PageRequest.of(request.getIndex(), request.getPageSize(), sort);

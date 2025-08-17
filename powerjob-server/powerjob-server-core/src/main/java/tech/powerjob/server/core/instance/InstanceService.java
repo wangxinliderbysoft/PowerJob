@@ -12,12 +12,14 @@ import tech.powerjob.common.SystemInstanceResult;
 import tech.powerjob.common.enums.InstanceStatus;
 import tech.powerjob.common.exception.PowerJobException;
 import tech.powerjob.common.model.InstanceDetail;
+import tech.powerjob.common.model.InstanceMeta;
 import tech.powerjob.common.request.ServerQueryInstanceStatusReq;
 import tech.powerjob.common.request.ServerStopInstanceReq;
 import tech.powerjob.common.request.query.InstancePageQuery;
 import tech.powerjob.common.response.AskResponse;
 import tech.powerjob.common.response.InstanceInfoDTO;
 import tech.powerjob.common.response.PageResult;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.remote.framework.base.URL;
 import tech.powerjob.server.common.constants.InstanceType;
 import tech.powerjob.server.common.module.WorkerInfo;
@@ -69,6 +71,8 @@ public class InstanceService {
 
     private final WorkerClusterQueryService workerClusterQueryService;
 
+    private final InstanceLogService instanceLogService;
+
     /**
      * 创建任务实例（注意，该方法并不调用 saveAndFlush，如果有需要立即同步到DB的需求，请在方法结束后手动调用 flush）
      * ********************************************
@@ -84,7 +88,7 @@ public class InstanceService {
      * @param expectTriggerTime 预期执行时间
      * @return 任务实例ID
      */
-    public InstanceInfoDO create(Long jobId, Long appId, String jobParams, String instanceParams, Long wfInstanceId, Long expectTriggerTime) {
+    public InstanceInfoDO create(Long jobId, Long appId, String jobParams, String instanceParams, Long wfInstanceId, Long expectTriggerTime, String outerKey, String extendValue) {
 
         Long instanceId = idGenerateService.allocate();
         Date now = new Date();
@@ -102,8 +106,15 @@ public class InstanceService {
         newInstanceInfo.setRunningTimes(0L);
         newInstanceInfo.setExpectedTriggerTime(expectTriggerTime);
         newInstanceInfo.setLastReportTime(-1L);
+        newInstanceInfo.setOuterKey(outerKey);
+        newInstanceInfo.setExtendValue(extendValue);
         newInstanceInfo.setGmtCreate(now);
         newInstanceInfo.setGmtModified(now);
+
+        // 写入调度元信息
+        InstanceMeta instanceMeta = new InstanceMeta();
+        instanceMeta.setEtt(expectTriggerTime);
+        newInstanceInfo.setMeta(JsonUtils.toJSONString(instanceMeta));
 
         instanceInfoRepository.save(newInstanceInfo);
         return newInstanceInfo;
@@ -187,6 +198,9 @@ public class InstanceService {
         // 派发任务
         Long jobId = instanceInfo.getJobId();
         JobInfoDO jobInfo = jobInfoRepository.findById(jobId).orElseThrow(() -> new PowerJobException("can't find job info by jobId: " + jobId));
+        //删除掉之前的日志文件
+        instanceLogService.removeOldFile(instanceId);
+
         dispatchService.dispatch(jobInfo, instanceId,Optional.of(instanceInfo),Optional.empty());
     }
 

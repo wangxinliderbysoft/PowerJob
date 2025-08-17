@@ -8,6 +8,7 @@ import tech.powerjob.common.response.ResultDTO;
 import tech.powerjob.server.auth.Permission;
 import tech.powerjob.server.auth.RoleScope;
 import tech.powerjob.server.auth.common.AuthConstants;
+import tech.powerjob.server.auth.common.utils.AuthHeaderUtils;
 import tech.powerjob.server.auth.interceptor.ApiPermission;
 import tech.powerjob.server.auth.plugin.ModifyOrCreateDynamicPermission;
 import tech.powerjob.server.auth.plugin.SaveNamespaceGrantPermissionPlugin;
@@ -25,6 +26,7 @@ import tech.powerjob.server.web.service.NamespaceWebService;
 import tech.powerjob.server.web.service.UserWebService;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,16 +51,19 @@ public class NamespaceController {
     @ResponseBody
     @PostMapping("/save")
     @ApiPermission(name = "Namespace-Save", roleScope = RoleScope.NAMESPACE, dynamicPermissionPlugin = ModifyOrCreateDynamicPermission.class, grandPermissionPlugin = SaveNamespaceGrantPermissionPlugin.class)
-    public ResultDTO<NamespaceBaseVO> save(@RequestBody ModifyNamespaceRequest req) {
+    public ResultDTO<NamespaceBaseVO> save(@RequestBody ModifyNamespaceRequest req, HttpServletRequest hsr) {
 
+        if (req.getId() != null) {
+            req.setId(AuthHeaderUtils.fetchNamespaceIdL(hsr));
+        }
         NamespaceDO savedNamespace = namespaceWebService.save(req);
         return ResultDTO.success(NamespaceConverter.do2BaseVo(savedNamespace));
     }
 
     @DeleteMapping("/delete")
     @ApiPermission(name = "Namespace-Delete", roleScope = RoleScope.NAMESPACE, requiredPermission = Permission.SU)
-    public ResultDTO<Void> deleteNamespace(Long id) {
-        namespaceWebService.delete(id);
+    public ResultDTO<Void> deleteNamespace(HttpServletRequest hsr) {
+        namespaceWebService.delete(AuthHeaderUtils.fetchNamespaceIdL(hsr));
         return ResultDTO.success(null);
     }
 

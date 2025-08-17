@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.common.PowerJobDKey;
 import tech.powerjob.common.model.WorkerAppInfo;
 import tech.powerjob.common.utils.CommonUtils;
+import tech.powerjob.common.utils.NetUtils;
 import tech.powerjob.common.utils.PropertyUtils;
 import tech.powerjob.remote.framework.base.Address;
 import tech.powerjob.remote.framework.base.ServerType;
@@ -18,7 +19,8 @@ import tech.powerjob.worker.actors.ProcessorTrackerActor;
 import tech.powerjob.worker.actors.TaskTrackerActor;
 import tech.powerjob.worker.actors.WorkerActor;
 import tech.powerjob.worker.background.OmsLogHandler;
-import tech.powerjob.worker.background.WorkerHealthReporter;
+import tech.powerjob.worker.background.heartbeat.DefaultSystemMetricsCollector;
+import tech.powerjob.worker.background.heartbeat.WorkerHealthReporter;
 import tech.powerjob.worker.background.discovery.PowerJobServerDiscoveryService;
 import tech.powerjob.worker.background.discovery.ServerDiscoveryService;
 import tech.powerjob.worker.common.PowerBannerPrinter;
@@ -150,6 +152,17 @@ public class PowerJobWorker {
     private PowerJobWorkerConfig reConfig(PowerJobWorkerConfig config) {
         CommonUtils.requireNonNull(config.getServerAddress(), "ServerAddress can't be null or empty!");
         Collections.shuffle(config.getServerAddress());
+
+        // 使用随机端口
+        if (config.getPort() < 0) {
+            config.setPort(NetUtils.getRandomPort());
+        }
+
+        // 系统指标收集器
+        if (config.getSystemMetricsCollector() == null) {
+            config.setSystemMetricsCollector(new DefaultSystemMetricsCollector());
+        }
+
         return config;
     }
 

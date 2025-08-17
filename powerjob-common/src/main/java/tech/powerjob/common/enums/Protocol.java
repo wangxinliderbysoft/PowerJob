@@ -13,7 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 public enum Protocol {
 
     AKKA,
-    HTTP;
+    HTTP,
+    MU;
 
     public static Protocol of(String protocol) {
         if (StringUtils.isEmpty(protocol)) {

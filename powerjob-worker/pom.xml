@@ -5,12 +5,13 @@
     <parent>
         <artifactId>powerjob</artifactId>
         <groupId>tech.powerjob</groupId>
-        <version>5.1.1</version>
+        <version>5.1.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>powerjob-worker</artifactId>
-    <version>5.1.1</version>
+    <name>powerjob-worker</name>
+    <version>5.1.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -21,10 +22,11 @@
 
         <logback.version>1.2.13</logback.version>
 
-        <powerjob-common.version>5.1.1</powerjob-common.version>
-        <powerjob-remote-framework.version>5.1.1</powerjob-remote-framework.version>
-        <powerjob-remote-impl-akka.version>5.1.1</powerjob-remote-impl-akka.version>
-        <powerjob-remote-impl-http.version>5.1.1</powerjob-remote-impl-http.version>
+        <powerjob-common.version>5.1.2</powerjob-common.version>
+        <powerjob-remote-framework.version>5.1.2</powerjob-remote-framework.version>
+        <powerjob-remote-impl-akka.version>5.1.2</powerjob-remote-impl-akka.version>
+        <powerjob-remote-impl-http.version>5.1.2</powerjob-remote-impl-http.version>
+        <powerjob-remote-impl-mu.version>5.1.2</powerjob-remote-impl-mu.version>
     </properties>
 
     <dependencies>
@@ -54,6 +56,11 @@
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-remote-impl-http</artifactId>
             <version>${powerjob-remote-impl-http.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tech.powerjob</groupId>
+            <artifactId>powerjob-remote-impl-mu</artifactId>
+            <version>${powerjob-remote-impl-mu.version}</version>
         </dependency>
 
         <!-- h2 database -->

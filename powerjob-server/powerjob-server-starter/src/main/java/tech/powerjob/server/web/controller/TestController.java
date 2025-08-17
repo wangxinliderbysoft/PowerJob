@@ -4,16 +4,17 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import tech.powerjob.common.PowerSerializable;
+import tech.powerjob.common.response.AskResponse;
 import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.common.utils.CollectionUtils;
+import tech.powerjob.remote.framework.base.URL;
 import tech.powerjob.server.common.utils.TestUtils;
 import tech.powerjob.server.core.alarm.AlarmCenter;
 import tech.powerjob.server.core.alarm.module.JobInstanceAlarm;
 import tech.powerjob.server.extension.alarm.AlarmTarget;
+import tech.powerjob.server.remote.transporter.TransportService;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -35,6 +36,8 @@ public class TestController {
 
     @Resource
     private AlarmCenter alarmCenter;
+    @Resource
+    private TransportService transportService;
 
     @RequestMapping("/io")
     public Map<String, Object> io(@RequestBody Map<String, Object> input) {
@@ -53,6 +56,24 @@ public class TestController {
         log.info("[TestController] testConfig: {}", JsonUtils.toJSONString(testConfig));
 
         testAlarmCenter();
+    }
+
+    @PostMapping("/transport")
+    public Object testTransportService(@RequestBody Map<String, Object> params) throws ClassNotFoundException {
+        String method = MapUtils.getString(params, "method");
+
+        String protocol = MapUtils.getString(params, "protocol");
+        Object url = MapUtils.getObject(params, "url");
+        Object request = MapUtils.getObject(params, "request");
+        String requestClassName = MapUtils.getString(params, "requestClassName");
+        Class<? extends PowerSerializable> requestClz = (Class<? extends PowerSerializable>) Class.forName(requestClassName);
+
+        if ("ask".equalsIgnoreCase(method)) {
+            return transportService.ask(protocol, JsonUtils.toJavaObject(url, URL.class), JsonUtils.toJavaObject(request, requestClz) , AskResponse.class);
+        }
+
+        transportService.tell(protocol, JsonUtils.toJavaObject(url, URL.class), (PowerSerializable) request);
+        return "TELL_SUCCESS";
     }
 
     void testAlarmCenter() {
