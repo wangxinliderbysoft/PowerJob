@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.client.ClientConfig;
 import tech.powerjob.client.TypeStore;
 import tech.powerjob.client.module.AppAuthRequest;
