@@ -30,6 +30,7 @@ services:
       - "7700:7700"
       - "10086:10086"
       - "10010:10010"
+      - "10077:10077"
     volumes:
       - ./powerjob-data/powerjob-server:/root/powerjob/server/
 
