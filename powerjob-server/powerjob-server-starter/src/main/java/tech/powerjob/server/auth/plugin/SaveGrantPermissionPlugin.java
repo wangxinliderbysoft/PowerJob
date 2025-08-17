@@ -1,5 +1,6 @@
 package tech.powerjob.server.auth.plugin;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -13,7 +14,11 @@ import tech.powerjob.server.auth.interceptor.GrantPermissionPlugin;
 import tech.powerjob.server.auth.service.permission.PowerJobPermissionService;
 import tech.powerjob.server.common.utils.SpringUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,8 +35,9 @@ public abstract class SaveGrantPermissionPlugin implements GrantPermissionPlugin
     @Override
     public void grant(Object[] args, Object result, Method method, Object originBean) {
 
-        if (args == null || args.length != 1) {
-            throw new IllegalArgumentException("[GrantPermission] args not match, maybe there has some bug");
+        List<Object> bizArgs = filterInputArgs(args);
+        if (bizArgs.size() != 1) {
+            throw new IllegalArgumentException("[GrantPermission] args not match(!=1), maybe there has some bug!size=" + bizArgs.size());
         }
 
         // 理论上不可能，前置已完成判断
@@ -73,4 +79,21 @@ public abstract class SaveGrantPermissionPlugin implements GrantPermissionPlugin
     }
 
     protected abstract RoleScope fetchRuleScope();
+
+    private static List<Object> filterInputArgs(Object[] args) {
+        if (args == null) {
+            return Collections.emptyList();
+        }
+        List<Object> ret = Lists.newArrayList();
+        for (Object arg : args) {
+            if (arg instanceof HttpServletRequest) {
+                continue;
+            }
+            if (arg instanceof HttpServletResponse) {
+                continue;
+            }
+            ret.add(arg);
+        }
+        return ret;
+    }
 }

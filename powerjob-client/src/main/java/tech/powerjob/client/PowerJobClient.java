@@ -240,8 +240,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
     @Override
     public ResultDTO<Long> runJob(Long jobId, String instanceParams, long delayMS) {
 
-        RunJobRequest runJobRequest = new RunJobRequest()
-                .setAppId(appId).setJobId(jobId).setInstanceParams(instanceParams).setDelay(delayMS);
+        RunJobRequest runJobRequest = new RunJobRequest().setJobId(jobId).setInstanceParams(instanceParams).setDelay(delayMS);
         return runJob(runJobRequest);
     }
 
@@ -251,6 +250,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
 
     @Override
     public PowerResultDTO<Long> runJob(RunJobRequest runJobRequest) {
+        runJobRequest.setAppId(appId);
         String post = requestService.request(OpenAPIConstant.RUN_JOB2, PowerRequestBody.newJsonRequestBody(runJobRequest));
         return JSON.parseObject(post, LONG_POWER_RESULT_TYPE);
     }
