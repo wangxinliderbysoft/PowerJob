@@ -1,12 +1,13 @@
 package tech.powerjob.worker.core.processor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import tech.powerjob.worker.common.PowerJobWorkerConfig;
-import tech.powerjob.worker.log.OmsLogger;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import tech.powerjob.common.model.InstanceMeta;
+import tech.powerjob.worker.common.PowerJobWorkerConfig;
+import tech.powerjob.worker.log.OmsLogger;
 
 /**
  * 任务上下文
@@ -72,8 +73,8 @@ public class TaskContext {
      */
     private WorkflowContext workflowContext;
     /**
-     * 预计任务执行时间,当实例从跑的时候，这个时间为该实例首次被算出要调度的时间，即重跑实例次时间将不变
+     * 调度元信息
      */
-    private Long expectTriggerTime;
+    private InstanceMeta instanceMeta;
 
 }

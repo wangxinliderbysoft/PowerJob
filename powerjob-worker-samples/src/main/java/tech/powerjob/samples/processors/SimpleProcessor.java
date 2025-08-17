@@ -21,6 +21,7 @@ public class SimpleProcessor implements BasicProcessor {
         String jobParams = Optional.ofNullable(context.getJobParams()).orElse("S");
         logger.info("Current context:{}", context.getWorkflowContext());
         logger.info("Current job params:{}", jobParams);
+        logger.info("META: {}", context.getInstanceMeta());
 
         // 测试中文问题 #581
         if (jobParams.contains("CN")) {

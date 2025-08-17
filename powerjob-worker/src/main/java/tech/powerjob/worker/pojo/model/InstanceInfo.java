@@ -56,4 +56,9 @@ public class InstanceInfo implements Serializable {
     private String logConfig;
 
     private String advancedRuntimeConfig;
+
+    /**
+     * 调度元信息
+     */
+    private String meta;
 }

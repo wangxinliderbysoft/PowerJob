@@ -7,10 +7,12 @@ import tech.powerjob.common.PowerJobDKey;
 import tech.powerjob.common.SystemInstanceResult;
 import tech.powerjob.common.enums.InstanceStatus;
 import tech.powerjob.common.model.InstanceDetail;
+import tech.powerjob.common.model.InstanceMeta;
 import tech.powerjob.common.request.ServerQueryInstanceStatusReq;
 import tech.powerjob.common.request.ServerScheduleJobReq;
 import tech.powerjob.common.request.TaskTrackerReportInstanceStatusReq;
 import tech.powerjob.common.enhance.SafeRunnableWrapper;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.worker.common.WorkerRuntime;
 import tech.powerjob.worker.common.constants.TaskConstant;
 import tech.powerjob.worker.common.constants.TaskStatus;
@@ -363,7 +365,7 @@ public class LightTaskTracker extends TaskTracker {
         context.setMaxRetryTimes(req.getTaskRetryNum());
         context.setCurrentRetryTimes(0);
         context.setUserContext(workerRuntime.getWorkerConfig().getUserContext());
-        context.setExpectTriggerTime(req.getExpectTriggerTime());
+        context.setInstanceMeta(JsonUtils.parseObjectUnsafe(req.getMeta(), InstanceMeta.class));
         // 轻量级任务不会涉及到任务分片的处理，不需要处理子任务相关的信息
         return context;
     }

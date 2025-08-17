@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.common.enums.ExecuteType;
+import tech.powerjob.common.model.InstanceMeta;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.common.serialize.SerializerUtils;
 import tech.powerjob.worker.common.ThreadLocalStore;
 import tech.powerjob.worker.common.WorkerRuntime;
@@ -113,7 +115,7 @@ public class HeavyProcessorRunnable implements Runnable {
         taskContext.setJobParams(instanceInfo.getJobParams());
         taskContext.setInstanceParams(instanceInfo.getInstanceParams());
         taskContext.setOmsLogger(omsLogger);
-        taskContext.setExpectTriggerTime(instanceInfo.getExpectTriggerTime());
+        taskContext.setInstanceMeta(JsonUtils.parseObjectUnsafe(instanceInfo.getMeta(), InstanceMeta.class));
         if (task.getTaskContent() != null && task.getTaskContent().length > 0) {
             taskContext.setSubTask(SerializerUtils.deSerialized(task.getTaskContent()));
         }

@@ -109,6 +109,10 @@ public class InstanceInfoDO {
      */
     private String extendValue;
 
+    /**
+     * 调度元信息
+     */
+    private String meta;
 
     private Date gmtCreate;
 

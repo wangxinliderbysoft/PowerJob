@@ -12,12 +12,14 @@ import tech.powerjob.common.SystemInstanceResult;
 import tech.powerjob.common.enums.InstanceStatus;
 import tech.powerjob.common.exception.PowerJobException;
 import tech.powerjob.common.model.InstanceDetail;
+import tech.powerjob.common.model.InstanceMeta;
 import tech.powerjob.common.request.ServerQueryInstanceStatusReq;
 import tech.powerjob.common.request.ServerStopInstanceReq;
 import tech.powerjob.common.request.query.InstancePageQuery;
 import tech.powerjob.common.response.AskResponse;
 import tech.powerjob.common.response.InstanceInfoDTO;
 import tech.powerjob.common.response.PageResult;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.remote.framework.base.URL;
 import tech.powerjob.server.common.constants.InstanceType;
 import tech.powerjob.server.common.module.WorkerInfo;
@@ -109,6 +111,11 @@ public class InstanceService {
         newInstanceInfo.setGmtCreate(now);
         newInstanceInfo.setGmtModified(now);
 
+        // 写入调度元信息
+        InstanceMeta instanceMeta = new InstanceMeta();
+        instanceMeta.setEtt(expectTriggerTime);
+        newInstanceInfo.setMeta(JsonUtils.toJSONString(instanceMeta));
+
         instanceInfoRepository.save(newInstanceInfo);
         return newInstanceInfo;
     }
@@ -181,7 +188,7 @@ public class InstanceService {
         }
 
         instanceInfo.setStatus(InstanceStatus.WAITING_DISPATCH.getV());
-        instanceInfo.setExpectedTriggerTime(instanceInfo.getExpectedTriggerTime());
+        instanceInfo.setExpectedTriggerTime(System.currentTimeMillis());
         instanceInfo.setFinishedTime(null);
         instanceInfo.setActualTriggerTime(null);
         instanceInfo.setTaskTrackerAddress(null);

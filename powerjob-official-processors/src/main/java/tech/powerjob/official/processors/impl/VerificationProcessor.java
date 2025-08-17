@@ -40,6 +40,8 @@ public class VerificationProcessor extends CommonBasicProcessor implements MapRe
 
         final Mode mode = Mode.of(verificationParam.getMode());
 
+        omsLogger.info("META: {}", taskContext.getInstanceMeta());
+
         switch (mode) {
             case ERROR:
                 return new ProcessResult(false, "EXECUTE_FAILED_FOR_TEST");
