@@ -97,10 +97,13 @@ public class PwjbUserWebServiceImplImpl implements PwjbUserWebService {
         // 不允许修改密码判定
         String extra = dbUser.getExtra();
         if (StringUtils.isNotEmpty(extra)) {
-            Map<String, Object> extraMap = JsonUtils.parseMap(extra);
-            Boolean allowedChangePwd = MapUtils.getBoolean(extraMap, ExtensionKey.PwjbUser.allowedChangePwd, true);
-            if (!allowedChangePwd) {
-                throw new PowerJobException(ErrorCodes.OPERATION_NOT_PERMITTED, "notAllowedChangePassword");
+            ModifyUserInfoRequest originRequest = JsonUtils.parseObjectUnsafe(extra, ModifyUserInfoRequest.class);
+            if (StringUtils.isNotEmpty(originRequest.getExtra())) {
+                Map<String, Object> extraMap = JsonUtils.parseMap(originRequest.getExtra());
+                boolean allowedChangePwd = MapUtils.getBoolean(extraMap, ExtensionKey.PwjbUser.allowedChangePwd, true);
+                if (!allowedChangePwd) {
+                    throw new PowerJobException(ErrorCodes.OPERATION_NOT_PERMITTED, "notAllowedChangePassword");
+                }
             }
         }
 

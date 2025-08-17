@@ -150,9 +150,9 @@ public class OpenAPIController {
     }
 
     @PostMapping(OpenAPIConstant.RUN_JOB2)
-    public ResultDTO<Long> runJob2(@RequestBody RunJobRequest runJobRequest) {
+    public PowerResultDTO<Long> runJob2(@RequestBody RunJobRequest runJobRequest) {
         checkJobIdValid(runJobRequest.getJobId(), runJobRequest.getAppId());
-        return ResultDTO.success(jobService.runJob(runJobRequest.getAppId(), runJobRequest));
+        return PowerResultDTO.s(jobService.runJob(runJobRequest.getAppId(), runJobRequest));
     }
 
     /* ************* Instance 区 ************* */

@@ -29,7 +29,7 @@ public class TestInstance extends ClientInitializer {
                 .setOuterKey(outerKey).setExtendValue("TEST_EXT_VALUE")
                 .setInstanceParams("OpenAPI-Params")
                 .setDelay(1000L);
-        ;
+
         PowerResultDTO<Long> runJobResult = powerJobClient.runJob(runJobRequest);
         log.info("[TestInstance] runJobResult: {}", runJobResult);
         Long instanceId = runJobResult.getData();

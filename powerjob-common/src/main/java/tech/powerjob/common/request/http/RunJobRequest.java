@@ -13,7 +13,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class RunJobRequest {
 
-    private Long appId;
     private Long jobId;
     /**
      * 运行时参数
@@ -32,4 +31,7 @@ public class RunJobRequest {
      * 扩展属性，用于 OPENAPI 场景上下文参数的透传
      */
     private String extendValue;
+
+    /* 无需填写，系统自动填充 */
+    private Long appId;
 }

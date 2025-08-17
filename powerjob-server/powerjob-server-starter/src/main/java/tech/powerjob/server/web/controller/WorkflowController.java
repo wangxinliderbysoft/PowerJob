@@ -46,6 +46,7 @@ public class WorkflowController {
     @PostMapping("/save")
     @ApiPermission(name = "Workflow-Save", roleScope = RoleScope.APP, requiredPermission = Permission.WRITE)
     public ResultDTO<Long> save(@RequestBody SaveWorkflowRequest req, HttpServletRequest hsr) throws ParseException {
+        req.setAppId(AuthHeaderUtils.fetchAppIdL(hsr));
         return ResultDTO.success(workflowService.saveWorkflow(req));
     }
 
