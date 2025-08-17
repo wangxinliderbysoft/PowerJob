@@ -17,6 +17,10 @@ public class PowerJobServerConfigKey {
      */
     public static final String HTTP_PORT = "oms.http.port";
     /**
+     * MU 协议端口号
+     */
+    public static final String MU_PORT = "oms.mu.port";
+    /**
      * 自定义数据库表前缀
      */
     public static final String TABLE_PREFIX = "oms.table-prefix";

@@ -2,6 +2,7 @@ package tech.powerjob.common.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.common.PowerJobDKey;
+import tech.powerjob.common.enums.SpEnv;
 
 /**
  * 系统工具
@@ -28,10 +29,22 @@ public class SysUtils {
      * @return 测试环境
      */
     public static boolean isTestEnv() {
-        String property = System.getProperty(PowerJobDKey.MARK_TEST_ENV);
+        String property = System.getProperty(PowerJobDKey.SP_ENV);
         if (StringUtils.isEmpty(property)) {
             return false;
         }
-        return Boolean.TRUE.toString().equalsIgnoreCase(property);
+        return SpEnv.TEST.getCode().equalsIgnoreCase(property);
+    }
+
+    /**
+     * 判断是否为试用环境
+     * @return 试用环境
+     */
+    public static boolean isTrialEnv() {
+        String property = System.getProperty(PowerJobDKey.SP_ENV);
+        if (StringUtils.isEmpty(property)) {
+            return false;
+        }
+        return SpEnv.TRIAL.getCode().equalsIgnoreCase(property);
     }
 }

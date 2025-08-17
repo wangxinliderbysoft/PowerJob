@@ -72,6 +72,9 @@ public class PowerJobDKey {
 
     public static final String SERVER_TEST_ACCOUNT_USERNAME = "powerjob.server.test-accounts";
 
-    public static final String MARK_TEST_ENV = "powerjob.test.env";
+    /**
+     * 特殊环境，test 代表测试环境，trial 代表试用环境
+     */
+    public static final String SP_ENV = "powerjob.sp-env";
 
 }
