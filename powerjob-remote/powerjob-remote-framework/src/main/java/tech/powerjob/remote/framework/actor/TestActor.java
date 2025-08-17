@@ -1,13 +1,11 @@
-package tech.powerjob.remote.framework.test;
+package tech.powerjob.remote.framework.actor;
 
 import lombok.extern.slf4j.Slf4j;
-import tech.powerjob.remote.framework.actor.Actor;
-import tech.powerjob.remote.framework.actor.Handler;
 
 import java.util.Map;
 
 /**
- * TestActor
+ * 内置一个用来通用测试的 TestActor
  *
  * @author tjq
  * @since 2022/12/31

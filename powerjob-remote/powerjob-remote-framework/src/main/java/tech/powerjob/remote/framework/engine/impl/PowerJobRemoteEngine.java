@@ -2,7 +2,9 @@ package tech.powerjob.remote.framework.engine.impl;
 
 import com.google.common.base.Stopwatch;
 import lombok.extern.slf4j.Slf4j;
+import tech.powerjob.common.utils.SysUtils;
 import tech.powerjob.remote.framework.actor.ActorInfo;
+import tech.powerjob.remote.framework.actor.TestActor;
 import tech.powerjob.remote.framework.cs.CSInitializer;
 import tech.powerjob.remote.framework.cs.CSInitializerConfig;
 import tech.powerjob.remote.framework.engine.EngineConfig;
@@ -26,6 +28,8 @@ public class PowerJobRemoteEngine implements RemoteEngine {
 
     @Override
     public EngineOutput start(EngineConfig engineConfig) {
+
+        reConfig(engineConfig);
 
         final String engineType = engineConfig.getType();
         EngineOutput engineOutput = new EngineOutput();
@@ -63,5 +67,13 @@ public class PowerJobRemoteEngine implements RemoteEngine {
     @Override
     public void close() throws IOException {
         csInitializer.close();
+    }
+
+    private static void reConfig(EngineConfig engineConfig) {
+        boolean testEnv = SysUtils.isTestEnv();
+        if (testEnv) {
+            log.info("[PowerJobRemoteEngine] add 'TestActor' due to current is test env");
+            engineConfig.getActorList().add(new TestActor());
+        }
     }
 }
