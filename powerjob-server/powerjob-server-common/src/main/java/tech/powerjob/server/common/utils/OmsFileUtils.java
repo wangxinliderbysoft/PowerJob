@@ -90,8 +90,10 @@ public class OmsFileUtils {
         try (BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream());
              BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
 
-            while (bis.read(buffer) != -1) {
-                bos.write(buffer);
+            // https://github.com/PowerJob/PowerJob/pull/939/files
+            int cnt;
+            while ((cnt = bis.read(buffer)) != -1) {
+                bos.write(buffer, 0, cnt);
             }
         }
     }
