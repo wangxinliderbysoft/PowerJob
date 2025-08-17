@@ -17,6 +17,7 @@
     </modules>
 
     <artifactId>powerjob-remote</artifactId>
+    <name>powerjob-remote</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

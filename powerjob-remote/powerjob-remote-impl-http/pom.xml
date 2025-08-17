@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>powerjob-remote-impl-http</artifactId>
+    <name>powerjob-remote-impl-http</name>
     <version>5.1.2</version>
 
     <properties>
