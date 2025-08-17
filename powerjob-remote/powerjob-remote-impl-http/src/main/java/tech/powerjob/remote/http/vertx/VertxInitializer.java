@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.common.OmsConstant;
 import tech.powerjob.common.PowerJobDKey;
+import tech.powerjob.common.utils.SysUtils;
 
 /**
  * VertxInitializer
@@ -31,7 +32,7 @@ public class VertxInitializer {
     private static final int SERVER_IDLE_TIMEOUT_S = 300;
 
     public static Vertx buildVertx() {
-        final int cpuCores = Runtime.getRuntime().availableProcessors();
+        final int cpuCores = SysUtils.availableProcessors();
         VertxOptions options = new VertxOptions()
                 .setWorkerPoolSize(Math.max(16, 2 * cpuCores))
                 .setInternalBlockingPoolSize(Math.max(32, 4 * cpuCores));
@@ -63,7 +64,7 @@ public class VertxInitializer {
         HttpClientOptions httpClientOptions = new HttpClientOptions()
                 .setMetricsName(OmsConstant.PACKAGE)
                 .setConnectTimeout(CONNECTION_TIMEOUT_MS)
-                .setMaxPoolSize(Math.max(8, Runtime.getRuntime().availableProcessors()) * 2);
+                .setMaxPoolSize(Math.max(8, SysUtils.availableProcessors()) * 2);
 
         // 长连接
         String keepaliveTimeout = System.getProperty(PowerJobDKey.TRANSPORTER_KEEP_ALIVE_TIMEOUT, String.valueOf(DEFAULT_KEEP_ALIVE_TIMEOUT));

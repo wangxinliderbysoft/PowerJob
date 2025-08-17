@@ -9,6 +9,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import tech.powerjob.common.utils.SysUtils;
 import tech.powerjob.server.common.RejectedExecutionHandlerFactory;
 import tech.powerjob.server.common.constants.PJThreadPool;
 import tech.powerjob.server.common.thread.NewThreadRunRejectedExecutionHandler;
@@ -27,8 +28,8 @@ public class ThreadPoolConfig {
     @Bean(PJThreadPool.TIMING_POOL)
     public TaskExecutor getTimingPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(Runtime.getRuntime().availableProcessors());
-        executor.setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 4);
+        executor.setCorePoolSize(SysUtils.availableProcessors());
+        executor.setMaxPoolSize(SysUtils.availableProcessors() * 4);
         // use SynchronousQueue
         executor.setQueueCapacity(0);
         executor.setKeepAliveSeconds(60);
@@ -40,8 +41,8 @@ public class ThreadPoolConfig {
     @Bean(PJThreadPool.BACKGROUND_POOL)
     public AsyncTaskExecutor initBackgroundPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(Runtime.getRuntime().availableProcessors() * 8);
-        executor.setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 16);
+        executor.setCorePoolSize(SysUtils.availableProcessors() * 8);
+        executor.setMaxPoolSize(SysUtils.availableProcessors() * 16);
         executor.setQueueCapacity(8192);
         executor.setKeepAliveSeconds(60);
         executor.setThreadNamePrefix("PJ-BG-");
@@ -52,7 +53,7 @@ public class ThreadPoolConfig {
     @Bean(PJThreadPool.LOCAL_DB_POOL)
     public TaskExecutor initOmsLocalDbPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        int tSize = Math.max(1, Runtime.getRuntime().availableProcessors() / 2);
+        int tSize = Math.max(1, SysUtils.availableProcessors() / 2);
         executor.setCorePoolSize(tSize);
         executor.setMaxPoolSize(tSize);
         executor.setQueueCapacity(2048);
@@ -67,7 +68,7 @@ public class ThreadPoolConfig {
     @Bean
     public TaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(Math.max(Runtime.getRuntime().availableProcessors() * 8, 32));
+        scheduler.setPoolSize(Math.max(SysUtils.availableProcessors() * 8, 32));
         scheduler.setThreadNamePrefix("PJ-DEFAULT-");
         scheduler.setDaemon(true);
         return scheduler;

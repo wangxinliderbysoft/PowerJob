@@ -12,6 +12,18 @@ import tech.powerjob.common.PowerJobDKey;
 public class SysUtils {
 
     /**
+     * 可用处理器核数
+     * @return 可用处理器核数
+     */
+    public static int availableProcessors() {
+        String property = System.getProperty(PowerJobDKey.SYS_AVAILABLE_PROCESSORS);
+        if (StringUtils.isEmpty(property)) {
+            return Runtime.getRuntime().availableProcessors();
+        }
+        return Integer.parseInt(property);
+    }
+
+    /**
      * 判断是否为测试环境
      * @return 测试环境
      */

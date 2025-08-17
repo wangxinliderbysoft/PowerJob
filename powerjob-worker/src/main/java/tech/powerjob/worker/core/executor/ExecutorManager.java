@@ -2,6 +2,7 @@ package tech.powerjob.worker.core.executor;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.Getter;
+import tech.powerjob.common.utils.SysUtils;
 import tech.powerjob.worker.common.PowerJobWorkerConfig;
 
 import java.util.concurrent.*;
@@ -29,7 +30,7 @@ public class ExecutorManager {
     public ExecutorManager(PowerJobWorkerConfig workerConfig){
 
 
-        final int availableProcessors = Runtime.getRuntime().availableProcessors();
+        final int availableProcessors = SysUtils.availableProcessors();
         // 初始化定时线程池
         ThreadFactory coreThreadFactory = new ThreadFactoryBuilder().setNameFormat("powerjob-worker-core-%d").build();
         coreExecutor =  new ScheduledThreadPoolExecutor(3, coreThreadFactory);
