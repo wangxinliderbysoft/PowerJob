@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.beans.BeanUtils;
@@ -77,6 +78,11 @@ public class InstanceLogService {
 
     @Resource(name = PJThreadPool.BACKGROUND_POOL)
     private AsyncTaskExecutor powerJobBackgroundPool;
+
+    @Value("${server.servlet.context-path:#{null}}")
+    private String servletContextPath;
+
+    private static final String DOWNLOAD_URL_PATTERN = "http://%s:%d%s/instance/downloadLog?instanceId=%d";
 
     /**
      *  分段锁
@@ -173,7 +179,8 @@ public class InstanceLogService {
      */
     @DesignateServer
     public String fetchDownloadUrl(Long appId, Long instanceId) {
-        String url = "http://" + NetUtils.getLocalHost() + ":" + port + "/instance/downloadLog?instanceId=" + instanceId;
+        String path = Optional.ofNullable(servletContextPath).orElse(StringUtils.EMPTY);
+        String url = String.format(DOWNLOAD_URL_PATTERN, NetUtils.getLocalHost(), port, path, instanceId);
         log.info("[InstanceLog-{}] downloadURL for appId[{}]: {}", instanceId, appId, url);
         return url;
     }
