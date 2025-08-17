@@ -26,6 +26,10 @@ public class WorkerStatusVO {
     private String protocol;
     private String tag;
     private String lastActiveTime;
+    /**
+     * 上一次worker在线时间（取 worker 端时间）
+     */
+    private String lastActiveWorkerTime;
 
     private Integer lightTaskTrackerNum;
 
@@ -99,6 +103,7 @@ public class WorkerStatusVO {
         this.protocol = workerInfo.getProtocol();
         this.tag = CommonUtils.formatString(workerInfo.getTag());
         this.lastActiveTime = CommonUtils.formatTime(workerInfo.getLastActiveTime());
+        this.lastActiveWorkerTime = CommonUtils.formatTime(workerInfo.getLastActiveWorkerTime());
         this.lightTaskTrackerNum = workerInfo.getLightTaskTrackerNum();
         this.heavyTaskTrackerNum = workerInfo.getHeavyTaskTrackerNum();
         this.lastOverloadTime = workerInfo.getLastOverloadTime();

@@ -55,8 +55,8 @@ public class ClusterStatusHolder {
             wf.refresh(heartbeat);
             return wf;
         });
-        long oldTime = workerInfo.getLastActiveTime();
-        if (heartbeatTime < oldTime) {
+        long oldHeartbeatTime = workerInfo.getLastActiveWorkerTime();
+        if (heartbeatTime < oldHeartbeatTime) {
             log.warn("[ClusterStatusHolder-{}] receive the expired heartbeat from {}, serverTime: {}, heartTime: {}", appName, heartbeat.getWorkerAddress(), System.currentTimeMillis(), heartbeat.getHeartbeatTime());
             return;
         }
