@@ -60,7 +60,7 @@ public class PwjbAccountLoginService implements ThirdPartyLoginService {
         final String password = MapUtils.getString(loginInfoMap, AuthConstants.PARAM_KEY_PASSWORD);
         final String encryption = MapUtils.getString(loginInfoMap, AuthConstants.PARAM_KEY_ENCRYPTION);
 
-        Loggers.WEB.debug("[PowerJobLoginService] username: {}, password: {}, encryption: {}", username, password, encryption);
+        Loggers.WEB.debug("[PowerJobLoginService] encryption: {}", encryption);
 
         if (StringUtils.isAnyEmpty(username, password)) {
             Loggers.WEB.debug("[PowerJobLoginService] username or password is empty, login failed!");
