@@ -28,18 +28,18 @@ public class MuConnectionManager {
 
     private final EventLoopGroup workerGroup;
     private final ChannelManager channelManager;
-    private final MuWorkerHandler workerHandler;
-    private final Address workerAddress;
+    private final Object messageHandler; // Can be MuWorkerHandler or MuServerHandler
+    private final Address localAddress;
     
     private final ConcurrentMap<String, Channel> serverConnections = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, CompletableFuture<Channel>> pendingConnections = new ConcurrentHashMap<>();
 
     public MuConnectionManager(EventLoopGroup workerGroup, ChannelManager channelManager, 
-                              MuWorkerHandler workerHandler, Address workerAddress) {
+                              Object messageHandler, Address localAddress) {
         this.workerGroup = workerGroup;
         this.channelManager = channelManager;
-        this.workerHandler = workerHandler;
-        this.workerAddress = workerAddress;
+        this.messageHandler = messageHandler;
+        this.localAddress = localAddress;
     }
 
     /**
@@ -78,8 +78,12 @@ public class MuConnectionManager {
                         ch.pipeline()
                             .addLast(new IdleStateHandler(0, 30, 0, TimeUnit.SECONDS))
                             .addLast(new MuMessageCodec())
-                            .addLast(workerHandler)
-                            .addLast(new MuWorkerHeartbeatHandler(workerAddress));
+                            .addLast((io.netty.channel.ChannelHandler) messageHandler);
+                        
+                        // Only add heartbeat handler for Worker connections
+                        if (messageHandler instanceof MuWorkerHandler) {
+                            ch.pipeline().addLast(new MuWorkerHeartbeatHandler(localAddress));
+                        }
                     }
                 });
 

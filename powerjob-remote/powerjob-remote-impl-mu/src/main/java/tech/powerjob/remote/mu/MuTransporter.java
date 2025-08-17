@@ -70,14 +70,32 @@ public class MuTransporter implements Transporter {
                         return null;
                     });
             } else {
-                // Server to worker: use stored channel
-                Channel channel = channelManager.getWorkerChannel(url.getAddress());
-                if (channel != null && channel.isActive()) {
-                    channel.writeAndFlush(message);
-                    log.debug("[MuTransporter] Sent TELL message to {}", url);
+                // Server side: distinguish between worker and server targets
+                if (url.getServerType() == ServerType.WORKER) {
+                    // Server to worker: use stored channel from worker registration
+                    Channel channel = channelManager.getWorkerChannel(url.getAddress());
+                    if (channel != null && channel.isActive()) {
+                        channel.writeAndFlush(message);
+                        log.debug("[MuTransporter] Sent TELL message to worker {}", url);
+                    } else {
+                        log.error("[MuTransporter] No active channel available for worker {}", url);
+                        throw new RemotingException("No active channel available for " + url);
+                    }
                 } else {
-                    log.error("[MuTransporter] No active channel available for worker {}", url);
-                    throw new RemotingException("No active channel available for " + url);
+                    // Server to server: use connection manager for direct connection
+                    connectionManager.getOrCreateConnection(url.getAddress())
+                        .thenAccept(channel -> {
+                            if (channel.isActive()) {
+                                channel.writeAndFlush(message);
+                                log.debug("[MuTransporter] Sent TELL message to server {}", url);
+                            } else {
+                                log.error("[MuTransporter] Channel is not active for server {}", url);
+                            }
+                        })
+                        .exceptionally(throwable -> {
+                            log.error("[MuTransporter] Failed to get connection for TELL to server {}", url, throwable);
+                            return null;
+                        });
                 }
             }
         } catch (Exception e) {
@@ -137,14 +155,34 @@ public class MuTransporter implements Transporter {
                         return null;
                     });
             } else {
-                // Server to worker: use stored channel
-                Channel channel = channelManager.getWorkerChannel(url.getAddress());
-                if (channel != null && channel.isActive()) {
-                    channel.writeAndFlush(message);
-                    log.debug("[MuTransporter] Sent ASK message to {} with requestId {}", url, requestId);
+                // Server side: distinguish between worker and server targets
+                if (url.getServerType() == ServerType.WORKER) {
+                    // Server to worker: use stored channel from worker registration
+                    Channel channel = channelManager.getWorkerChannel(url.getAddress());
+                    if (channel != null && channel.isActive()) {
+                        channel.writeAndFlush(message);
+                        log.debug("[MuTransporter] Sent ASK message to worker {} with requestId {}", url, requestId);
+                    } else {
+                        channelManager.removePendingRequest(requestId);
+                        future.completeExceptionally(new RemotingException("No active channel available for " + url));
+                    }
                 } else {
-                    channelManager.removePendingRequest(requestId);
-                    future.completeExceptionally(new RemotingException("No active channel available for " + url));
+                    // Server to server: use connection manager for direct connection
+                    connectionManager.getOrCreateConnection(url.getAddress())
+                        .thenAccept(channel -> {
+                            if (channel.isActive()) {
+                                channel.writeAndFlush(message);
+                                log.debug("[MuTransporter] Sent ASK message to server {} with requestId {}", url, requestId);
+                            } else {
+                                channelManager.removePendingRequest(requestId);
+                                future.completeExceptionally(new RemotingException("Channel is not active for server " + url));
+                            }
+                        })
+                        .exceptionally(throwable -> {
+                            channelManager.removePendingRequest(requestId);
+                            future.completeExceptionally(new RemotingException("Failed to get connection for ASK to server " + url, throwable));
+                            return null;
+                        });
                 }
             }
 

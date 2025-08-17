@@ -85,6 +85,10 @@ public class MuCSInitializer implements CSInitializer {
             log.info("[MuCSInitializer] Server started on {}:{}", 
                 config.getBindAddress().getHost(), 
                 config.getBindAddress().getPort());
+            
+            // 初始化连接管理器，用于Server连接到其他Server
+            connectionManager = new MuConnectionManager(workerGroup, channelManager, serverHandler, config.getBindAddress());
+            log.info("[MuCSInitializer] Server initialized with client capabilities for server-to-server communication");
         } catch (Exception e) {
             log.error("[MuCSInitializer] Failed to start server", e);
             throw new RuntimeException("Failed to start Mu server", e);
