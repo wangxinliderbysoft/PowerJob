@@ -43,12 +43,12 @@ public class MuConnectionManager {
     }
 
     /**
-     * Get or create connection to server
-     * @param serverAddress server address
+     * Get or create connection to target address
+     * @param targetAddress target address
      * @return CompletableFuture of channel
      */
-    public CompletableFuture<Channel> getOrCreateConnection(Address serverAddress) {
-        String key = serverAddress.getHost() + ":" + serverAddress.getPort();
+    public CompletableFuture<Channel> getOrCreateConnection(Address targetAddress) {
+        String key = targetAddress.getHost() + ":" + targetAddress.getPort();
         
         // Check if we already have an active connection
         Channel existingChannel = serverConnections.get(key);
@@ -87,7 +87,7 @@ public class MuConnectionManager {
                     }
                 });
 
-            ChannelFuture future = bootstrap.connect(serverAddress.getHost(), serverAddress.getPort());
+            ChannelFuture future = bootstrap.connect(targetAddress.getHost(), targetAddress.getPort());
             future.addListener(f -> {
                 pendingConnections.remove(key);
                 if (f.isSuccess()) {

@@ -62,6 +62,9 @@ public class MuWorkerHandler extends SimpleChannelInboundHandler<MuMessage> {
                 case ERROR:
                     handleError(ctx, msg);
                     break;
+                case HEARTBEAT:
+                    handleHeartbeat(ctx, msg);
+                    break;
                 default:
                     log.warn("[MuWorkerHandler] Unknown message type: {}", msg.getMessageType());
             }
@@ -112,6 +115,16 @@ public class MuWorkerHandler extends SimpleChannelInboundHandler<MuMessage> {
     private void handleError(ChannelHandlerContext ctx, MuMessage msg) {
         Exception exception = new RuntimeException(msg.getErrorMessage());
         channelManager.completePendingRequestExceptionally(msg.getRequestId(), exception);
+    }
+
+    private void handleHeartbeat(ChannelHandlerContext ctx, MuMessage msg) {
+        // Worker接收到心跳消息时，通常不需要特殊处理
+        // 但记录一下调试信息，表明收到了心跳
+        if (msg.getSenderAddress() != null) {
+            log.debug("[MuWorkerHandler] Received heartbeat from: {}", msg.getSenderAddress());
+        } else {
+            log.debug("[MuWorkerHandler] Received heartbeat");
+        }
     }
 
     private Object invokeHandler(MuMessage msg, boolean needResponse, ChannelHandlerContext ctx) {
