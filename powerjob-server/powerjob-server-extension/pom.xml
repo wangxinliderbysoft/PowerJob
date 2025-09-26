@@ -13,12 +13,4 @@
     <artifactId>powerjob-server-extension</artifactId>
     <version>${project.parent.version}</version>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
-
-    <dependencies>
-    </dependencies>
-
 </project>

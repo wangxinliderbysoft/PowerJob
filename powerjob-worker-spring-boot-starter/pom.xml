@@ -14,37 +14,29 @@
     <version>5.1.2</version>
     <packaging>jar</packaging>
 
-    <properties>
-        <powerjob.worker.version>5.1.2</powerjob.worker.version>
-        <springboot.version>2.7.18</springboot.version>
-    </properties>
+
 
     <dependencies>
         <!-- oms-worker -->
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-worker</artifactId>
-            <version>${powerjob.worker.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>${springboot.version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>${springboot.version}</version>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>${springboot.version}</version>
             <scope>test</scope>
         </dependency>
 

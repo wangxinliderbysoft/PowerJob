@@ -14,14 +14,7 @@
     <version>5.1.2</version>
     <packaging>jar</packaging>
 
-    <properties>
-        <junit.version>5.9.1</junit.version>
-        <logback.version>1.2.13</logback.version>
-        <fastjson.version>1.2.83</fastjson.version>
-        <powerjob.common.version>5.1.2</powerjob.common.version>
 
-        <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
-    </properties>
 
     <dependencies>
 
@@ -29,28 +22,24 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>${fastjson.version}</version>
         </dependency>
 
         <!-- oms-common -->
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-common</artifactId>
-            <version>${powerjob.common.version}</version>
         </dependency>
 
         <!-- Junit tests -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- log for test stage -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
