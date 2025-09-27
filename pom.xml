@@ -59,6 +59,7 @@
         <commons.io.version>2.11.0</commons.io.version>
         <commons.net.version>3.9.0</commons.net.version>
         <cron-utils.version>9.2.1</cron-utils.version>
+        <dingding.version>1.0.1</dingding.version>
         <dingtalk.version>1.1.86</dingtalk.version>
         <fastjson.version>1.2.83</fastjson.version>
         <guava.version>31.1-jre</guava.version>
@@ -355,32 +356,7 @@
                 <artifactId>picocli</artifactId>
                 <version>${picocli.version}</version>
             </dependency>
-            <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>4.0.0</version>
-            </dependency>
 
-            <!-- JAXB Implementation (GlassFish RI) -->
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>4.0.3</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <!-- JAXB Core -->
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-core</artifactId>
-                <version>4.0.3</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>6.1.0</version>
-                <scope>provided</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
