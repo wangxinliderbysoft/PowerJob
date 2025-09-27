@@ -1,12 +1,14 @@
 package tech.powerjob.server.config;
 
 import com.google.common.collect.Sets;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 /**
@@ -60,24 +62,9 @@ public class CachingRequestBodyFilter implements Filter {
 
         public CustomHttpServletRequestWrapper(HttpServletRequest request) throws IOException {
             super(request);
-            StringBuilder stringBuilder = new StringBuilder();
-            BufferedReader bufferedReader = null;
-            try {
-                InputStream inputStream = request.getInputStream();
-                if (inputStream != null) {
-                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    char[] charBuffer = new char[128];
-                    int bytesRead = -1;
-                    while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-                        stringBuilder.append(charBuffer, 0, bytesRead);
-                    }
-                }
-            } finally {
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                }
+            try (InputStream inputStream = request.getInputStream()){
+                body=IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             }
-            body = stringBuilder.toString();
         }
 
         @Override

@@ -15,6 +15,7 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.bson.conversions.Bson;
@@ -72,11 +73,7 @@ public class GridFsService extends AbstractDFsService {
         try (GridFSDownloadStream gis = bucket.openDownloadStream(downloadRequest.getFileLocation().getName());
              BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(downloadRequest.getTarget().toPath()))
         ) {
-            byte[] buffer = new byte[1024];
-            int bytes = 0;
-            while ((bytes = gis.read(buffer)) != -1) {
-                bos.write(buffer, 0, bytes);
-            }
+            IOUtils.copy(gis,bos);
             bos.flush();
         }
     }

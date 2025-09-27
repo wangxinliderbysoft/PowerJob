@@ -101,12 +101,13 @@ public class ContainerTemplateGenerator {
 
         // 5. 再打包回去
         String finPath = tmpPath + "template.zip";
-        ZipFile finZip = new ZipFile(finPath);
+       try( ZipFile finZip = new ZipFile(finPath)){
         finZip.addFolder(new File(rootPath));
+        FileUtils.forceDelete(originJar);
+        return finZip.getFile();
+       }
 
         // 6. 删除源文件
-        FileUtils.forceDelete(originJar);
 
-        return finZip.getFile();
     }
 }

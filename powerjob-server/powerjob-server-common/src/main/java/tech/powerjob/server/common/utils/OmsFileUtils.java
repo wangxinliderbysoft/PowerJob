@@ -1,5 +1,6 @@
 package tech.powerjob.server.common.utils;
 
+import org.apache.commons.io.IOUtils;
 import tech.powerjob.common.utils.CommonUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.DigestUtils;
@@ -7,6 +8,7 @@ import org.springframework.util.DigestUtils;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.file.Files;
 
 /**
  * 文件工具类，统一文件存放地址
@@ -86,15 +88,9 @@ public class OmsFileUtils {
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(file.getName(), "UTF-8"));
 
-        byte[] buffer = new byte[4096];
         try (BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream());
-             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
-
-            // https://github.com/PowerJob/PowerJob/pull/939/files
-            int cnt;
-            while ((cnt = bis.read(buffer)) != -1) {
-                bos.write(buffer, 0, cnt);
-            }
+             BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
+            IOUtils.copy(bis,bos);
         }
     }
 
