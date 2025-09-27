@@ -11,8 +11,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>powerjob-server-starter</artifactId>
-    <version>${project.parent.version}</version>
-
+    <version>5.1.2</version>
+    <packaging>war</packaging>
 
 
     <dependencies>
@@ -52,6 +52,11 @@
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
