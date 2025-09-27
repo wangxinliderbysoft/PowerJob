@@ -5,11 +5,11 @@
     <parent>
         <artifactId>powerjob-remote</artifactId>
         <groupId>tech.powerjob</groupId>
-        <version>5.1.2</version>
+        <version>5.1.2-springboot3-snapshot</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <version>5.1.2</version>
+    <version>5.1.2-springboot3-snapshot</version>
     <artifactId>powerjob-remote-framework</artifactId>
     <name>powerjob-remote-framework</name>
 
