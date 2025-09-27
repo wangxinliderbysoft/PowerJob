@@ -78,13 +78,9 @@ public class ProcessorTrackerStatus {
         }
 
         // 留有过多待处理任务，则不可用
-        if (remainTaskNum >= DISPATCH_THRESHOLD) {
-            return false;
-        }
+        return remainTaskNum < DISPATCH_THRESHOLD;
 
         // TODO：后续考虑加上机器健康度等信息
-
-        return true;
     }
 
     /**

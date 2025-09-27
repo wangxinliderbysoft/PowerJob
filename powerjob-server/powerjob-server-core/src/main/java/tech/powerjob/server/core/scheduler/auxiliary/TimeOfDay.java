@@ -1,7 +1,5 @@
 package tech.powerjob.server.core.scheduler.auxiliary;
 
-import java.io.Serializable;
-
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -134,8 +132,6 @@ public class TimeOfDay implements Serializable {
 
         if(timeOfDay.second > second)
             return true;
-        if(timeOfDay.second < second)
-            return false;
 
         return false; // must be equal...
     }

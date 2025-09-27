@@ -6,7 +6,6 @@ import tech.powerjob.server.core.uid.IdGenerateService;
 import tech.powerjob.server.extension.LockService;
 import tech.powerjob.server.core.scheduler.CleanService;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 
