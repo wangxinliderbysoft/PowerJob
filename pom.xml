@@ -52,38 +52,36 @@
     </modules>
 
     <properties>
-        <fastjson.version>1.2.83</fastjson.version>
-
-        <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
-        <commons.io.version>2.11.0</commons.io.version>
-        <guava.version>31.1-jre</guava.version>
-        <kryo.version>5.3.0</kryo.version>
-        <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <reflections.version>0.10.2</reflections.version>
         <akka.version>2.6.21</akka.version>
-        <vertx.version>4.3.7</vertx.version>
-        <jjwt.version>0.11.5</jjwt.version>
-        <dingtalk.version>1.1.86</dingtalk.version>
-        <zip4j.version>2.11.2</zip4j.version>
-        <jgit.version>5.13.2.202306221912-r</jgit.version>
-        <mvn.invoker.version>3.0.1</mvn.invoker.version>
-        <commons.net.version>3.9.0</commons.net.version>
-        <dingding.version>1.0.1</dingding.version>
-        <maven.deploy.skip>true</maven.deploy.skip>
-        <cron-utils.version>9.2.1</cron-utils.version>
-        <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
         <aliyun-sdk-oss.version>3.17.1</aliyun-sdk-oss.version>
         <aws-java-sdk-s3.version>1.12.665</aws-java-sdk-s3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <picocli.version>4.3.2</picocli.version>
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
-        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <commons.io.version>2.11.0</commons.io.version>
+        <commons.net.version>3.9.0</commons.net.version>
+        <cron-utils.version>9.2.1</cron-utils.version>
+        <dingtalk.version>1.1.86</dingtalk.version>
+        <fastjson.version>1.2.83</fastjson.version>
+        <guava.version>31.1-jre</guava.version>
+        <jgit.version>5.13.2.202306221912-r</jgit.version>
+        <jjwt.version>0.11.5</jjwt.version>
+        <kryo.version>5.3.0</kryo.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <mvn.invoker.version>3.0.1</mvn.invoker.version>
+        <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
+        <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
+        <picocli.version>4.3.2</picocli.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <reflections.version>0.10.2</reflections.version>
+        <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
+        <vertx.version>4.3.7</vertx.version>
+        <zip4j.version>2.11.2</zip4j.version>
     </properties>
 
     <dependencies>
