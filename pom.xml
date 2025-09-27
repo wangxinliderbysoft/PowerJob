@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.3.4</version>
     </parent>
     <groupId>tech.powerjob</groupId>
     <artifactId>powerjob</artifactId>
@@ -55,7 +55,6 @@
         <fastjson.version>1.2.83</fastjson.version>
 
         <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
-        <slf4j.version>1.7.36</slf4j.version>
         <commons.io.version>2.11.0</commons.io.version>
         <guava.version>31.1-jre</guava.version>
         <kryo.version>5.3.0</kryo.version>
@@ -64,19 +63,17 @@
         <!-- 不会被打包的部分，scope 只能是 test 或 provide -->
         <powerjob.worker.version>5.1.2</powerjob.worker.version>
         <!-- 全部 shade 化，避免依赖冲突 -->
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <powerjob-common.version>5.1.2</powerjob-common.version>
         <reflections.version>0.10.2</reflections.version>
         <powerjob-remote-framework.version>5.1.2</powerjob-remote-framework.version>
         <akka.version>2.6.13</akka.version>
-        <maven.compiler.source>8</maven.compiler.source>
         <vertx.version>4.3.7</vertx.version>
         <netty.version>4.1.104.Final</netty.version>
         <jjwt.version>0.11.5</jjwt.version>
         <dingtalk.version>1.1.86</dingtalk.version>
-        <maven.compiler.source>8</maven.compiler.source>
         <ojdbc.version>19.7.0.0</ojdbc.version>
         <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
         <db2-jdbc.version>11.5.0.0</db2-jdbc.version>
@@ -89,7 +86,7 @@
         <dingding.version>1.0.1</dingding.version>
         <!-- skip this module when deploying. -->
         <maven.deploy.skip>true</maven.deploy.skip>
-        <groovy.version>3.0.10</groovy.version>
+<!--        <groovy.versionsion>3.0.10</groovy.versionsion>-->
         <cron-utils.version>9.2.1</cron-utils.version>
         <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
         <aliyun-sdk-oss.version>3.17.1</aliyun-sdk-oss.version>
@@ -98,12 +95,8 @@
         <powerjob.worker.version>5.1.2</powerjob.worker.version>
         <picocli.version>4.3.2</picocli.version>
         <!-- dependency for dynamic sql processor -->
-        <springboot.version>2.7.18</springboot.version>
         <!-- 部署时跳过该module -->
         <powerjob-client.version>5.1.2</powerjob-client.version>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
@@ -111,6 +104,7 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <lombok.version>1.18.38</lombok.version>
+        <groovy.version>3.0.9</groovy.version>
     </properties>
 
     <dependencies>
@@ -284,8 +278,8 @@
                 <version>${dingding.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j*</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -305,10 +299,6 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-ui</artifactId>
                 <version>${springdoc-openapi-ui.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>info.picocli</groupId>
-                <artifactId>picocli</artifactId>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -349,7 +339,32 @@
                 <version>${jjwt.version}</version>
                 <scope>runtime</scope>
             </dependency>
-
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-jsr223</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-json</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy-jsr223</artifactId>
+                <version>5.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy-json</artifactId>
+                <version>5.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy-bom</artifactId>
+                <version>5.0.1</version>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>dingtalk</artifactId>
@@ -386,6 +401,32 @@
                 <groupId>info.picocli</groupId>
                 <artifactId>picocli</artifactId>
                 <version>${picocli.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>4.0.0</version>
+            </dependency>
+
+            <!-- JAXB Implementation (GlassFish RI) -->
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>4.0.3</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- JAXB Core -->
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>4.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>6.1.0</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

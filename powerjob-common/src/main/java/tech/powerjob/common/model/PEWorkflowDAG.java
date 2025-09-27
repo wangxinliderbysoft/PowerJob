@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import tech.powerjob.common.enums.WorkflowNodeType;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.List;
 
