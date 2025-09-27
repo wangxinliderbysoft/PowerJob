@@ -21,9 +21,10 @@ public class ContainerTemplateGenerator {
 
     /**
      * 生成 container 的模版文件
-     * @param group pom group标签
-     * @param artifact pom artifact标签
-     * @param name pom name标签
+     *
+     * @param group       pom group标签
+     * @param artifact    pom artifact标签
+     * @param name        pom name标签
      * @param packageName 包名
      * @param javaVersion Java版本
      * @return 压缩包
@@ -41,8 +42,9 @@ public class ContainerTemplateGenerator {
             FileUtils.copyInputStreamToFile(is, originJar);
         }
 
-        ZipFile zipFile = new ZipFile(originJar);
-        zipFile.extractAll(tmpPath);
+        try (ZipFile zipFile = new ZipFile(originJar)) {
+            zipFile.extractAll(tmpPath);
+        }
         String rootPath = tmpPath + ORIGIN_FILE_NAME;
 
         // 1. 修改 pom.xml （按行读，读取期间更改，然后回写）
@@ -55,13 +57,13 @@ public class ContainerTemplateGenerator {
 
                 if (line.contains("<groupId>groupId</groupId>")) {
                     buffer.append("    <groupId>").append(group).append("</groupId>");
-                }else if (line.contains("<artifactId>artifactId</artifactId>")) {
+                } else if (line.contains("<artifactId>artifactId</artifactId>")) {
                     buffer.append("    <artifactId>").append(artifact).append("</artifactId>");
-                }else if (line.contains("<name>name</name>")) {
+                } else if (line.contains("<name>name</name>")) {
                     buffer.append("    <name>").append(name).append("</name>");
-                }else if (line.contains("<maven.compiler.source>")) {
+                } else if (line.contains("<maven.compiler.source>")) {
                     buffer.append("        <maven.compiler.source>").append(javaVersion).append("</maven.compiler.source>");
-                }else if (line.contains("<maven.compiler.target>")) {
+                } else if (line.contains("<maven.compiler.target>")) {
                     buffer.append("        <maven.compiler.target>").append(javaVersion).append("</maven.compiler.target>");
                 } else {
                     buffer.append(line);
@@ -86,7 +88,7 @@ public class ContainerTemplateGenerator {
 
                 if (line.contains("<context:component-scan base-package=\"")) {
                     buffer.append("    <context:component-scan base-package=\"").append(packageName).append("\"/>");
-                }else {
+                } else {
                     buffer.append(line);
                 }
                 buffer.append(System.lineSeparator());
@@ -101,11 +103,11 @@ public class ContainerTemplateGenerator {
 
         // 5. 再打包回去
         String finPath = tmpPath + "template.zip";
-       try( ZipFile finZip = new ZipFile(finPath)){
-        finZip.addFolder(new File(rootPath));
-        FileUtils.forceDelete(originJar);
-        return finZip.getFile();
-       }
+        try (ZipFile finZip = new ZipFile(finPath)) {
+            finZip.addFolder(new File(rootPath));
+            FileUtils.forceDelete(originJar);
+            return finZip.getFile();
+        }
 
         // 6. 删除源文件
 
