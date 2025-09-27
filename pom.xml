@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.4</version>
+        <version>3.3.13</version>
     </parent>
     <groupId>tech.powerjob</groupId>
     <artifactId>powerjob</artifactId>
@@ -58,53 +58,35 @@
         <commons.io.version>2.11.0</commons.io.version>
         <guava.version>31.1-jre</guava.version>
         <kryo.version>5.3.0</kryo.version>
-        <jackson.version>2.14.3</jackson.version>
         <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
-        <!-- 不会被打包的部分，scope 只能是 test 或 provide -->
-        <powerjob.worker.version>5.1.2</powerjob.worker.version>
-        <!-- 全部 shade 化，避免依赖冲突 -->
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <powerjob-common.version>5.1.2</powerjob-common.version>
         <reflections.version>0.10.2</reflections.version>
-        <powerjob-remote-framework.version>5.1.2</powerjob-remote-framework.version>
-        <akka.version>2.6.13</akka.version>
+        <akka.version>2.6.21</akka.version>
         <vertx.version>4.3.7</vertx.version>
-        <netty.version>4.1.104.Final</netty.version>
         <jjwt.version>0.11.5</jjwt.version>
         <dingtalk.version>1.1.86</dingtalk.version>
-        <ojdbc.version>19.7.0.0</ojdbc.version>
         <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
-        <db2-jdbc.version>11.5.0.0</db2-jdbc.version>
-        <postgresql.version>42.6.0</postgresql.version>
-        <mongodb-driver-sync.version>4.10.2</mongodb-driver-sync.version>
         <zip4j.version>2.11.2</zip4j.version>
         <jgit.version>5.13.2.202306221912-r</jgit.version>
         <mvn.invoker.version>3.0.1</mvn.invoker.version>
         <commons.net.version>3.9.0</commons.net.version>
         <dingding.version>1.0.1</dingding.version>
-        <!-- skip this module when deploying. -->
         <maven.deploy.skip>true</maven.deploy.skip>
-<!--        <groovy.versionsion>3.0.10</groovy.versionsion>-->
         <cron-utils.version>9.2.1</cron-utils.version>
         <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
         <aliyun-sdk-oss.version>3.17.1</aliyun-sdk-oss.version>
         <aws-java-sdk-s3.version>1.12.665</aws-java-sdk-s3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <powerjob.worker.version>5.1.2</powerjob.worker.version>
         <picocli.version>4.3.2</picocli.version>
         <!-- dependency for dynamic sql processor -->
         <!-- 部署时跳过该module -->
-        <powerjob-client.version>5.1.2</powerjob-client.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <lombok.version>1.18.38</lombok.version>
-        <groovy.version>3.0.9</groovy.version>
     </properties>
 
     <dependencies>
@@ -112,7 +94,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -339,32 +320,9 @@
                 <version>${jjwt.version}</version>
                 <scope>runtime</scope>
             </dependency>
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-jsr223</artifactId>
-                <version>${groovy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-json</artifactId>
-                <version>${groovy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.groovy</groupId>
-                <artifactId>groovy-jsr223</artifactId>
-                <version>5.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.groovy</groupId>
-                <artifactId>groovy-json</artifactId>
-                <version>5.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.groovy</groupId>
-                <artifactId>groovy-bom</artifactId>
-                <version>5.0.1</version>
-                <type>pom</type>
-            </dependency>
+
+
+
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>dingtalk</artifactId>
