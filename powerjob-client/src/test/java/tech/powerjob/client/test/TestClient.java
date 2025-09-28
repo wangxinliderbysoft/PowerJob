@@ -1,6 +1,5 @@
 package tech.powerjob.client.test;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +13,7 @@ import tech.powerjob.common.request.query.InstancePageQuery;
 import tech.powerjob.common.response.InstanceInfoDTO;
 import tech.powerjob.common.response.JobInfoDTO;
 import tech.powerjob.common.response.ResultDTO;
+import tech.powerjob.common.serialize.JsonUtils;
 
 /**
  * Test cases for {@link PowerJobClient}
@@ -46,30 +46,30 @@ class TestClient extends ClientInitializer {
         newJobInfo.setMinMemorySpace(1.2);
         newJobInfo.setMinDiskSpace(1.3);
 
-        log.info("[TestClient] [testSaveJob] SaveJobInfoRequest: {}", JSONObject.toJSONString(newJobInfo));
+        log.info("[TestClient] [testSaveJob] SaveJobInfoRequest: {}", JsonUtils.toJSONString(newJobInfo));
 
         ResultDTO<Long> resultDTO = powerJobClient.saveJob(newJobInfo);
-        log.info("[TestClient] [testSaveJob] result: {}", JSONObject.toJSONString(resultDTO));
+        log.info("[TestClient] [testSaveJob] result: {}", JsonUtils.toJSONString(resultDTO));
         Assertions.assertNotNull(resultDTO);
     }
 
     @Test
     void testCopyJob() {
         ResultDTO<Long> copyJobRes = powerJobClient.copyJob(JOB_ID);
-        System.out.println(JSONObject.toJSONString(copyJobRes));
+        System.out.println(JsonUtils.toJSONString(copyJobRes));
         Assertions.assertNotNull(copyJobRes);
     }
 
     @Test
     void testExportJob() {
         ResultDTO<SaveJobInfoRequest> exportJobRes = powerJobClient.exportJob(JOB_ID);
-        System.out.println(JSONObject.toJSONString(exportJobRes));
+        System.out.println(JsonUtils.toJSONString(exportJobRes));
     }
 
     @Test
     void testFetchJob() {
         ResultDTO<JobInfoDTO> fetchJob = powerJobClient.fetchJob(JOB_ID);
-        System.out.println(JSONObject.toJSONString(fetchJob));
+        System.out.println(JsonUtils.toJSONString(fetchJob));
         Assertions.assertNotNull(fetchJob);
     }
 
@@ -143,9 +143,9 @@ class TestClient extends ClientInitializer {
     @Test
     void testCancelInstanceInTimeWheel() {
         ResultDTO<Long> startRes = powerJobClient.runJob(JOB_ID, "start by OhMyClient", 20000);
-        System.out.println("runJob result: " + JSONObject.toJSONString(startRes));
+        System.out.println("runJob result: " + JsonUtils.toJSONString(startRes));
         ResultDTO<Void> cancelRes = powerJobClient.cancelInstance(startRes.getData());
-        System.out.println("cancelJob result: " + JSONObject.toJSONString(cancelRes));
+        System.out.println("cancelJob result: " + JsonUtils.toJSONString(cancelRes));
         Assertions.assertTrue(cancelRes.isSuccess());
     }
 
@@ -153,13 +153,13 @@ class TestClient extends ClientInitializer {
 //    @SneakyThrows
 //    void testCancelInstanceInDatabase() {
 //        ResultDTO<Long> startRes = powerJobClient.runJob(15L, "start by OhMyClient", 2000000);
-//        System.out.println("runJob result: " + JSONObject.toJSONString(startRes));
+//        System.out.println("runJob result: " + JsonUtils.toJSONString(startRes));
 //
 //        // Restart server manually and clear all the data in time wheeler.
 //        TimeUnit.MINUTES.sleep(1);
 //
 //        ResultDTO<Void> cancelRes = powerJobClient.cancelInstance(startRes.getData());
-//        System.out.println("cancelJob result: " + JSONObject.toJSONString(cancelRes));
+//        System.out.println("cancelJob result: " + JsonUtils.toJSONString(cancelRes));
 //        Assertions.assertTrue(cancelRes.isSuccess());
 //    }
 

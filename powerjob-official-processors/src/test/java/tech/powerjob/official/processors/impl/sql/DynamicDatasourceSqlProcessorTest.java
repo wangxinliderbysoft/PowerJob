@@ -1,13 +1,17 @@
 package tech.powerjob.official.processors.impl.sql;
 
-import com.alibaba.fastjson.JSONObject;
 import org.junit.jupiter.api.Test;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.official.processors.TestUtils;
 import tech.powerjob.official.processors.util.SecurityUtils;
 import tech.powerjob.worker.core.processor.ProcessResult;
 import tech.powerjob.worker.core.processor.TaskContext;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author tjq
@@ -29,7 +33,7 @@ class DynamicDatasourceSqlProcessorTest {
     }
 
     private static TaskContext genDynamicSqlCtx() {
-        JSONObject params = new JSONObject();
+        Map<String,Object> params = new HashMap<>();
 
         // connection info
         params.put("jdbcUrl", "jdbc:mysql://localhost:3306/powerjob-daily?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai");
@@ -39,7 +43,7 @@ class DynamicDatasourceSqlProcessorTest {
         params.put("sql", "select * from job_info");
         params.put("showResult", true);
 
-        String jobParams = params.toJSONString();
+        String jobParams = JsonUtils.toJSONString(params);
 
         System.out.println(jobParams);
 

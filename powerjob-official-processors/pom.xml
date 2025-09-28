@@ -18,11 +18,7 @@
 
     <dependencies>
 
-        <!-- fastJson(used for serialization of DAG) -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-        </dependency>
+
 
         <!-- OKHttp -->
         <dependency>

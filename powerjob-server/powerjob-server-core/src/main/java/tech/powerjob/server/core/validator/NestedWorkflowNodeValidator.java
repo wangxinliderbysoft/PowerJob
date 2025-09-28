@@ -1,6 +1,6 @@
 package tech.powerjob.server.core.validator;
 
-import com.alibaba.fastjson.JSON;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -8,6 +8,7 @@ import tech.powerjob.common.enums.WorkflowNodeType;
 import tech.powerjob.common.exception.PowerJobException;
 import tech.powerjob.common.model.PEWorkflowDAG;
 import tech.powerjob.common.enums.SwitchableStatus;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.server.core.workflow.algorithm.WorkflowDAG;
 import tech.powerjob.server.persistence.remote.model.WorkflowInfoDO;
 import tech.powerjob.server.persistence.remote.model.WorkflowNodeInfoDO;
@@ -48,7 +49,7 @@ public class NestedWorkflowNodeValidator implements NodeValidator {
             throw new PowerJobException("Illegal nested workflow node,specified workflow has been deleted,node name : " + node.getNodeName());
         }
         // 不允许多层嵌套，即 嵌套工作流节点引用的工作流中不能包含嵌套节点
-        PEWorkflowDAG peDag = JSON.parseObject(workflowInfo.getPeDAG(), PEWorkflowDAG.class);
+        PEWorkflowDAG peDag = JsonUtils.parseObject(workflowInfo.getPeDAG(), PEWorkflowDAG.class);
         for (PEWorkflowDAG.Node peDagNode : peDag.getNodes()) {
             //
             final Optional<WorkflowNodeInfoDO> nestWfNodeOp = workflowNodeInfoRepository.findById(peDagNode.getNodeId());

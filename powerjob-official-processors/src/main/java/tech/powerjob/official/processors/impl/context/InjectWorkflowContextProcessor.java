@@ -1,7 +1,7 @@
 package tech.powerjob.official.processors.impl.context;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
+import com.fasterxml.jackson.core.type.TypeReference;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.official.processors.CommonBasicProcessor;
 import tech.powerjob.worker.core.processor.ProcessResult;
 import tech.powerjob.worker.core.processor.TaskContext;
@@ -24,7 +24,7 @@ public class InjectWorkflowContextProcessor extends CommonBasicProcessor {
         String jobParams = taskContext.getJobParams();
         OmsLogger omsLogger = taskContext.getOmsLogger();
         try {
-            HashMap<String, Object> data = JSON.parseObject(jobParams, new TypeReference<HashMap<String, Object>>() {
+            HashMap<String, Object> data = JsonUtils.parseObject(jobParams, new TypeReference<>() {
             });
             WorkflowContext workflowContext = taskContext.getWorkflowContext();
             for (Map.Entry<String, Object> entry : data.entrySet()) {

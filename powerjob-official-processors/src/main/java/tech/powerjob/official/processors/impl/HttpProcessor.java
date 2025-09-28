@@ -1,16 +1,15 @@
 package tech.powerjob.official.processors.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONValidator;
-import tech.powerjob.worker.core.processor.ProcessResult;
-import tech.powerjob.worker.core.processor.TaskContext;
-import tech.powerjob.worker.log.OmsLogger;
+
 import lombok.Data;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.official.processors.CommonBasicProcessor;
 import tech.powerjob.official.processors.util.CommonUtils;
+import tech.powerjob.worker.core.processor.ProcessResult;
+import tech.powerjob.worker.core.processor.TaskContext;
+import tech.powerjob.worker.log.OmsLogger;
 
 import java.time.Duration;
 import java.util.Map;
@@ -36,7 +35,7 @@ public class HttpProcessor extends CommonBasicProcessor {
     @Override
     public ProcessResult process0(TaskContext taskContext) throws Exception {
         OmsLogger omsLogger = taskContext.getOmsLogger();
-        HttpParams httpParams = JSON.parseObject(CommonUtils.parseParams(taskContext), HttpParams.class);
+        HttpParams httpParams = JsonUtils.parseObject(CommonUtils.parseParams(taskContext), HttpParams.class);
 
         if (httpParams == null) {
             String message = "httpParams is null, please check jobParam configuration.";
@@ -66,10 +65,10 @@ public class HttpProcessor extends CommonBasicProcessor {
         if (!"GET".equals(httpParams.method)) {
             // set default request body
             if (StringUtils.isEmpty(httpParams.body)) {
-                httpParams.body = new JSONObject().toJSONString();
+                httpParams.body = "{}";
                 omsLogger.warn("try to use default request body:{}", httpParams.body);
             }
-            if (JSONValidator.from(httpParams.body).validate() && StringUtils.isEmpty(httpParams.mediaType)) {
+            if (JsonUtils.isValidJson(httpParams.body) && StringUtils.isEmpty(httpParams.mediaType)) {
                 httpParams.mediaType = "application/json";
                 omsLogger.warn("try to use 'application/json' as media type");
             }

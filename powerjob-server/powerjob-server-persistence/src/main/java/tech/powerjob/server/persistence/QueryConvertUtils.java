@@ -1,6 +1,6 @@
 package tech.powerjob.server.persistence;
 
-import com.alibaba.fastjson.JSONArray;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +13,8 @@ import tech.powerjob.common.exception.PowerJobException;
 import tech.powerjob.common.request.query.PowerPageQuery;
 
 import jakarta.persistence.criteria.Predicate;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -123,6 +125,6 @@ public class QueryConvertUtils {
 
     private static Object[] convertInParams(Object o) {
         // FastJSON, 永远滴神！
-        return JSONArray.parseArray(JSONArray.toJSONString(o)).toArray();
+        return JsonUtils.parseObject(JsonUtils.toJSONString(o), new TypeReference<List<Object>>() {}).toArray();
     }
 }

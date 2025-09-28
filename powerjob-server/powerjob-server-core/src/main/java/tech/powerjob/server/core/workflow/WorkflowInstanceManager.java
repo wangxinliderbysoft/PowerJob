@@ -1,7 +1,7 @@
 package tech.powerjob.server.core.workflow;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
@@ -96,7 +96,7 @@ public class WorkflowInstanceManager {
 
         PEWorkflowDAG dag = null;
         try {
-            dag = JSON.parseObject(wfInfo.getPeDAG(), PEWorkflowDAG.class);
+            dag = JsonUtils.parseObject(wfInfo.getPeDAG(), PEWorkflowDAG.class);
             // 校验 DAG 信息
             if (!WorkflowDAGUtils.valid(dag)) {
                 log.error("[Workflow-{}|{}] DAG of this workflow is illegal! maybe you has modified the DAG info directly in database!", wfId, wfInstanceId);
@@ -120,11 +120,11 @@ public class WorkflowInstanceManager {
                 log.warn("[Workflow-{}|{}] this workflow need {} jobs, but just find {} jobs in database, maybe you delete or disable some job!", wfId, wfInstanceId, needNum, dbNum);
                 throw new PowerJobException(SystemInstanceResult.CAN_NOT_FIND_JOB);
             }
-            newWfInstance.setDag(JSON.toJSONString(dag));
+            newWfInstance.setDag(JsonUtils.toJSONString(dag));
             workflowInstanceInfoRepository.saveAndFlush(newWfInstance);
         } catch (Exception e) {
             if (dag != null) {
-                newWfInstance.setDag(JSON.toJSONString(dag));
+                newWfInstance.setDag(JsonUtils.toJSONString(dag));
             }
             handleWfInstanceFinalStatus(newWfInstance, e.getMessage(), WorkflowInstanceStatus.FAILED);
         }
@@ -183,7 +183,7 @@ public class WorkflowInstanceManager {
         // 如果 initParams 是个合法的 Map<String,String> JSON 串则直接将其注入 wfContext
         boolean injectDirect = false;
         try {
-            Map<String, String> parseRes = JSON.parseObject(initParams, new TypeReference<Map<String, String>>() {
+            Map<String, String> parseRes = JsonUtils.parseObject(initParams, new TypeReference<Map<String, String>>() {
             });
             if (parseRes != null && !parseRes.isEmpty()) {
                 injectDirect = true;
@@ -243,7 +243,7 @@ public class WorkflowInstanceManager {
         }
         try {
             // 从实例中读取工作流信息
-            PEWorkflowDAG dag = JSON.parseObject(wfInstanceInfo.getDag(), PEWorkflowDAG.class);
+            PEWorkflowDAG dag = JsonUtils.parseObject(wfInstanceInfo.getDag(), PEWorkflowDAG.class);
             // 根节点有可能被 disable
             List<PEWorkflowDAG.Node> readyNodes = WorkflowDAGUtils.listReadyNodes(dag);
             // 先处理其中的控制节点
@@ -256,7 +256,7 @@ public class WorkflowInstanceManager {
             if (readyNodes.isEmpty()) {
                 // 没有就绪的节点（所有节点都被禁用）
                 wfInstanceInfo.setFinishedTime(System.currentTimeMillis());
-                wfInstanceInfo.setDag(JSON.toJSONString(dag));
+                wfInstanceInfo.setDag(JsonUtils.toJSONString(dag));
                 log.warn("[Workflow-{}|{}] workflowInstance({}) needn't running ", wfInfo.getId(), wfInstanceId, wfInstanceInfo);
                 handleWfInstanceFinalStatus(wfInstanceInfo, SystemInstanceResult.NO_ENABLED_NODES, WorkflowInstanceStatus.SUCCEED);
                 return;
@@ -307,7 +307,7 @@ public class WorkflowInstanceManager {
         }
 
         try {
-            PEWorkflowDAG dag = JSON.parseObject(wfInstance.getDag(), PEWorkflowDAG.class);
+            PEWorkflowDAG dag = JsonUtils.parseObject(wfInstance.getDag(), PEWorkflowDAG.class);
             // 更新完成节点状态
             boolean allFinished = true;
             PEWorkflowDAG.Node instanceNode = null;
@@ -330,7 +330,7 @@ public class WorkflowInstanceManager {
             }
 
             wfInstance.setGmtModified(new Date());
-            wfInstance.setDag(JSON.toJSONString(dag));
+            wfInstance.setDag(JsonUtils.toJSONString(dag));
             // 工作流已经结束（某个节点失败导致工作流整体已经失败），仅更新最新的 DAG 图
             if (!WorkflowInstanceStatus.GENERALIZED_RUNNING_STATUS.contains(wfInstance.getStatus())) {
                 workflowInstanceInfoRepository.saveAndFlush(wfInstance);
@@ -360,7 +360,7 @@ public class WorkflowInstanceManager {
             // 工作流执行完毕（能执行到这里代表该工作流内所有子任务都执行成功了）
             if (allFinished) {
                 // 这里得重新更新一下，因为 WorkflowDAGUtils#listReadyNodes 可能会更新节点状态
-                wfInstance.setDag(JSON.toJSONString(dag));
+                wfInstance.setDag(JsonUtils.toJSONString(dag));
                 // 最终任务的结果作为整个 workflow 的结果
                 handleWfInstanceFinalStatus(wfInstance, result, WorkflowInstanceStatus.SUCCEED);
                 log.info("[Workflow-{}|{}] process successfully.", wfId, wfInstanceId);
@@ -376,13 +376,13 @@ public class WorkflowInstanceManager {
             // 再次判断是否已完成 （允许控制节点出现在末尾）
             if (readyNodes.isEmpty()) {
                 if (isFinish(dag)) {
-                    wfInstance.setDag(JSON.toJSONString(dag));
+                    wfInstance.setDag(JsonUtils.toJSONString(dag));
                     handleWfInstanceFinalStatus(wfInstance, result, WorkflowInstanceStatus.SUCCEED);
                     log.info("[Workflow-{}|{}] process successfully.", wfId, wfInstanceId);
                     return;
                 }
                 // 没有就绪的节点 但 还没执行完成，仅更新 DAG
-                wfInstance.setDag(JSON.toJSONString(dag));
+                wfInstance.setDag(JsonUtils.toJSONString(dag));
                 workflowInstanceInfoRepository.saveAndFlush(wfInstance);
                 return;
             }
@@ -413,14 +413,14 @@ public class WorkflowInstanceManager {
                 return;
             }
             WorkflowInstanceInfoDO wfInstance = wfInstanceInfoOpt.get();
-            HashMap<String, String> wfContext = JSON.parseObject(wfInstance.getWfContext(), new TypeReference<HashMap<String, String>>() {
+            HashMap<String, String> wfContext = JsonUtils.parseObject(wfInstance.getWfContext(), new TypeReference<HashMap<String, String>>() {
             });
             for (Map.Entry<String, String> entry : appendedWfContextData.entrySet()) {
                 String key = entry.getKey();
                 String originValue = wfContext.put(key, entry.getValue());
                 log.info("[Workflow-{}|{}] update workflow context {} : {} -> {}", wfInstance.getWorkflowId(), wfInstance.getWfInstanceId(), key, originValue, entry.getValue());
             }
-            wfInstance.setWfContext(JSON.toJSONString(wfContext));
+            wfInstance.setWfContext(JsonUtils.toJSONString(wfContext));
             workflowInstanceInfoRepository.saveAndFlush(wfInstance);
 
         } catch (Exception e) {
@@ -440,7 +440,7 @@ public class WorkflowInstanceManager {
         if (wfInstance.getParentWfInstanceId() != null) {
             // 先处理上下文
             if (workflowInstanceStatus == WorkflowInstanceStatus.SUCCEED){
-                HashMap<String, String> wfContext = JSON.parseObject(wfInstance.getWfContext(), new TypeReference<HashMap<String, String>>() {
+                HashMap<String, String> wfContext = JsonUtils.parseObject(wfInstance.getWfContext(), new TypeReference<HashMap<String, String>>() {
                 });
                 SpringUtils.getBean(this.getClass()).updateWorkflowContext(wfInstance.getParentWfInstanceId(), wfContext);
             }

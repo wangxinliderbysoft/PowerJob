@@ -1,7 +1,8 @@
 package tech.powerjob.official.processors.impl.sql;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.lang3.StringUtils;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.official.processors.util.CommonUtils;
 import tech.powerjob.official.processors.util.SecurityUtils;
 import tech.powerjob.worker.core.processor.TaskContext;
@@ -9,6 +10,7 @@ import tech.powerjob.worker.core.processor.TaskContext;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -29,7 +31,8 @@ public class DynamicDatasourceSqlProcessor extends AbstractSqlProcessor {
     @Override
     Connection getConnection(SqlParams sqlParams, TaskContext taskContext) throws SQLException {
 
-        JSONObject params = JSONObject.parseObject(CommonUtils.parseParams(taskContext));
+        Map<String,Object> params = JsonUtils.parseObject(CommonUtils.parseParams(taskContext),
+                new TypeReference<Map<String, Object>>() {});
         Properties properties = new Properties();
 
         // normally at least a "user" and "password" property should be included

@@ -1,6 +1,6 @@
 package tech.powerjob.server.core.workflow.hanlder.impl;
 
-import com.alibaba.fastjson.JSON;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,6 +10,7 @@ import tech.powerjob.common.enums.WorkflowInstanceStatus;
 import tech.powerjob.common.enums.WorkflowNodeType;
 import tech.powerjob.common.exception.PowerJobException;
 import tech.powerjob.common.model.PEWorkflowDAG;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.common.utils.CommonUtils;
 import tech.powerjob.common.enums.SwitchableStatus;
 import tech.powerjob.server.common.utils.SpringUtils;
@@ -59,12 +60,12 @@ public class NestedWorkflowNodeHandler implements TaskNodeHandler {
             // 不用考虑状态，只有失败的工作流嵌套节点状态会被重置
             // 需要将子工作流中失败的节点状态重置为 等待 派发
             try {
-                PEWorkflowDAG nodeDag = JSON.parseObject(wfInstance.getDag(), PEWorkflowDAG.class);
+                PEWorkflowDAG nodeDag = JsonUtils.parseObject(wfInstance.getDag(), PEWorkflowDAG.class);
                 if (!WorkflowDAGUtils.valid(nodeDag)) {
                     throw new PowerJobException(SystemInstanceResult.INVALID_DAG);
                 }
                 WorkflowDAGUtils.resetRetryableNode(nodeDag);
-                wfInstance.setDag(JSON.toJSONString(nodeDag));
+                wfInstance.setDag(JsonUtils.toJSONString(nodeDag));
                 wfInstance.setStatus(WorkflowInstanceStatus.WAITING.getV());
                 wfInstance.setGmtModified(new Date());
                 workflowInstanceInfoRepository.saveAndFlush(wfInstance);
