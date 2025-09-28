@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.13</version>
+        <version>3.5.6</version>
     </parent>
     <groupId>tech.powerjob</groupId>
     <artifactId>powerjob</artifactId>
@@ -52,18 +52,18 @@
     </modules>
 
     <properties>
-        <akka.version>2.6.21</akka.version>
+        <akka.version>2.8.1</akka.version>
         <aliyun-sdk-oss.version>3.17.1</aliyun-sdk-oss.version>
         <aws-java-sdk-s3.version>1.12.665</aws-java-sdk-s3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <commons.io.version>2.11.0</commons.io.version>
-        <commons.net.version>3.9.0</commons.net.version>
+        <commons.io.version>2.20.0</commons.io.version>
+        <commons.net.version>3.12.0</commons.net.version>
         <cron-utils.version>9.2.1</cron-utils.version>
         <dingding.version>1.0.1</dingding.version>
         <dingtalk.version>1.1.86</dingtalk.version>
 
-        <guava.version>31.1-jre</guava.version>
-        <jgit.version>5.13.2.202306221912-r</jgit.version>
+        <guava.version>33.5.0-jre</guava.version>
+        <jgit.version>7.3.0.202506031305-r</jgit.version>
         <jjwt.version>0.11.5</jjwt.version>
         <kryo.version>5.3.0</kryo.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
@@ -81,8 +81,11 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <reflections.version>0.10.2</reflections.version>
         <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
-        <vertx.version>4.3.7</vertx.version>
+        <vertx.version>5.0.4</vertx.version>
         <zip4j.version>2.11.2</zip4j.version>
+        <tomcat.version>10.1.46</tomcat.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
+        <netty.version>4.1.125.Final</netty.version>
     </properties>
 
     <dependencies>
@@ -314,7 +317,6 @@
             </dependency>
 
 
-
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>dingtalk</artifactId>
@@ -352,7 +354,11 @@
                 <artifactId>picocli</artifactId>
                 <version>${picocli.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>4.12.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
