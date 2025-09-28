@@ -255,8 +255,8 @@
                 <version>${dingding.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>org.apache.logging.log4j</groupId>
-                        <artifactId>log4j*</artifactId>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>commons-logging</groupId>
