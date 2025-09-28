@@ -62,7 +62,6 @@
             <artifactId>powerjob-client</artifactId>
         </dependency>
 
-        <!-- 高版本 JDK 移除了 JavaEE 的包，需要手动引入 -->
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>

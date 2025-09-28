@@ -50,7 +50,7 @@ public class FileCleanupProcessor implements BroadcastProcessor {
 
         cleanupParamsList.forEach(params -> {
 
-            logger.info("start to process: {}", JsonUtils.toBytes(params));
+            logger.info("start to process: {}", JsonUtils.toJSONString(params));
 
             if (StringUtils.isEmpty(params.filePattern) || StringUtils.isEmpty(params.dirPath)) {
                 logger.warn("skip due to invalid params!");
