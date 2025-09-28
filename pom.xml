@@ -54,7 +54,6 @@
     <properties>
         <akka.version>2.8.1</akka.version>
         <aliyun-sdk-oss.version>3.17.1</aliyun-sdk-oss.version>
-        <aws-java-sdk-s3.version>1.12.665</aws-java-sdk-s3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <commons.io.version>2.20.0</commons.io.version>
         <commons.net.version>3.12.0</commons.net.version>
@@ -73,8 +72,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <mvn.invoker.version>3.0.1</mvn.invoker.version>
-        <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
+        <mvn.invoker.version>3.3.0</mvn.invoker.version>
         <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
         <picocli.version>4.3.2</picocli.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -211,16 +209,13 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-s3</artifactId>
-                <version>${aws-java-sdk-s3.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${aws.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
+
             <dependency>
                 <groupId>net.lingala.zip4j</groupId>
                 <artifactId>zip4j</artifactId>
