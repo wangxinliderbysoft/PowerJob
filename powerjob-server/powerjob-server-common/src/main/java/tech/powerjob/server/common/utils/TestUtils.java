@@ -1,9 +1,10 @@
 package tech.powerjob.server.common.utils;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Maps;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import tech.powerjob.common.serialize.JsonUtils;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -32,7 +33,8 @@ public class TestUtils {
             // 后续本地测试，密钥相关的内容统一存入 .powerjob_test 中，方便管理
             String content = FileUtils.readFileToString(new File(System.getProperty("user.home").concat(TEST_CONFIG_NAME)), StandardCharsets.UTF_8);
             if (StringUtils.isNotEmpty(content)) {
-                return JSONObject.parseObject(content);
+                return JsonUtils.parseObject(content, new TypeReference<>() {
+                });
             }
         } catch (Exception ignore) {
         }

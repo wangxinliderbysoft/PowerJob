@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.5.6</version>
     </parent>
     <groupId>tech.powerjob</groupId>
     <artifactId>powerjob</artifactId>
@@ -52,65 +52,38 @@
     </modules>
 
     <properties>
-        <fastjson.version>1.2.83</fastjson.version>
-
-        <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
-        <slf4j.version>1.7.36</slf4j.version>
-        <commons.io.version>2.11.0</commons.io.version>
-        <guava.version>31.1-jre</guava.version>
-        <kryo.version>5.3.0</kryo.version>
-        <jackson.version>2.14.3</jackson.version>
-        <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
-        <!-- 不会被打包的部分，scope 只能是 test 或 provide -->
-        <powerjob.worker.version>5.1.2</powerjob.worker.version>
-        <!-- 全部 shade 化，避免依赖冲突 -->
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <powerjob-common.version>5.1.2</powerjob-common.version>
-        <reflections.version>0.10.2</reflections.version>
-        <powerjob-remote-framework.version>5.1.2</powerjob-remote-framework.version>
-        <akka.version>2.6.13</akka.version>
-        <maven.compiler.source>8</maven.compiler.source>
-        <vertx.version>4.3.7</vertx.version>
-        <netty.version>4.1.104.Final</netty.version>
-        <jjwt.version>0.11.5</jjwt.version>
-        <dingtalk.version>1.1.86</dingtalk.version>
-        <maven.compiler.source>8</maven.compiler.source>
-        <ojdbc.version>19.7.0.0</ojdbc.version>
-        <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
-        <db2-jdbc.version>11.5.0.0</db2-jdbc.version>
-        <postgresql.version>42.6.0</postgresql.version>
-        <mongodb-driver-sync.version>4.10.2</mongodb-driver-sync.version>
-        <zip4j.version>2.11.2</zip4j.version>
-        <jgit.version>5.13.2.202306221912-r</jgit.version>
-        <mvn.invoker.version>3.0.1</mvn.invoker.version>
-        <commons.net.version>3.9.0</commons.net.version>
-        <dingding.version>1.0.1</dingding.version>
-        <!-- skip this module when deploying. -->
-        <maven.deploy.skip>true</maven.deploy.skip>
-        <groovy.version>3.0.10</groovy.version>
-        <cron-utils.version>9.2.1</cron-utils.version>
-        <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
+        <akka.version>2.8.1</akka.version>
         <aliyun-sdk-oss.version>3.17.1</aliyun-sdk-oss.version>
-        <aws-java-sdk-s3.version>1.12.665</aws-java-sdk-s3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <powerjob.worker.version>5.1.2</powerjob.worker.version>
-        <picocli.version>4.3.2</picocli.version>
-        <!-- dependency for dynamic sql processor -->
-        <springboot.version>2.7.18</springboot.version>
-        <!-- 部署时跳过该module -->
-        <powerjob-client.version>5.1.2</powerjob-client.version>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
-        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <commons.io.version>2.20.0</commons.io.version>
+        <commons.net.version>3.12.0</commons.net.version>
+        <cron-utils.version>9.2.1</cron-utils.version>
+        <dingding.version>1.0.1</dingding.version>
+        <dingtalk.version>1.1.86</dingtalk.version>
+
+        <guava.version>33.5.0-jre</guava.version>
+        <jgit.version>7.3.0.202506031305-r</jgit.version>
+        <jjwt.version>0.11.5</jjwt.version>
+        <kryo.version>5.3.0</kryo.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <mvn.invoker.version>3.3.0</mvn.invoker.version>
+        <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
+        <picocli.version>4.3.2</picocli.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <lombok.version>1.18.38</lombok.version>
+        <reflections.version>0.10.2</reflections.version>
+        <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
+        <vertx.version>4.5.21</vertx.version>
+        <zip4j.version>2.11.2</zip4j.version>
+        <tomcat.version>10.1.46</tomcat.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
+        <netty.version>4.1.127.Final</netty.version>
     </properties>
 
     <dependencies>
@@ -118,7 +91,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -236,17 +208,8 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-s3</artifactId>
-                <version>${aws-java-sdk-s3.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+
+
             <dependency>
                 <groupId>net.lingala.zip4j</groupId>
                 <artifactId>zip4j</artifactId>
@@ -273,11 +236,7 @@
                 <artifactId>maven-invoker</artifactId>
                 <version>${mvn.invoker.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>${fastjson.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>alibaba-dingtalk-service-sdk</artifactId>
@@ -305,10 +264,6 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-ui</artifactId>
                 <version>${springdoc-openapi-ui.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>info.picocli</groupId>
-                <artifactId>picocli</artifactId>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -350,6 +305,7 @@
                 <scope>runtime</scope>
             </dependency>
 
+
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>dingtalk</artifactId>
@@ -387,6 +343,11 @@
                 <artifactId>picocli</artifactId>
                 <version>${picocli.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>4.12.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -412,7 +373,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>${maven-source-plugin.version}</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -426,7 +386,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <version>${maven-jar-plugin.version}</version>
                         <configuration>
                             <archive>
                                 <manifestEntries>
@@ -440,7 +399,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven-javadoc-plugin.version}</version>
                         <configuration>
                             <!-- Prevent JavaDoc error from affecting building project. -->
                             <failOnError>false</failOnError>
@@ -480,6 +438,13 @@
                             <publishingServerId>central</publishingServerId>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>versions-maven-plugin</artifactId>
+                        <configuration>
+                            <generateBackupPoms>false</generateBackupPoms>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -497,7 +462,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>${maven-compiler-plugin.version}</version>
                         <configuration>
                             <source>${java.version}</source>
                             <target>${java.version}</target>
@@ -509,7 +473,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <version>${maven-jar-plugin.version}</version>
                         <configuration>
                             <archive>
                                 <manifestEntries>

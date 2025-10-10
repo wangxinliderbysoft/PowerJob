@@ -1,18 +1,18 @@
 package tech.powerjob.server.test;
 
-import com.alibaba.fastjson.JSONObject;
+
 import org.junit.jupiter.api.Test;
 import tech.powerjob.common.PowerQuery;
 import tech.powerjob.common.response.JobInfoDTO;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.server.core.service.JobService;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.time.DateUtils;
 import org.assertj.core.util.Lists;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import java.util.Date;
 import java.util.List;
@@ -39,7 +39,7 @@ public class QueryConvertUtilsTest {
 
         List<JobInfoDTO> list = jobService.queryJob(jobInfoQuery);
         System.out.println("size: " + list.size());
-        System.out.println(JSONObject.toJSONString(list));
+        System.out.println(JsonUtils.toJSONString(list));
     }
 
     @Getter

@@ -1,8 +1,8 @@
 package tech.powerjob.server.remote.server.redirector;
 
-import com.alibaba.fastjson.JSONObject;
-import tech.powerjob.server.common.utils.SpringUtils;
 import org.springframework.util.ReflectionUtils;
+import tech.powerjob.common.serialize.JsonUtils;
+import tech.powerjob.server.common.utils.SpringUtils;
 
 import java.lang.reflect.Method;
 
@@ -23,7 +23,7 @@ public class RemoteRequestProcessor {
             parameters[i] = Class.forName(parameterTypes[i]);
             Object arg = args[i];
             if (arg != null) {
-                args[i] = JSONObject.parseObject(JSONObject.toJSONBytes(arg), parameters[i]);
+                args[i] = JsonUtils.parseObject(JsonUtils.toJSONString(arg), parameters[i]);
             }
         }
 

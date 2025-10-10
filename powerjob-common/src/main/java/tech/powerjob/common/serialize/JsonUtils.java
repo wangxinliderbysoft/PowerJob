@@ -4,15 +4,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import tech.powerjob.common.exception.ImpossibleException;
 import tech.powerjob.common.exception.PowerJobException;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,9 +44,10 @@ public class JsonUtils {
         }
     }
 
-    private static final TypeReference<Map<String, Object>>  MAP_TYPE_REFERENCE  = new TypeReference<Map<String, Object>> () {};
+    private static final TypeReference<Map<String, Object>> MAP_TYPE_REFERENCE =
+            new TypeReference<Map<String, Object>>() {};
 
-    private JsonUtils(){
+    private JsonUtils() {
 
     }
 
@@ -58,7 +60,7 @@ public class JsonUtils {
         }
         try {
             return JSON_MAPPER.writeValueAsString(obj);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("[PowerJob] toJSONString failed", e);
         }
         return null;
@@ -70,7 +72,7 @@ public class JsonUtils {
         }
         try {
             return JSON_MAPPER.writeValueAsString(obj);
-        }catch (Exception e) {
+        } catch (Exception e) {
             ExceptionUtils.rethrow(e);
         }
         throw new ImpossibleException();
@@ -79,13 +81,14 @@ public class JsonUtils {
     public static byte[] toBytes(Object obj) {
         try {
             return JSON_MAPPER.writeValueAsBytes(obj);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("[PowerJob] serialize failed", e);
         }
         return null;
     }
 
-    public static <T> T parseObject(String json, Class<T> clz) throws Exception {
+    @SneakyThrows
+    public static <T> T parseObject(String json, Class<T> clz) {
         return JSON_MAPPER.readValue(json, clz);
     }
 
@@ -101,15 +104,18 @@ public class JsonUtils {
         throw new ImpossibleException();
     }
 
-    public static <T> T parseObject(byte[] b, Class<T> clz) throws IOException {
+    @SneakyThrows
+    public static <T> T parseObject(byte[] b, Class<T> clz) {
         return JSON_MAPPER.readValue(b, clz);
     }
 
-    public static <T> T parseObject(byte[] b, TypeReference<T> typeReference) throws IOException {
+    @SneakyThrows
+    public static <T> T parseObject(byte[] b, TypeReference<T> typeReference) {
         return JSON_MAPPER.readValue(b, typeReference);
     }
 
-    public static <T> T parseObject(String json, TypeReference<T> typeReference) throws IOException {
+    @SneakyThrows
+    public static <T> T parseObject(String json, TypeReference<T> typeReference) {
         return JSON_MAPPER.readValue(json, typeReference);
     }
 
@@ -119,8 +125,8 @@ public class JsonUtils {
         }
         try {
             return JSON_MAPPER.readValue(json, clz);
-        }catch (Exception e) {
-            log.error("unable to parse json string to object,current string:{}",json,e);
+        } catch (Exception e) {
+            log.error("unable to parse json string to object,current string:{}", json, e);
             return null;
         }
 
@@ -132,7 +138,7 @@ public class JsonUtils {
         }
         try {
             return JSON_MAPPER.readValue(json, clz);
-        }catch (Exception e) {
+        } catch (Exception e) {
             ExceptionUtils.rethrow(e);
         }
         throw new PowerJobException("impossible");
@@ -143,5 +149,22 @@ public class JsonUtils {
             return null;
         }
         return JSON_MAPPER.convertValue(o, clz);
+    }
+
+    public static boolean isValidJson(String json) {
+        if (StringUtils.isEmpty(json)) {
+            return false;
+        }
+        try {
+            JSON_MAPPER.readTree(json);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @SneakyThrows
+    public static JsonNode readTree(String json) {
+        return JSON_MAPPER.readTree(json);
     }
 }

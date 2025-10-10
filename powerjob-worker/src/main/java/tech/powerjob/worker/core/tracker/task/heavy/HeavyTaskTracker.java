@@ -36,7 +36,7 @@ import tech.powerjob.worker.pojo.request.ProcessorTrackerStatusReportReq;
 import tech.powerjob.worker.pojo.request.TaskTrackerStartTaskReq;
 import tech.powerjob.worker.pojo.request.TaskTrackerStopInstanceReq;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

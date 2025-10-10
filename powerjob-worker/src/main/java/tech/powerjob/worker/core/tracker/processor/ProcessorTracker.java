@@ -317,10 +317,7 @@ public class ProcessorTracker {
         map 情况下，如果子任务执行较长，任务末期可能出现某一个节点的任务仍在执行，其他机器都已经无任务可执行，被 idle 逻辑关闭节点。如果不幸在‘生成reduce任务后并派发前’关闭了 TaskTracker 所在节点的 PT，那 reduce 任务就会直接失败
         解决方案：同 TT 节点的 PT，本身不存在分布式不一致问题，因此不需要 idle 直接关闭 PT 的机制
         */
-        if (taskTrackerAddress.equalsIgnoreCase(workerRuntime.getWorkerAddress())) {
-            return false;
-        }
-        return true;
+        return !taskTrackerAddress.equalsIgnoreCase(workerRuntime.getWorkerAddress());
     }
 
 

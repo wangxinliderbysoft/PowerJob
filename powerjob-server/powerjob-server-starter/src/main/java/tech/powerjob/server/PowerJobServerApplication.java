@@ -1,5 +1,7 @@
 package tech.powerjob.server;
 
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import tech.powerjob.server.common.utils.PropertyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -15,7 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Slf4j
 @EnableScheduling
 @SpringBootApplication
-public class PowerJobServerApplication {
+public class PowerJobServerApplication extends SpringBootServletInitializer {
 
     private static final String TIPS = "\n\n" +
             "******************* PowerJob Tips *******************\n" +
@@ -40,6 +42,10 @@ public class PowerJobServerApplication {
     private static void pre() {
         log.info(TIPS);
         PropertyUtils.init();
+    }
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(PowerJobServerApplication.class);
     }
 
 }

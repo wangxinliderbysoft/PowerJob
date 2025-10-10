@@ -1,6 +1,5 @@
 package tech.powerjob.samples.processors;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +15,9 @@ import tech.powerjob.worker.core.processor.sdk.MapReduceProcessor;
 import tech.powerjob.worker.log.OmsLogger;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
@@ -51,7 +52,8 @@ public class MapReduceProcessorDemo implements MapReduceProcessor {
 
         // 常见写法，优先从 InstanceParams 获取参数，取不到再从 JobParams 中获取，灵活性最佳（相当于实现了实例参数重载任务参数）
         String finalParams = StringUtils.isEmpty(instanceParamsStr) ? jobParamsStr : instanceParamsStr;
-        final JSONObject params = Optional.ofNullable(finalParams).map(JSONObject::parseObject).orElse(new JSONObject());
+        final Map<String,Object> params =
+                Optional.ofNullable(finalParams).map(JsonUtils::parseMap).orElse(new HashMap<>());
 
         if (isRootTask) {
 
@@ -132,7 +134,7 @@ public class MapReduceProcessorDemo implements MapReduceProcessor {
     public ProcessResult reduce(TaskContext context, List<TaskResult> taskResults) {
 
         // 子任务结果太大，上报在线日志会有 IO 问题，直接使用本地日志打
-        log.info("List<TaskResult>: {}", JSONObject.toJSONString(taskResults));
+        log.info("List<TaskResult>: {}", JsonUtils.toJSONString(taskResults));
 
         OmsLogger omsLogger = context.getOmsLogger();
         omsLogger.info("================ MapReduceProcessorDemo#reduce ================");

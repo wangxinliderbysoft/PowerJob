@@ -1,6 +1,6 @@
 package tech.powerjob.samples.tester;
 
-import com.alibaba.fastjson.JSONObject;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Data;
@@ -17,6 +17,7 @@ import tech.powerjob.common.request.http.SaveJobInfoRequest;
 import tech.powerjob.common.response.InstanceInfoDTO;
 import tech.powerjob.common.response.JobInfoDTO;
 import tech.powerjob.common.response.ResultDTO;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.official.processors.util.CommonUtils;
 import tech.powerjob.worker.core.processor.ProcessResult;
 import tech.powerjob.worker.core.processor.TaskContext;
@@ -51,15 +52,15 @@ public class OpenApiTester implements BasicProcessor {
 
         SaveJobInfoRequest saveJobInfoRequest = buildSaveJobInfoRequest();
 
-        context.getOmsLogger().info("[newJob] saveJobInfoRequest: {}", JSONObject.toJSONString(saveJobInfoRequest));
+        context.getOmsLogger().info("[newJob] saveJobInfoRequest: {}", JsonUtils.toJSONString(saveJobInfoRequest));
         ResultDTO<Long> saveJobResult = client.saveJob(saveJobInfoRequest);
-        context.getOmsLogger().info("[newJob] RESPONSE: {}", JSONObject.toJSONString(saveJobResult));
+        context.getOmsLogger().info("[newJob] RESPONSE: {}", JsonUtils.toJSONString(saveJobResult));
         Long createdJobId = fetchResultData(saveJobResult);
 
 
         // 测试导出
         ResultDTO<SaveJobInfoRequest> exportJobResult = client.exportJob(createdJobId);
-        context.getOmsLogger().info("[exportJob] exportJobResult: {}", JSONObject.toJSONString(exportJobResult));
+        context.getOmsLogger().info("[exportJob] exportJobResult: {}", JsonUtils.toJSONString(exportJobResult));
         SaveJobInfoRequest exportJobInfo = fetchResultData(exportJobResult);
         assert exportJobInfo.getJobParams().equals(saveJobInfoRequest.getJobParams());
         assert exportJobInfo.getMaxInstanceNum().equals(saveJobInfoRequest.getMaxInstanceNum());
@@ -67,7 +68,7 @@ public class OpenApiTester implements BasicProcessor {
         // 测试复制
         context.getOmsLogger().info("[copyJob] sourceJobId: {}", createdJobId);
         ResultDTO<Long> copyJobResult = client.copyJob(createdJobId);
-        context.getOmsLogger().info("[copyJob] copyJobResult: {}", JSONObject.toJSONString(copyJobResult));
+        context.getOmsLogger().info("[copyJob] copyJobResult: {}", JsonUtils.toJSONString(copyJobResult));
 
         Long copiedJobId = fetchResultData(copyJobResult);
 
@@ -77,9 +78,9 @@ public class OpenApiTester implements BasicProcessor {
         context.getOmsLogger().info("[disableJob] disableJobResult: {}", disableJobResult);
 
         ResultDTO<JobInfoDTO> createdJobInfoResult = client.fetchJob(createdJobId);
-        context.getOmsLogger().info("[fetchJob] createdJobInfo: {}", JSONObject.toJSONString(createdJobInfoResult));
+        context.getOmsLogger().info("[fetchJob] createdJobInfo: {}", JsonUtils.toJSONString(createdJobInfoResult));
         ResultDTO<JobInfoDTO> copiedJobInfoResult = client.fetchJob(copiedJobId);
-        context.getOmsLogger().info("[fetchJob] copiedJobInfo: {}", JSONObject.toJSONString(copiedJobInfoResult));
+        context.getOmsLogger().info("[fetchJob] copiedJobInfo: {}", JsonUtils.toJSONString(copiedJobInfoResult));
 
         JobInfoDTO createdJob = fetchResultData(createdJobInfoResult);
         JobInfoDTO copiedJob = fetchResultData(copiedJobInfoResult);
@@ -90,22 +91,22 @@ public class OpenApiTester implements BasicProcessor {
 
         ResultDTO<Void> enableJobResult = client.enableJob(copiedJob.getId());
         fetchResultData(enableJobResult);
-        context.getOmsLogger().info("[enableJob] enableJobResult: {}", JSONObject.toJSONString(enableJobResult));
+        context.getOmsLogger().info("[enableJob] enableJobResult: {}", JsonUtils.toJSONString(enableJobResult));
 
         // 再次查询验证 enable
         ResultDTO<JobInfoDTO> copiedJobInfoResult2 = client.fetchJob(copiedJobId);
-        context.getOmsLogger().info("[fetchJob] copiedJobInfoResult2: {}", JSONObject.toJSONString(copiedJobInfoResult2));
+        context.getOmsLogger().info("[fetchJob] copiedJobInfoResult2: {}", JsonUtils.toJSONString(copiedJobInfoResult2));
         JobInfoDTO copiedJob2 = fetchResultData(copiedJobInfoResult2);
         assert copiedJob2.getStatus() == SwitchableStatus.ENABLE.getV();
 
         // 删除拷贝出来的任务
         ResultDTO<Void> deleteJobResult = client.deleteJob(copiedJobId);
-        context.getOmsLogger().info("[deleteJob] deleteJobResult: {}", JSONObject.toJSONString(deleteJobResult));
+        context.getOmsLogger().info("[deleteJob] deleteJobResult: {}", JsonUtils.toJSONString(deleteJobResult));
         fetchResultData(deleteJobResult);
 
         // 执行任务
         ResultDTO<Long> runJobResult = client.runJob(createdJobId, RUN_INSTANCE_PARAMS, 0);
-        context.getOmsLogger().info("[runJob] runJobResult: {}", JSONObject.toJSONString(runJobResult));
+        context.getOmsLogger().info("[runJob] runJobResult: {}", JsonUtils.toJSONString(runJobResult));
         Long instanceId = fetchResultData(runJobResult);
 
         // 等10S，理论上应该能执行完成
@@ -113,17 +114,17 @@ public class OpenApiTester implements BasicProcessor {
 
         // 查询任务详情和状态
         ResultDTO<InstanceInfoDTO> fetchInstanceInfoResult = client.fetchInstanceInfo(instanceId);
-        context.getOmsLogger().info("[fetchInstanceInfo] fetchInstanceInfoResult: {}", JSONObject.toJSONString(fetchInstanceInfoResult));
+        context.getOmsLogger().info("[fetchInstanceInfo] fetchInstanceInfoResult: {}", JsonUtils.toJSONString(fetchInstanceInfoResult));
         InstanceInfoDTO instanceInfoDTO = fetchResultData(fetchInstanceInfoResult);
 
         ResultDTO<Integer> fetchInstanceStatusResult = client.fetchInstanceStatus(instanceId);
-        context.getOmsLogger().info("[fetchInstanceStatus] fetchInstanceStatusResult: {}", JSONObject.toJSONString(fetchInstanceStatusResult));
+        context.getOmsLogger().info("[fetchInstanceStatus] fetchInstanceStatusResult: {}", JsonUtils.toJSONString(fetchInstanceStatusResult));
         Integer instanceStatus = fetchResultData(fetchInstanceStatusResult);
         assert instanceInfoDTO.getStatus() == instanceStatus;
 
         // 回收全部资源
         ResultDTO<Void> deleteCreatedJobResult = client.deleteJob(createdJobId);
-        context.getOmsLogger().info("[deleteJob] deleteCreatedJobResult: {}", JSONObject.toJSONString(deleteCreatedJobResult));
+        context.getOmsLogger().info("[deleteJob] deleteCreatedJobResult: {}", JsonUtils.toJSONString(deleteCreatedJobResult));
         fetchResultData(deleteCreatedJobResult);
 
         return new ProcessResult(true);
@@ -159,7 +160,7 @@ public class OpenApiTester implements BasicProcessor {
 
     private IPowerJobClient fetchClient(TaskContext context) {
         String params = CommonUtils.parseParams(context);
-        Config clientConfig = Optional.ofNullable(params).map(x -> JSONObject.parseObject(params, Config.class)).orElse(new Config());
+        Config clientConfig = Optional.ofNullable(params).map(x -> JsonUtils.parseObject(params, Config.class)).orElse(new Config());
 
         String appName = Optional.ofNullable(clientConfig.getAppName()).orElse("powerjob-worker-samples");
         String password = Optional.ofNullable(clientConfig.getPassword()).orElse("powerjob123");

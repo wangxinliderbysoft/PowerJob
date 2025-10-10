@@ -1,6 +1,6 @@
 package tech.powerjob.server.web;
 
-import com.alibaba.fastjson.JSONObject;
+
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -13,10 +13,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.server.common.utils.AOPUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -96,6 +97,6 @@ public class WebLogAspect {
 
             objList.add(obj);
         }
-        return JSONObject.toJSONString(objList);
+        return JsonUtils.toJSONString(objList);
     }
 }

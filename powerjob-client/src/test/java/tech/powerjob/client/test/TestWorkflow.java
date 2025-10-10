@@ -1,6 +1,8 @@
 package tech.powerjob.client.test;
 
-import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import tech.powerjob.client.PowerJobClient;
 import tech.powerjob.common.enums.ExecuteType;
 import tech.powerjob.common.enums.ProcessorType;
@@ -14,9 +16,7 @@ import tech.powerjob.common.response.ResultDTO;
 import tech.powerjob.common.response.WorkflowInfoDTO;
 import tech.powerjob.common.response.WorkflowInstanceInfoDTO;
 import tech.powerjob.common.response.WorkflowNodeInfoDTO;
-import com.google.common.collect.Lists;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import tech.powerjob.common.serialize.JsonUtils;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ class TestWorkflow extends ClientInitializer {
         base.setProcessorInfo("tech.powerjob.samples.workflow.WorkflowStandaloneProcessor");
 
         for (int i = 0; i < 5; i++) {
-            SaveJobInfoRequest request = JSONObject.parseObject(JSONObject.toJSONBytes(base), SaveJobInfoRequest.class);
+            SaveJobInfoRequest request = JsonUtils.parseObject(JsonUtils.toBytes(base), SaveJobInfoRequest.class);
             request.setJobName(request.getJobName() + i);
             ResultDTO<Long> res = powerJobClient.saveJob(request);
             System.out.println(res);
@@ -60,7 +60,7 @@ class TestWorkflow extends ClientInitializer {
         req.setEnable(true);
         req.setTimeExpressionType(TimeExpressionType.API);
 
-        System.out.println("req ->" + JSONObject.toJSON(req));
+        System.out.println("req ->" + JsonUtils.toJSONString(req));
         ResultDTO<Long> res = powerJobClient.saveWorkflow(req);
         System.out.println(res);
         Assertions.assertNotNull(res);

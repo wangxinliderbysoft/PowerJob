@@ -1,17 +1,18 @@
 package tech.powerjob.server.persistence.config;
 
+import org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl;
 import tech.powerjob.server.common.PowerJobServerConfigKey;
 import tech.powerjob.server.common.utils.PropertyUtils;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
-import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
+import org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
 /**
  * 自定义表前缀，配置项 oms.table-prefix 不配置时，不增加表前缀。
- * 参考实现：{@link org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy}
+ * 参考实现：{@link org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy}
  * <p>
  * 1. 继承 PhysicalNamingStrategy 类，实现自定义表前缀；
  * </p>
@@ -22,7 +23,7 @@ import java.io.Serializable;
  * @author songyinyin
  * @since 2020/7/18
  */
-public class PowerJobPhysicalNamingStrategy extends SpringPhysicalNamingStrategy implements Serializable {
+public class PowerJobPhysicalNamingStrategy extends PhysicalNamingStrategyStandardImpl implements Serializable {
 
 
     /**

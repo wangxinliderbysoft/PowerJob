@@ -1,7 +1,6 @@
 package tech.powerjob.server.web.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import tech.powerjob.common.model.WorkerAppInfo;
 import tech.powerjob.common.request.ServerDiscoveryRequest;
 import tech.powerjob.common.response.ResultDTO;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.common.utils.CommonUtils;
 import tech.powerjob.common.utils.net.PingPongUtils;
 import tech.powerjob.server.common.aware.ServerInfoAware;
@@ -20,6 +20,8 @@ import tech.powerjob.server.remote.server.election.ServerElectionService;
 import tech.powerjob.server.remote.transporter.TransportService;
 import tech.powerjob.server.remote.worker.WorkerClusterQueryService;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -78,8 +80,8 @@ public class ServerController implements ServerInfoAware {
 
 
     @GetMapping("/hello")
-    public ResultDTO<JSONObject> ping(@RequestParam(required = false) boolean debug) {
-        JSONObject res = new JSONObject();
+    public ResultDTO<Map<String,Object>> ping(@RequestParam(required = false) boolean debug) {
+        Map<String,Object> res = new HashMap<>();
         res.put("localHost", serverInfo.getIp());
         res.put("serverInfo", serverInfo);
         res.put("serverTime", CommonUtils.formatTime(System.currentTimeMillis()));
@@ -87,11 +89,12 @@ public class ServerController implements ServerInfoAware {
         res.put("serverTimeZone", TimeZone.getDefault().getDisplayName());
         res.put("appIds", workerClusterQueryService.getAppId2ClusterStatus().keySet());
         if (debug) {
-            res.put("appId2ClusterInfo", JSON.parseObject(JSON.toJSONString(workerClusterQueryService.getAppId2ClusterStatus())));
+            res.put("appId2ClusterInfo",
+                    JsonUtils.parseMap(JsonUtils.toJSONString(workerClusterQueryService.getAppId2ClusterStatus())));
         }
 
         try {
-            res.put("defaultAddress", JSONObject.toJSON(transportService.defaultProtocol()));
+            res.put("defaultAddress", JsonUtils.toJSONString(transportService.defaultProtocol()));
         } catch (Exception ignore) {
         }
 

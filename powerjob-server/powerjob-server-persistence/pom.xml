@@ -11,14 +11,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>powerjob-server-persistence</artifactId>
-    <version>${project.parent.version}</version>
+    <version>5.1.2</version>
 
 
     <dependencies>
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-server-common</artifactId>
-
         </dependency>
         <dependency>
             <groupId>tech.powerjob</groupId>
@@ -41,10 +40,16 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.12.791</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
     </dependencies>
 

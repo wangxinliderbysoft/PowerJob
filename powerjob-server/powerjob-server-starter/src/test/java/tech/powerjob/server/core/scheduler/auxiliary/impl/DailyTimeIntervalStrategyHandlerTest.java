@@ -1,6 +1,7 @@
 package tech.powerjob.server.core.scheduler.auxiliary.impl;
 
-import com.alibaba.fastjson.JSONArray;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +80,9 @@ class DailyTimeIntervalStrategyHandlerTest {
             log.info("[DailyTimeIntervalStrategyHandlerTest] [calculateNextTriggerTime] {}st ->ts={},date={}", i, triggerTime, DateFormatUtils.format(triggerTime, OmsConstant.TIME_PATTERN));
         }
         assert i == 8;
-        assert ret.equals(JSONArray.parseArray("[1676262813000, 1676266413000, 1676270013000, 1676273613000, 1676522013000, 1676525613000, 1676529213000, 1676532813000]", Long.class));
+        assert ret.equals(JsonUtils.parseObject("[1676262813000, 1676266413000, 1676270013000, 1676273613000, " +
+                "1676522013000, " +
+                "1676525613000, 1676529213000, 1676532813000]", new TypeReference<List<Long>>() {}));
     }
 
     private static DailyTimeIntervalStrategyHandler.DailyTimeIntervalExpress simpleBuild(String startTimeOfDay, String endTimeOfDay, Set<Integer> days) {

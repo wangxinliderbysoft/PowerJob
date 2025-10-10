@@ -1,10 +1,12 @@
 package tech.powerjob.server.extension.alarm;
 
-import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.common.OmsConstant;
 import tech.powerjob.common.PowerSerializable;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.common.utils.CommonUtils;
-import org.apache.commons.lang3.StringUtils;
+
+import java.util.Map;
 
 /**
  * 报警内容
@@ -18,7 +20,7 @@ public interface Alarm extends PowerSerializable {
 
     default String fetchContent() {
         StringBuilder sb = new StringBuilder();
-        JSONObject content = JSONObject.parseObject(JSONObject.toJSONString(this));
+        Map<String,Object> content = JsonUtils.parseMap(JsonUtils.toJSONString(this));
         content.forEach((key, originWord) -> {
             sb.append(key).append(": ");
             String word = String.valueOf(originWord);

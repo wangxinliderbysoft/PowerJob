@@ -1,6 +1,5 @@
 package tech.powerjob.server.core.lock;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
@@ -11,11 +10,11 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.server.common.utils.AOPUtils;
 import tech.powerjob.server.monitor.MonitorService;
 import tech.powerjob.server.monitor.events.lock.SlowLockEvent;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -73,7 +72,7 @@ public class UseCacheLockAspect {
 
                 log.warn("[UseSegmentLockAspect] wait lock for method({}#{}) cost {} ms! key = '{}', args = {}, ", method.getDeclaringClass().getSimpleName(), method.getName(), timeCost,
                         key,
-                        JSON.toJSONString(point.getArgs()));
+                        JsonUtils.toJSONString(point.getArgs()));
             }
             return point.proceed();
         } finally {

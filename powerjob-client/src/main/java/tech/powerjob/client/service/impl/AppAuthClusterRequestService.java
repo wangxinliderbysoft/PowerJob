@@ -1,6 +1,5 @@
 package tech.powerjob.client.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +14,7 @@ import tech.powerjob.common.OpenAPIConstant;
 import tech.powerjob.common.enums.EncryptType;
 import tech.powerjob.common.exception.PowerJobException;
 import tech.powerjob.common.response.ResultDTO;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.common.utils.DigestUtils;
 import tech.powerjob.common.utils.MapUtils;
 
@@ -94,7 +94,8 @@ abstract class AppAuthClusterRequestService extends ClusterRequestService {
         if (!httpResponse.isSuccess()) {
             throw new PowerJobException("AUTH_APP_EXCEPTION!");
         }
-        ResultDTO<AppAuthResult> authResultDTO = JSONObject.parseObject(httpResponse.getResponse(), TypeStore.APP_AUTH_RESULT_TYPE);
+        ResultDTO<AppAuthResult> authResultDTO = JsonUtils.parseObject(httpResponse.getResponse(),
+                TypeStore.APP_AUTH_RESULT_TYPE);
         if (!authResultDTO.isSuccess()) {
             throw new PowerJobException("AUTH_FAILED_" + authResultDTO.getMessage());
         }

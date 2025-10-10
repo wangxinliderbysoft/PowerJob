@@ -111,7 +111,8 @@ public class MuTransporter implements Transporter {
             CompletableFuture<T> future = new CompletableFuture<>();
 
             // Register the future for response handling
-            channelManager.registerPendingRequest(requestId, (CompletableFuture<Object>) future, clz);
+            channelManager.registerPendingRequest(requestId,
+                    (CompletableFuture<Object>) future, clz);
 
             // Set timeout for the request (JDK8 compatible)
             future.whenComplete((result, throwable) -> {

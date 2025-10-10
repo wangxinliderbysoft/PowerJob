@@ -1,16 +1,11 @@
 package tech.powerjob.worker.processor.impl;
 
-import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
-import tech.powerjob.common.enums.ProcessorType;
 import tech.powerjob.worker.core.processor.sdk.BasicProcessor;
 import tech.powerjob.worker.extension.processor.ProcessorBean;
 import tech.powerjob.worker.extension.processor.ProcessorDefinition;
-import tech.powerjob.worker.extension.processor.ProcessorFactory;
-
-import java.util.Set;
 
 /**
  * 内建的 SpringBean 处理器工厂，用于加载 Spring 相关的Bean，非核心依赖

@@ -1,16 +1,16 @@
 package tech.powerjob.official.processors.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.base.Stopwatch;
+import lombok.Data;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.official.processors.util.SecurityUtils;
 import tech.powerjob.worker.core.processor.ProcessResult;
 import tech.powerjob.worker.core.processor.TaskContext;
 import tech.powerjob.worker.core.processor.sdk.BroadcastProcessor;
 import tech.powerjob.worker.log.OmsLogger;
-import com.google.common.base.Stopwatch;
-import lombok.Data;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.Collection;
@@ -45,11 +45,12 @@ public class FileCleanupProcessor implements BroadcastProcessor {
         LongAdder cleanNum = new LongAdder();
         Stopwatch sw = Stopwatch.createStarted();
 
-        List<CleanupParams> cleanupParamsList = JSONArray.parseArray(taskContext.getJobParams(), CleanupParams.class);
+        List<CleanupParams> cleanupParamsList = JsonUtils.parseObject(taskContext.getJobParams(),
+                new TypeReference<>() {});
 
         cleanupParamsList.forEach(params -> {
 
-            logger.info("start to process: {}", JSON.toJSON(params));
+            logger.info("start to process: {}", JsonUtils.toJSONString(params));
 
             if (StringUtils.isEmpty(params.filePattern) || StringUtils.isEmpty(params.dirPath)) {
                 logger.warn("skip due to invalid params!");

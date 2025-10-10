@@ -1,8 +1,9 @@
 package tech.powerjob.server.web.response;
 
-import com.alibaba.fastjson.JSONObject;
+
 import tech.powerjob.common.OmsConstant;
 import tech.powerjob.common.model.PEWorkflowDAG;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.server.persistence.remote.model.WorkflowInstanceInfoDO;
 import lombok.Data;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -63,7 +64,7 @@ public class WorkflowInstanceInfoVO {
         BeanUtils.copyProperties(wfInstanceDO, vo);
 
         vo.setWorkflowName(workflowName);
-        vo.setPEWorkflowDAG(JSONObject.parseObject(wfInstanceDO.getDag(), PEWorkflowDAG.class));
+        vo.setPEWorkflowDAG(JsonUtils.parseObject(wfInstanceDO.getDag(), PEWorkflowDAG.class));
 
         // JS精度丢失问题
         vo.setWfInstanceId(String.valueOf(wfInstanceDO.getWfInstanceId()));
