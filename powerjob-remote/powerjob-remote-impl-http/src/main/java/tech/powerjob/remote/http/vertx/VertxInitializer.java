@@ -64,7 +64,7 @@ public class VertxInitializer {
         HttpClientOptions httpClientOptions = new HttpClientOptions()
                 .setMetricsName(OmsConstant.PACKAGE)
                 .setConnectTimeout(CONNECTION_TIMEOUT_MS)
-                .setMaxPoolSize(Math.max(8, SysUtils.availableProcessors()) * 2);
+                .setHttp2MultiplexingLimit(Math.max(8, SysUtils.availableProcessors()) * 2);
 
         // 长连接
         String keepaliveTimeout = System.getProperty(PowerJobDKey.TRANSPORTER_KEEP_ALIVE_TIMEOUT, String.valueOf(DEFAULT_KEEP_ALIVE_TIMEOUT));
@@ -78,7 +78,7 @@ public class VertxInitializer {
         // 压缩判定
         String enableCompressing = System.getProperty(PowerJobDKey.TRANSPORTER_USE_COMPRESSING);
         if (StringUtils.isNotEmpty(enableCompressing)) {
-            httpClientOptions.setTryUseCompression(StringUtils.equalsIgnoreCase(enableCompressing, Boolean.TRUE.toString()));
+            httpClientOptions.setDecompressionSupported(StringUtils.equalsIgnoreCase(enableCompressing, Boolean.TRUE.toString()));
         }
 
         log.info("[PowerJob-Vertx] use HttpClientOptions: {}", httpClientOptions.toJson());

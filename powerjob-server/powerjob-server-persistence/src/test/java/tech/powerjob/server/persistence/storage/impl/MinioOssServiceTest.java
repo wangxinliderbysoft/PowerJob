@@ -19,7 +19,7 @@ class MinioOssServiceTest extends AbstractDfsServiceTest {
     protected Optional<DFsService> fetchService() {
         try {
             MinioOssService aliOssService = new MinioOssService();
-            aliOssService.initOssClient("http://192.168.124.23:9000", "pj2","testAk", "testSktestSktestSk");
+            aliOssService.initOssClient("pj2");
             return Optional.of(aliOssService);
         } catch (Exception e) {
             // 仅异常提醒

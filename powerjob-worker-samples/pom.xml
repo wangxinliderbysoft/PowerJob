@@ -51,11 +51,7 @@
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-worker-spring-boot-starter</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-official-processors</artifactId>
@@ -66,7 +62,6 @@
             <artifactId>powerjob-client</artifactId>
         </dependency>
 
-        <!-- 高版本 JDK 移除了 JavaEE 的包，需要手动引入 -->
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>

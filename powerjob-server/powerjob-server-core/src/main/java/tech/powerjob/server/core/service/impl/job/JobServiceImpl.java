@@ -1,7 +1,6 @@
 package tech.powerjob.server.core.service.impl.job;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -98,7 +97,7 @@ public class JobServiceImpl implements JobService {
             }
         }
         LifeCycle lifecycle = Optional.ofNullable(request.getLifeCycle()).orElse(LifeCycle.EMPTY_LIFE_CYCLE);
-        jobInfoDO.setLifecycle(JSON.toJSONString(lifecycle));
+        jobInfoDO.setLifecycle(JsonUtils.toJSONString(lifecycle));
         // 检查定时策略
         timingStrategyService.validate(request.getTimeExpressionType(), request.getTimeExpression(), lifecycle.getStart(), lifecycle.getEnd());
         calculateNextTriggerTime(jobInfoDO);
@@ -111,15 +110,15 @@ public class JobServiceImpl implements JobService {
             if (config.getStatisticWindowLen() == null || config.getAlertThreshold() == null || config.getSilenceWindowLen() == null) {
                 throw new PowerJobException("illegal alarm config!");
             }
-            jobInfoDO.setAlarmConfig(JSON.toJSONString(request.getAlarmConfig()));
+            jobInfoDO.setAlarmConfig(JsonUtils.toJSONString(request.getAlarmConfig()));
         }
         // 日志配置
         if (request.getLogConfig() != null) {
-            jobInfoDO.setLogConfig(JSONObject.toJSONString(request.getLogConfig()));
+            jobInfoDO.setLogConfig(JsonUtils.toJSONString(request.getLogConfig()));
         }
         // 日志配置
         if (request.getAdvancedRuntimeConfig() != null) {
-            jobInfoDO.setAdvancedRuntimeConfig(JSONObject.toJSONString(request.getAdvancedRuntimeConfig()));
+            jobInfoDO.setAdvancedRuntimeConfig(JsonUtils.toJSONString(request.getAdvancedRuntimeConfig()));
         }
         JobInfoDO res = jobInfoRepository.saveAndFlush(jobInfoDO);
         return res.getId();

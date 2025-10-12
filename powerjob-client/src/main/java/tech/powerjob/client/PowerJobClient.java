@@ -1,6 +1,5 @@
 package tech.powerjob.client;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +62,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         String assertResponse = requestService.request(OpenAPIConstant.AUTH_APP, PowerRequestBody.newJsonRequestBody(appAuthRequest));
 
         if (StringUtils.isNotEmpty(assertResponse)) {
-            ResultDTO<AppAuthResult> resultDTO = JSON.parseObject(assertResponse, APP_AUTH_RESULT_TYPE);
+            ResultDTO<AppAuthResult> resultDTO = JsonUtils.parseObject(assertResponse, APP_AUTH_RESULT_TYPE);
             if (resultDTO.isSuccess()) {
                 appId = resultDTO.getData().getAppId();
             } else {
@@ -114,7 +113,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
 
         request.setAppId(appId);
         String post = requestService.request(OpenAPIConstant.SAVE_JOB, PowerRequestBody.newJsonRequestBody(request));
-        return JSON.parseObject(post, LONG_RESULT_TYPE);
+        return JsonUtils.parseObject(post, LONG_RESULT_TYPE);
     }
 
 
@@ -130,8 +129,9 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("jobId", jobId.toString());
         param.put("appId", appId.toString());
 
+
         String post = requestService.request(OpenAPIConstant.COPY_JOB, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, LONG_RESULT_TYPE);
+        return JsonUtils.parseObject(post, LONG_RESULT_TYPE);
     }
 
     @Override
@@ -140,7 +140,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("jobId", jobId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.EXPORT_JOB, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, SAVE_JOB_INFO_REQUEST_RESULT_TYPE);
+        return JsonUtils.parseObject(post, SAVE_JOB_INFO_REQUEST_RESULT_TYPE);
     }
 
     /**
@@ -155,7 +155,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("jobId", jobId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.FETCH_JOB, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, JOB_RESULT_TYPE);
+        return JsonUtils.parseObject(post, JOB_RESULT_TYPE);
     }
 
     /**
@@ -168,7 +168,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         Map<String, String> param = Maps.newHashMap();
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.FETCH_ALL_JOB, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, LIST_JOB_RESULT_TYPE);
+        return JsonUtils.parseObject(post, LIST_JOB_RESULT_TYPE);
     }
 
     /**
@@ -181,7 +181,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
     public ResultDTO<List<JobInfoDTO>> queryJob(JobInfoQuery powerQuery) {
         powerQuery.setAppIdEq(appId);
         String post = requestService.request(OpenAPIConstant.QUERY_JOB, PowerRequestBody.newJsonRequestBody(powerQuery));
-        return JSON.parseObject(post, LIST_JOB_RESULT_TYPE);
+        return JsonUtils.parseObject(post, LIST_JOB_RESULT_TYPE);
     }
 
     /**
@@ -196,7 +196,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("jobId", jobId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.DISABLE_JOB, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -211,7 +211,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("jobId", jobId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.ENABLE_JOB, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -226,7 +226,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("jobId", jobId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.DELETE_JOB, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -252,7 +252,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
     public PowerResultDTO<Long> runJob(RunJobRequest runJobRequest) {
         runJobRequest.setAppId(appId);
         String post = requestService.request(OpenAPIConstant.RUN_JOB2, PowerRequestBody.newJsonRequestBody(runJobRequest));
-        return JSON.parseObject(post, LONG_POWER_RESULT_TYPE);
+        return JsonUtils.parseObject(post, LONG_POWER_RESULT_TYPE);
     }
 
     /* ************* Instance API list ************* */
@@ -271,7 +271,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("appId", appId.toString());
 
         String post = requestService.request(OpenAPIConstant.STOP_INSTANCE, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -287,7 +287,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("instanceId", instanceId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.CANCEL_INSTANCE, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -303,7 +303,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("instanceId", instanceId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.RETRY_INSTANCE, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -318,7 +318,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("instanceId", instanceId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.FETCH_INSTANCE_STATUS, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, INTEGER_RESULT_TYPE);
+        return JsonUtils.parseObject(post, INTEGER_RESULT_TYPE);
     }
 
     /**
@@ -333,14 +333,14 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("instanceId", instanceId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.FETCH_INSTANCE_INFO, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, INSTANCE_RESULT_TYPE);
+        return JsonUtils.parseObject(post, INSTANCE_RESULT_TYPE);
     }
 
     @Override
     public ResultDTO<PageResult<InstanceInfoDTO>> queryInstanceInfo(InstancePageQuery instancePageQuery) {
         instancePageQuery.setAppIdEq(appId);
         String post = requestService.request(OpenAPIConstant.QUERY_INSTANCE, PowerRequestBody.newJsonRequestBody(instancePageQuery));
-        return JSON.parseObject(post, PAGE_INSTANCE_RESULT_TYPE);
+        return JsonUtils.parseObject(post, PAGE_INSTANCE_RESULT_TYPE);
     }
 
     /* ************* Workflow API list ************* */
@@ -358,7 +358,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         // 中坑记录：用 FastJSON 序列化会导致 Server 接收时 pEWorkflowDAG 为 null，无语.jpg
         String json = JsonUtils.toJSONStringUnsafe(request);
         String post = requestService.request(OpenAPIConstant.SAVE_WORKFLOW, PowerRequestBody.newJsonRequestBody(json));
-        return JSON.parseObject(post, LONG_RESULT_TYPE);
+        return JsonUtils.parseObject(post, LONG_RESULT_TYPE);
     }
 
     /**
@@ -375,7 +375,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("appId", appId.toString());
 
         String post = requestService.request(OpenAPIConstant.COPY_WORKFLOW, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, LONG_RESULT_TYPE);
+        return JsonUtils.parseObject(post, LONG_RESULT_TYPE);
     }
 
 
@@ -393,7 +393,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
 
         String json = JsonUtils.toJSONStringUnsafe(requestList);
         String post = requestService.request(OpenAPIConstant.SAVE_WORKFLOW_NODE, PowerRequestBody.newJsonRequestBody(json));
-        return JSON.parseObject(post, WF_NODE_LIST_RESULT_TYPE);
+        return JsonUtils.parseObject(post, WF_NODE_LIST_RESULT_TYPE);
     }
 
 
@@ -410,7 +410,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("workflowId", workflowId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.FETCH_WORKFLOW, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, WF_RESULT_TYPE);
+        return JsonUtils.parseObject(post, WF_RESULT_TYPE);
     }
 
     /**
@@ -425,7 +425,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("workflowId", workflowId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.DISABLE_WORKFLOW, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -440,7 +440,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("workflowId", workflowId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.ENABLE_WORKFLOW, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -455,7 +455,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("workflowId", workflowId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.DELETE_WORKFLOW, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -479,7 +479,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
             param.put("initParams", initParams);
         }
         String post = requestService.request(OpenAPIConstant.RUN_WORKFLOW, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, LONG_RESULT_TYPE);
+        return JsonUtils.parseObject(post, LONG_RESULT_TYPE);
     }
 
     public ResultDTO<Long> runWorkflow(Long workflowId) {
@@ -502,7 +502,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("appId", appId.toString());
 
         String post = requestService.request(OpenAPIConstant.STOP_WORKFLOW_INSTANCE, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -517,7 +517,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("wfInstanceId", wfInstanceId.toString());
         param.put("appId", appId.toString());
         String post = requestService.request(OpenAPIConstant.RETRY_WORKFLOW_INSTANCE, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -536,7 +536,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("nodeId", nodeId.toString());
 
         String post = requestService.request(OpenAPIConstant.MARK_WORKFLOW_NODE_AS_SUCCESS, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, VOID_RESULT_TYPE);
+        return JsonUtils.parseObject(post, VOID_RESULT_TYPE);
     }
 
     /**
@@ -553,7 +553,7 @@ public class PowerJobClient implements IPowerJobClient, Closeable {
         param.put("appId", appId.toString());
 
         String post = requestService.request(OpenAPIConstant.FETCH_WORKFLOW_INSTANCE_INFO, PowerRequestBody.newFormRequestBody(param));
-        return JSON.parseObject(post, WF_INSTANCE_RESULT_TYPE);
+        return JsonUtils.parseObject(post, WF_INSTANCE_RESULT_TYPE);
     }
 
     @Override

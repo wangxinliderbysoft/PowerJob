@@ -1,14 +1,16 @@
 package tech.powerjob.official.processors.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import tech.powerjob.worker.core.processor.TaskContext;
 import org.junit.jupiter.api.Test;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.official.processors.TestUtils;
+import tech.powerjob.worker.core.processor.TaskContext;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * test FileCleanupProcessor
@@ -36,14 +38,12 @@ class FileCleanupProcessorTest {
 
     @Test
     void testProcess() throws Exception {
-        JSONObject params = new JSONObject();
+        Map<String,Object> params = new HashMap<>() ;
         params.put("dirPath", "/Users/tjq/logs");
         params.put("filePattern", "[\\s\\S]*log");
         params.put("retentionTime", 0);
-        JSONArray array = new JSONArray();
-        array.add(params);
+        String paramsStr = JsonUtils.toJSONString(List.of(params));
 
-        String paramsStr = array.toJSONString();
         System.out.println(paramsStr);
 
         TaskContext taskContext = TestUtils.genTaskContext(paramsStr);
@@ -52,14 +52,14 @@ class FileCleanupProcessorTest {
 
     @Test
     void testCleanWorkerScript() throws Exception {
-        JSONObject params = new JSONObject();
+        Map<String,Object> params = new HashMap<>() ;
         params.put("dirPath", "/");
         params.put("filePattern", "(shell|python)_[0-9]*\\.(sh|py)");
         params.put("retentionTime", 24);
-        JSONArray array = new JSONArray();
-        array.add(params);
+        List<Map<String, Object>> params1 = List.of(params);
 
-        TaskContext taskContext = TestUtils.genTaskContext(array.toJSONString());
+
+        TaskContext taskContext = TestUtils.genTaskContext(JsonUtils.toJSONString(params1));
         System.out.println(new FileCleanupProcessor().process(taskContext));
     }
 }

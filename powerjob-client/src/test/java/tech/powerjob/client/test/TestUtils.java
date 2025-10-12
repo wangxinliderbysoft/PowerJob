@@ -1,6 +1,6 @@
 package tech.powerjob.client.test;
 
-import com.alibaba.fastjson.JSONObject;
+import tech.powerjob.common.serialize.JsonUtils;
 
 /**
  * TestUtils
@@ -11,7 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 public class TestUtils {
 
     public static void output(Object v) {
-        String str = JSONObject.toJSONString(v);
+        String str = JsonUtils.toJSONString(v);
         System.out.println(str);
     }
 }

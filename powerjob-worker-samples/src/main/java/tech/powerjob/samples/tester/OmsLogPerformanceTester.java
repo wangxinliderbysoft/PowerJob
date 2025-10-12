@@ -1,11 +1,13 @@
 package tech.powerjob.samples.tester;
 
-import com.alibaba.fastjson.JSONObject;
+import org.springframework.stereotype.Component;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.worker.core.processor.ProcessResult;
 import tech.powerjob.worker.core.processor.TaskContext;
 import tech.powerjob.worker.core.processor.sdk.BasicProcessor;
 import tech.powerjob.worker.log.OmsLogger;
-import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * 测试 Oms 在线日志的性能
@@ -23,9 +25,9 @@ public class OmsLogPerformanceTester implements BasicProcessor {
 
         OmsLogger omsLogger = context.getOmsLogger();
         // 控制台参数，格式为 {"num":10000, "interval": 200}
-        JSONObject jobParams = JSONObject.parseObject(context.getJobParams());
-        Long num = jobParams.getLong("num");
-        Long interval = jobParams.getLong("interval");
+        Map<String,Object> jobParams = JsonUtils.parseMap(context.getJobParams());
+        Long num = (Long) jobParams.get("num");
+        Long interval = (Long) jobParams.get("interval");
 
         omsLogger.info("ready to start to process, current JobParams is {}.", jobParams);
 

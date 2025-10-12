@@ -1,10 +1,11 @@
 package tech.powerjob.server.core.service;
 
-import com.alibaba.fastjson.JSON;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tech.powerjob.common.enums.WorkflowNodeType;
 import tech.powerjob.common.model.PEWorkflowDAG;
+import tech.powerjob.common.serialize.JsonUtils;
 import tech.powerjob.common.utils.CommonUtils;
 import tech.powerjob.server.core.workflow.hanlder.ControlNodeHandler;
 import tech.powerjob.server.core.workflow.hanlder.TaskNodeHandler;
@@ -54,7 +55,7 @@ public class WorkflowNodeHandleService {
             log.debug("[Workflow-{}|{}] workflowInstance start to process new node(nodeId={},jobId={})", wfInstanceInfo.getWorkflowId(), wfInstanceInfo.getWfInstanceId(), taskNode.getNodeId(), taskNode.getJobId());
         });
         // 持久化工作流实例信息
-        wfInstanceInfo.setDag(JSON.toJSONString(dag));
+        wfInstanceInfo.setDag(JsonUtils.toJSONString(dag));
         workflowInstanceInfoRepository.saveAndFlush(wfInstanceInfo);
         // 启动
         taskNodeList.forEach(taskNode -> {

@@ -1,6 +1,5 @@
 package tech.powerjob.official.processors.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +60,7 @@ public class ConfigProcessor implements BroadcastProcessor {
         if (StringUtils.isNotEmpty(config.persistentFileName)) {
             final File file = new File(config.persistentFileName);
 
-            String content = JSONObject.toJSONString(realConfig);
+            String content = JsonUtils.toJSONString(realConfig);
             FileUtils.copyToFile(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), file);
         }
 
