@@ -27,7 +27,7 @@ services:
       JVMOPTIONS: "-Xmx512m"
       PARAMS: "--oms.mongodb.enable=false --spring.datasource.core.jdbc-url=jdbc:mysql://powerjob-mysql:3306/powerjob-daily?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
     ports:
-      - "7700:7700"
+      - "8080:8080"
       - "10086:10086"
       - "10010:10010"
       - "10077:10077"
@@ -52,4 +52,4 @@ services:
     entrypoint:
       - "sh"
       - "-c"
-      - "chmod +x wait-for-it.sh && ./wait-for-it.sh powerjob-server:7700 --strict -- java -Xmx512m -jar /powerjob-worker-samples.jar --powerjob.worker.server-address=powerjob-server:7700"
+      - "chmod +x wait-for-it.sh && ./wait-for-it.sh powerjob-server:8080 --strict -- java -Xmx512m -jar /powerjob-worker-samples.jar --powerjob.worker.server-address=powerjob-server:7700"

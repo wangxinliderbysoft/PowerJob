@@ -102,7 +102,7 @@ if [ "$startup" = "y" ] || [  "$startup" = "Y" ]; then
   sleep 30
   echo "================== 准备启动 powerjob-client =================="
   serverIP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' powerjob-server)
-  serverAddress="$serverIP:7700"
+  serverAddress="$serverIP:8080"
   echo "使用的Server地址：$serverAddress"
   docker run -d \
          --name powerjob-agent \
