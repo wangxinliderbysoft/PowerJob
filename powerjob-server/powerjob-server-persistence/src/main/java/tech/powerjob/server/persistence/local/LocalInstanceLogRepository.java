@@ -26,12 +26,12 @@ public interface LocalInstanceLogRepository extends JpaRepository<LocalInstanceL
      */
     @Modifying
     @Transactional(rollbackOn = Exception.class)
-    long deleteByInstanceId(Long instanceId);
+    Long deleteByInstanceId(Long instanceId);
 
     @Modifying
     @Transactional(rollbackOn = Exception.class)
     @CanIgnoreReturnValue
-    long deleteByInstanceIdInAndLogTimeLessThan(List<Long> instanceIds, Long t);
+    Long deleteByInstanceIdInAndLogTimeLessThan(List<Long> instanceIds, Long t);
 
-    long countByInstanceId(Long instanceId);
+    Long countByInstanceId(Long instanceId);
 }
