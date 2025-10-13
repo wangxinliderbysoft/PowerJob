@@ -5,13 +5,13 @@
     <parent>
         <artifactId>powerjob-server</artifactId>
         <groupId>tech.powerjob</groupId>
-        <version>5.1.2</version>
+        <version>5.1.2-springboot3-snapshot</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>powerjob-server-starter</artifactId>
-    <version>5.1.2</version>
+    <version>5.1.2-springboot3-snapshot</version>
     <packaging>war</packaging>
 
 
@@ -58,19 +58,23 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
 
     </dependencies>
 
     <!-- SpringBoot maven plugin -->
     <build>
         <plugins>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>tech.powerjob.server.PowerJobServerApplication</mainClass>
-                    <!-- 支持 server 作为 jar 包被外部系统集成 https://gitee.com/KFCFans/PowerJob/issues/I6H8JF ，短期su内为了兼容 CI 流程 deploy 阶段关闭注释，推 master 重新打开-->
-                    <!-- <classifier>exec</classifier>-->
+                    &lt;!&ndash; 支持 server 作为 jar 包被外部系统集成 https://gitee.com/KFCFans/PowerJob/issues/I6H8JF ，短期su内为了兼容 CI 流程 deploy 阶段关闭注释，推 master 重新打开&ndash;&gt;
+                    &lt;!&ndash; <classifier>exec</classifier>&ndash;&gt;
                 </configuration>
                 <executions>
                     <execution>
@@ -80,7 +84,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 

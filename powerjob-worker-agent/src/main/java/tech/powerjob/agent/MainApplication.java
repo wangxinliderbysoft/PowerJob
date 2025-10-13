@@ -38,7 +38,7 @@ public class MainApplication implements Runnable {
     private String storeStrategy = "DISK";
 
     @Option(names = {"-s", "--server"}, description = "oms-server's address, IP:Port OR domain", required = true)
-    private String server = "localhost:7700";
+    private String server = "localhost:8080";
 
     @Option(names = {"-l", "--length"}, description = "ProcessResult#msg max length")
     private int length = 1024;

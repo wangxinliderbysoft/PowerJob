@@ -31,7 +31,7 @@ docker run -d \
 sleep 60
 echo "================== 准备启动 powerjob-agent =================="
 serverIP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' powerjob-server)
-serverAddress="$serverIP:7700"
+serverAddress="$serverIP:8080"
 echo "使用的Server地址：$serverAddress"
 
 docker run -d \

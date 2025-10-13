@@ -10,7 +10,7 @@
     </parent>
     <groupId>tech.powerjob</groupId>
     <artifactId>powerjob</artifactId>
-    <version>5.1.2</version>
+    <version>5.1.2-springboot3-snapshot</version>
     <packaging>pom</packaging>
     <name>powerjob</name>
     <url>http://www.powerjob.tech</url>
@@ -458,7 +458,10 @@
 
             <build>
                 <plugins>
-                    <!-- Maven compiler plugin -->
+<!--                    <plugin>-->
+<!--                        <groupId>org.springframework.boot</groupId>-->
+<!--                        <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                    </plugin>-->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
@@ -480,6 +483,13 @@
                                     <Implementation-Version>${project.version}</Implementation-Version>
                                 </manifestEntries>
                             </archive>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>versions-maven-plugin</artifactId>
+                        <configuration>
+                            <generateBackupPoms>false</generateBackupPoms>
                         </configuration>
                     </plugin>
                 </plugins>

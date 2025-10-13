@@ -66,7 +66,7 @@ class HttpProcessorTest {
 
     @Test
     void testTimeout() throws Exception {
-        String url = "http://localhost:7700/tmp/sleep";
+        String url = "http://localhost:8080/tmp/sleep";
         Map<String,Object> params = new HashMap<>();
         params.put("url", url);
         params.put("method", "GET");

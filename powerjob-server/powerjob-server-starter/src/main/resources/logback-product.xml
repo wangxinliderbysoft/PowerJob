@@ -12,7 +12,7 @@
         Bug recording: Setting `~/logs`, is unable to create folder in user home directory,
         a folder with the name ~ is created in project folder.
     -->
-    <property name="LOG_PATH" value="${user.home}/powerjob/server/logs"/>
+    <property name="LOG_PATH" value="/usr/local/logs"/>
 
     <!-- include other logback configs -->
     <include resource="logback-config/powerjob_monitor.xml"/>
