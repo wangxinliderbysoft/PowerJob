@@ -13,7 +13,7 @@
     <name>powerjob-worker-samples</name>
     <version>5.1.2-springboot3-snapshot</version>
 
-
+<packaging>war</packaging>
 
     <dependencies>
 
