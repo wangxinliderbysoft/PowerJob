@@ -4,9 +4,9 @@ import tech.powerjob.common.enums.InstanceStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NativeGenerator;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 /**
@@ -28,8 +28,8 @@ import java.util.Date;
 public class InstanceInfoDO {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @GeneratedValue
+    @NativeGenerator(sequenceForm = @SequenceGenerator(name = "native", sequenceName = "native", allocationSize = 1))
     private Long id;
     /**
      * 任务ID
@@ -49,13 +49,13 @@ public class InstanceInfoDO {
      * @since 2021/2/01
      */
     @Lob
-    @Column
+    @Column(length = Integer.MAX_VALUE)
     private String jobParams;
     /**
      * 任务实例参数（动态）
      */
     @Lob
-    @Column
+    @Column(length = Integer.MAX_VALUE)
     private String instanceParams;
     /**
      * 该任务实例的类型，普通/工作流（InstanceType）
@@ -73,7 +73,7 @@ public class InstanceInfoDO {
      * 执行结果（允许存储稍大的结果）
      */
     @Lob
-    @Column
+    @Column(length = Integer.MAX_VALUE)
     private String result;
     /**
      * 预计触发时间

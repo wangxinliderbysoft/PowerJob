@@ -29,8 +29,8 @@ import tech.powerjob.server.persistence.remote.repository.*;
 import tech.powerjob.server.remote.worker.WorkerClusterQueryService;
 import tech.powerjob.server.web.controller.ContainerController;
 
-import javax.websocket.RemoteEndpoint;
-import javax.websocket.Session;
+import jakarta.websocket.RemoteEndpoint;
+import jakarta.websocket.Session;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,7 +76,7 @@ class ContainerCredentialSecurityTest {
         ReflectionTestUtils.setField(permissions, "userRoleRepository", roles);
         PowerJobUser user = new PowerJobUser(); user.setId(9L);
         PowerJobLoginService login = mock(PowerJobLoginService.class);
-        when(login.ifLogin(any(javax.servlet.http.HttpServletRequest.class))).thenReturn(Optional.of(user));
+        when(login.ifLogin(any(jakarta.servlet.http.HttpServletRequest.class))).thenReturn(Optional.of(user));
         PowerJobAuthInterceptor interceptor = new PowerJobAuthInterceptor();
         ReflectionTestUtils.setField(interceptor, "powerJobLoginService", login);
         ReflectionTestUtils.setField(interceptor, "powerJobPermissionService", permissions);

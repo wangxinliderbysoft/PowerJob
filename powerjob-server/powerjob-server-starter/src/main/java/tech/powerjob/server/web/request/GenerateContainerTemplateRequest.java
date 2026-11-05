@@ -28,7 +28,7 @@ public class GenerateContainerTemplateRequest {
      */
     private String packageName;
     /**
-     * Java版本号，8或者11
+     * Target Java version; defaults to 21 when omitted.
      */
     private Integer javaVersion;
 

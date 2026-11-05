@@ -1,9 +1,9 @@
 package tech.powerjob.server.persistence.config.dialect;
 
-import org.hibernate.dialect.PostgreSQL10Dialect;
-import org.hibernate.type.descriptor.sql.LongVarbinaryTypeDescriptor;
-import org.hibernate.type.descriptor.sql.LongVarcharTypeDescriptor;
-import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
+import org.hibernate.boot.model.TypeContributions;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.type.descriptor.jdbc.LongVarbinaryJdbcType;
+import org.hibernate.type.descriptor.jdbc.spi.JdbcTypeRegistry;
 
 import java.sql.Types;
 
@@ -14,24 +14,18 @@ import java.sql.Types;
  * @author litong0531
  * @since 2024/8/11
  */
-public class AdpPostgreSQLDialect extends PostgreSQL10Dialect {
+public class AdpPostgreSQLDialect extends PowerJobPGDialect {
 
-    public AdpPostgreSQLDialect() {
-        super();
-        registerColumnType(Types.BLOB, "bytea");
-        registerColumnType(Types.CLOB, "text");
+    @Override
+    protected String columnType(int sqlTypeCode) {
+        return sqlTypeCode == Types.BLOB ? "bytea" : super.columnType(sqlTypeCode);
     }
 
     @Override
-    public SqlTypeDescriptor remapSqlTypeDescriptor(SqlTypeDescriptor sqlTypeDescriptor) {
-        switch (sqlTypeDescriptor.getSqlType()) {
-            case Types.CLOB:
-                return LongVarcharTypeDescriptor.INSTANCE;
-            case Types.BLOB:
-                return LongVarbinaryTypeDescriptor.INSTANCE;
-            case Types.NCLOB:
-                return LongVarbinaryTypeDescriptor.INSTANCE;
-        }
-        return super.remapSqlTypeDescriptor(sqlTypeDescriptor);
+    public void contributeTypes(TypeContributions typeContributions, ServiceRegistry serviceRegistry) {
+        super.contributeTypes(typeContributions, serviceRegistry);
+        JdbcTypeRegistry jdbcTypes = typeContributions.getTypeConfiguration().getJdbcTypeRegistry();
+        jdbcTypes.addDescriptor(Types.BLOB, LongVarbinaryJdbcType.INSTANCE);
+        jdbcTypes.addDescriptor(Types.NCLOB, LongVarbinaryJdbcType.INSTANCE);
     }
 }

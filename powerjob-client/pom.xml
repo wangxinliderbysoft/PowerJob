@@ -15,12 +15,10 @@
     <packaging>jar</packaging>
 
     <properties>
-        <junit.version>5.9.1</junit.version>
-        <logback.version>1.2.13</logback.version>
         <fastjson.version>1.2.84</fastjson.version>
         <powerjob.common.version>5.1.7</powerjob.common.version>
 
-        <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
+        <mvn.shade.plugin.version>3.6.1</mvn.shade.plugin.version>
     </properties>
 
     <dependencies>
@@ -43,20 +41,17 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- log for test stage -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

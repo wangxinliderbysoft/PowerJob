@@ -3,9 +3,9 @@ package tech.powerjob.server.persistence.remote.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NativeGenerator;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 /**
@@ -28,8 +28,8 @@ import java.util.Date;
 public class WorkflowInstanceInfoDO {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @GeneratedValue
+    @NativeGenerator(sequenceForm = @SequenceGenerator(name = "native", sequenceName = "native", allocationSize = 1))
     private Long id;
     /**
      * 任务所属应用的ID，冗余提高查询效率
@@ -53,21 +53,21 @@ public class WorkflowInstanceInfoDO {
      * 工作流启动参数
      */
     @Lob
-    @Column
+    @Column(length = Integer.MAX_VALUE)
     private String wfInitParams;
     /**
      * 工作流上下文
      */
     @Lob
-    @Column
+    @Column(length = Integer.MAX_VALUE)
     private String wfContext;
 
     @Lob
-    @Column
+    @Column(length = Integer.MAX_VALUE)
     private String dag;
 
     @Lob
-    @Column
+    @Column(length = Integer.MAX_VALUE)
     private String result;
     /**
      * 预计触发时间

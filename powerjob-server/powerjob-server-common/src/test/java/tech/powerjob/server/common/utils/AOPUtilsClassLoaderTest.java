@@ -17,6 +17,14 @@ public class AOPUtilsClassLoaderTest {
 
     public void target() { }
 
+    public void namedTarget(Long appId) { }
+
+    @Test
+    void bindsNamedArgumentsForLockExpressions() throws Exception {
+        assertEquals("app-42", AOPUtils.parseSpEl(getClass().getMethod("namedTarget", Long.class),
+                new Object[]{42L}, "'app-' + #appId", String.class, "missing"));
+    }
+
     public static int incrementAndReturnZero() {
         EVALUATIONS.incrementAndGet();
         return 0;

@@ -113,20 +113,13 @@ public class MuTransporter implements Transporter {
             // Register the future for response handling
             channelManager.registerPendingRequest(requestId, (CompletableFuture<Object>) future, clz);
 
-            // Set timeout for the request (JDK8 compatible)
             future.whenComplete((result, throwable) -> {
                 if (throwable != null) {
                     channelManager.removePendingRequest(requestId);
                 }
             });
 
-            // Schedule timeout manually for JDK8 compatibility
-            java.util.concurrent.Executors.newSingleThreadScheduledExecutor().schedule(() -> {
-                if (!future.isDone()) {
-                    channelManager.removePendingRequest(requestId);
-                    future.completeExceptionally(new java.util.concurrent.TimeoutException("Request timeout after " + ASK_TIMEOUT_SECONDS + " seconds"));
-                }
-            }, ASK_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            future.orTimeout(ASK_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
             MuMessage message = new MuMessage(
                 MuMessage.MessageType.ASK,

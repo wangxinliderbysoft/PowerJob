@@ -15,6 +15,69 @@
 
 Refer to [PowerJob Introduction](https://www.yuque.com/powerjob/en/introduce) for detailed information.
 
+# Java 21 / Spring Boot 4
+
+All modules now require **JDK 21**. Applications and the worker starter target **Spring Boot 4.0.9**;
+the starter is not compatible with Boot 2 or 3. Rebuild consumers and dynamic processor projects with
+Java 21. Servlet, WebSocket, persistence and resource-injection integrations now use `jakarta.*`.
+The server uses embedded **Tomcat 11**, not Undertow; the independent HTTP/AKKA/MU transports remain available.
+
+PowerJob's public JSON utilities and existing Jackson annotations remain on **Jackson 2**.
+The server intentionally uses Boot's deprecated `spring-boot-jackson2` compatibility bridge, with
+`spring.http.converters.preferred-json-mapper=jackson2`. Move custom mapper settings from
+`spring.jackson.*` to `spring.jackson2.*`. Jackson 3 may coexist for framework integrations.
+
+## Building and testing
+
+Select JDK 21 in `JAVA_HOME` and put `$JAVA_HOME/bin` on `PATH`, then use **mvnd 1.0.3**:
+
+```bash
+java -version
+mvnd --version
+bash .github/scripts/verify-java21.sh
+```
+
+The [verification script](.github/scripts/verify-java21.sh) builds every module and runs an explicit,
+local-only contract suite, including real embedded-Tomcat HTTP/WebSocket and HTTP/AKKA/MU loopback tests.
+It does not run legacy tests that connect to shared databases, object stores or public HTTP services.
+Do not run an unrestricted `mvnd test` or `mvnd verify` until those fixtures have been isolated.
+The [Java CI workflow](.github/workflows/maven_build.yml) also runs `PersistenceMigrationIT` against
+disposable MySQL and PostgreSQL services. That test accepts only loopback databases named
+`powerjob_upgrade_test`, bootstraps frozen pre-upgrade DDL and validates mappings without schema updates.
+
+Downloaded processor templates now default to Java 21 and Spring 7. Build them with JDK 21;
+explicit older processor bytecode targets remain accepted for compatibility with existing requests.
+This does not make the Java 21 PowerJob artifacts loadable by older JVMs.
+
+## Database and deployment compatibility
+
+| Database | JDBC driver retained | Java 21 migration validation |
+|---|---|---|
+| MySQL | Connector/J 8.0.33 | MySQL 8.4: legacy schema, identity IDs, large text and transaction routing |
+| PostgreSQL | 42.6.0 | PostgreSQL 18: legacy schema, shared `native` sequence, text LOBs and transaction routing |
+| Oracle | ojdbc8 19.7.0.0 | Real-database validation still required |
+| SQL Server | 7.4.1.jre8 | Driver/runtime and real-database validation still required |
+| DB2 | 11.5.0.0 | Driver/runtime and real-database validation still required |
+
+No schema migration is included. Native sequence allocation remains 1, table prefixes and names are
+preserved, and MySQL LOB columns retain their existing `longtext` capacity. Both configured PostgreSQL
+dialect class names remain available; the Hibernate community dialect dependency preserves their
+PostgreSQL-10-era SQL baseline. This does not certify every historical database version.
+Before rollout, validate a disposable copy of your actual schema with
+`spring.datasource.remote.hibernate.properties.hibernate.hbm2ddl.auto=validate`; never use automatic
+schema updates to conceal an incompatibility.
+
+Application Dockerfiles pin a multi-architecture Temurin 21 JDK image. The agent's `python` command now
+runs **Python 3**; Python 2 processors must be ported before using that image. Development GC options use
+Java 21 unified logging. Docker image startup and architecture checks must be run on a Docker-enabled host.
+
+Java 8 consumers cannot load these Java 21 artifacts. Frozen Java 8 JSON/Kryo fixtures and separate-JVM
+Java 8/Java 21 request/reply checks passed for HTTP, AKKA and MU. The upgraded MU transport also releases
+request-timeout threads on shutdown. These checks do not replace rolling-upgrade tests for your actual
+server-worker topology and processors. Retain the previous artifacts and a database backup; do not assume
+that application rollback reverses data or DDL changes. Release coordinates are unchanged: choose a new
+release version before publishing, rather than overwriting `5.1.7`.
+
 # Introduction
 
 ### Features

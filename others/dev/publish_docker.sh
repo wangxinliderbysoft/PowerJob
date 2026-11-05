@@ -11,9 +11,9 @@ cd `dirname $0`/../.. || exit
 read -r -p "是否进行maven构建（y/n）:" needmvn
 if [ "$needmvn" = "y" ] || [  "$needmvn" = "Y" ]; then
   echo "================== 构建 jar =================="
-  # mvn clean package -Pdev -DskipTests -U -e -pl powerjob-server,powerjob-worker-agent -am
+  # mvnd clean package -Pdev -DskipTests -U -e -pl powerjob-server,powerjob-worker-agent -am
   # -U：强制检查snapshot库 -pl：指定需要构建的模块，多模块逗号分割 -am：同时构建依赖模块，一般与pl连用 -Pxxx：指定使用的配置文件
-  mvn clean package -Pdev -DskipTests -U -e
+  mvnd clean package -Pdev -DskipTests -U -e
   echo "================== 拷贝 jar =================="
   /bin/cp -rf powerjob-server/powerjob-server-starter/target/*.jar powerjob-server/docker/powerjob-server.jar
   /bin/cp -rf powerjob-worker-agent/target/*.jar powerjob-worker-agent/powerjob-agent.jar
@@ -91,7 +91,7 @@ if [ "$startup" = "y" ] || [  "$startup" = "Y" ]; then
   docker run -d \
          --name powerjob-server \
          -p 7700:7700 -p 10086:10086 -p 10010:10010 -p 10077:10077 -p 5001:5005 -p 10001:10000 \
-         -e JVMOPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10000 -Dcom.sun.management.jmxremote.rmi.port=10000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false" \
+         -e JVMOPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10000 -Dcom.sun.management.jmxremote.rmi.port=10000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false" \
          -e PARAMS="--spring.profiles.active=pre" \
          -e TZ="Asia/Shanghai" \
          -v ~/docker/powerjob-server:/root/powerjob-server -v ~/.m2:/root/.m2 \
@@ -107,7 +107,7 @@ if [ "$startup" = "y" ] || [  "$startup" = "Y" ]; then
   docker run -d \
          --name powerjob-agent \
          -p 27777:27777 -p 5002:5005 -p 10002:10000 \
-         -e JVMOPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10000 -Dcom.sun.management.jmxremote.rmi.port=10000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false" \
+         -e JVMOPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10000 -Dcom.sun.management.jmxremote.rmi.port=10000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false" \
          -e PARAMS="--app powerjob-agent-test --server $serverAddress" \
          -v ~/docker/powerjob-agent:/root \
          tjqq/powerjob-agent:$version
@@ -115,7 +115,7 @@ if [ "$startup" = "y" ] || [  "$startup" = "Y" ]; then
   docker run -d \
          --name powerjob-agent2 \
          -p 27778:27777 -p 5003:5005 -p 10003:10000 \
-         -e JVMOPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005" \
+         -e JVMOPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005" \
          -e PARAMS="--app powerjob-agent-test --server $serverAddress" \
          -v ~/docker/powerjob-agent2:/root \
          tjqq/powerjob-agent:$version

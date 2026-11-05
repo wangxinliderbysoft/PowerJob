@@ -1,10 +1,10 @@
 package tech.powerjob.worker.autoconfigure;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import tech.powerjob.common.utils.CommonUtils;
 import tech.powerjob.common.utils.NetUtils;
 import tech.powerjob.worker.PowerJobSpringWorker;
@@ -19,7 +19,7 @@ import java.util.List;
  * @author songyinyin
  * @since 2020/7/26 16:37
  */
-@Configuration
+@AutoConfiguration
 @EnableConfigurationProperties(PowerJobProperties.class)
 @ConditionalOnProperty(prefix = "powerjob.worker", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class PowerJobAutoConfiguration {

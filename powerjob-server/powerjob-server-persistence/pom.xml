@@ -14,11 +14,13 @@
     <version>${project.parent.version}</version>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-community-dialects</artifactId>
+        </dependency>
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-server-common</artifactId>

@@ -12,6 +12,68 @@
 </p>
 
 PowerJob（原OhMyScheduler）是全新一代分布式调度与计算框架，能让您轻松完成作业的调度与繁杂任务的分布式计算。
+
+# Java 21 / Spring Boot 4
+
+所有模块最低要求 **JDK 21**，应用和 Worker Starter 使用 **Spring Boot 4.0.9**。
+Starter 不再兼容 Boot 2/3；接入项目和动态处理器项目需要使用 Java 21 重新构建。
+Servlet、WebSocket、持久化和资源注入接口迁移到 `jakarta.*`。
+Server 的嵌入式容器改为 **Tomcat 11**；独立的 HTTP、AKKA、MU 通讯协议均保留。
+
+公共 JSON 工具和现有 Jackson 注解仍使用 **Jackson 2**。
+Server 有意使用 Boot 已标记弃用的 `spring-boot-jackson2` 兼容模块，并设置
+`spring.http.converters.preferred-json-mapper=jackson2`。
+自定义 Jackson 2 配置需要从 `spring.jackson.*` 迁移到 `spring.jackson2.*`；
+框架组件可能同时使用 Jackson 3。
+
+## 构建与测试
+
+将 `JAVA_HOME` 指向 JDK 21，并把 `$JAVA_HOME/bin` 放到 `PATH` 前部，使用 **mvnd 1.0.3**：
+
+```bash
+java -version
+mvnd --version
+bash .github/scripts/verify-java21.sh
+```
+
+[验证脚本](.github/scripts/verify-java21.sh)构建全部模块，运行显式选择的本地契约测试，
+包括真实 Tomcat HTTP/WebSocket 测试和 HTTP/AKKA/MU 回环通讯测试。
+它不会运行依赖共享数据库、对象存储或公网 HTTP 服务的旧测试。
+隔离这些测试资源之前，不要直接运行未筛选的 `mvnd test` 或 `mvnd verify`。
+[Java CI](.github/workflows/maven_build.yml)还会在一次性 MySQL/PostgreSQL 服务上运行
+`PersistenceMigrationIT`。该测试只接受本机回环地址、数据库名为 `powerjob_upgrade_test` 的连接，
+使用升级前冻结的 DDL 初始化数据库，然后验证映射，不通过更新表结构消除错误。
+
+下载的处理器模板默认使用 Java 21 和 Spring 7，需使用 JDK 21 构建；
+仍保留请求中显式指定的旧处理器字节码目标，但这不代表旧 JVM 可以加载 Java 21 PowerJob 构件。
+
+## 数据库与部署兼容性
+
+| 数据库 | 保留的 JDBC 驱动 | Java 21 迁移验证 |
+|---|---|---|
+| MySQL | Connector/J 8.0.33 | MySQL 8.4：旧表结构、自增 ID、大文本和事务路由 |
+| PostgreSQL | 42.6.0 | PostgreSQL 18：旧表结构、共享 `native` 序列、文本 LOB 和事务路由 |
+| Oracle | ojdbc8 19.7.0.0 | 仍需真实数据库验证 |
+| SQL Server | 7.4.1.jre8 | 仍需驱动运行时和真实数据库验证 |
+| DB2 | 11.5.0.0 | 仍需驱动运行时和真实数据库验证 |
+
+本次不包含表结构迁移。保留序列步长 1、表前缀和命名规则，MySQL LOB 保留原有 `longtext` 容量。
+两个原有 PostgreSQL 方言类名均保留，使用 Hibernate 社区方言维持原 PostgreSQL 10 时代的 SQL 基线，
+但这不代表所有历史数据库版本都已通过验证。
+发布前应使用实际数据库的一次性副本，并设置
+`spring.datasource.remote.hibernate.properties.hibernate.hbm2ddl.auto=validate` 检查兼容性；
+不要依靠自动修改表结构掩盖问题。
+
+应用 Dockerfile 固定使用支持多架构的 Temurin 21 JDK 镜像。
+Agent 中的 `python` 命令改为 **Python 3**，Python 2 处理器必须先迁移。
+开发环境 GC 参数已改为 Java 21 统一日志格式；镜像启动和架构检查仍需在支持 Docker 的环境中执行。
+
+Java 8 应用无法加载新的 Java 21 构件。冻结的 Java 8 JSON/Kryo 数据兼容测试，以及不同 JVM 中
+Java 8/Java 21 双向 HTTP、AKKA、MU 请求响应测试已通过；升级后的 MU 还验证了请求超时线程的释放。
+这些检查不能替代实际 Server/Worker 拓扑和处理器的滚动升级验证。
+请保留旧构件和数据库备份，不能假设应用回滚会撤销数据或 DDL 变更。
+项目发布坐标未修改，正式发布前需确定新版本号，不要覆盖已经发布的 `5.1.7`。
+
 # 简介
 ### 主要特性
 * 使用简单：提供前端Web界面，允许开发者可视化地完成调度任务的管理（增、删、改、查）、任务运行状态监控和运行日志查看等功能。

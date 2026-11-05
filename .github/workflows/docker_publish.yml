@@ -14,10 +14,16 @@ jobs:
       - name: Build Maven Project
         uses: actions/setup-java@v4
         with:
-          java-version: '8'
+          java-version: '21'
           distribution: 'temurin'
-      - name: Publish package
-        run: mvn clean package -Pdev -DskipTests -U -e && /bin/cp -rf powerjob-server/powerjob-server-starter/target/*.jar powerjob-server/docker/powerjob-server.jar && /bin/cp -rf powerjob-worker-agent/target/*.jar powerjob-worker-agent/powerjob-agent.jar && /bin/cp -rf powerjob-worker-samples/target/*.jar powerjob-worker-samples/powerjob-worker-samples.jar
+      - name: Install mvnd 1.0.3
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/mvnd.tar.gz" https://archive.apache.org/dist/maven/mvnd/1.0.3/maven-mvnd-1.0.3-linux-amd64.tar.gz
+          echo "9c9933db7552869c1c4d45d9eaff34291599273929c010086e07dc78b090d7b393467a94fd1d9cc96201856b71723f2501a6ac94907248021f83eb277651cf26  $RUNNER_TEMP/mvnd.tar.gz" | sha512sum --check -
+          tar -xzf "$RUNNER_TEMP/mvnd.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/maven-mvnd-1.0.3-linux-amd64/bin" >> "$GITHUB_PATH"
+      - name: Verify and package
+        run: bash .github/scripts/verify-java21.sh && /bin/cp -rf powerjob-server/powerjob-server-starter/target/*.jar powerjob-server/docker/powerjob-server.jar && /bin/cp -rf powerjob-worker-agent/target/*.jar powerjob-worker-agent/powerjob-agent.jar
 
       # Login
       - name: Login to Docker Hub

@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 import tech.powerjob.server.core.container.ContainerService;
 
-import javax.websocket.RemoteEndpoint;
-import javax.websocket.Session;
+import jakarta.websocket.RemoteEndpoint;
+import jakarta.websocket.Session;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;

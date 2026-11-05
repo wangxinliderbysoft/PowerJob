@@ -59,10 +59,9 @@ public class ContainerTemplateGenerator {
                     buffer.append("    <artifactId>").append(artifact).append("</artifactId>");
                 }else if (line.contains("<name>name</name>")) {
                     buffer.append("    <name>").append(name).append("</name>");
-                }else if (line.contains("<maven.compiler.source>")) {
-                    buffer.append("        <maven.compiler.source>").append(javaVersion).append("</maven.compiler.source>");
-                }else if (line.contains("<maven.compiler.target>")) {
-                    buffer.append("        <maven.compiler.target>").append(javaVersion).append("</maven.compiler.target>");
+                }else if (line.contains("<maven.compiler.release>")) {
+                    buffer.append("        <maven.compiler.release>").append(javaVersion == null ? 21 : javaVersion)
+                            .append("</maven.compiler.release>");
                 } else {
                     buffer.append(line);
                 }

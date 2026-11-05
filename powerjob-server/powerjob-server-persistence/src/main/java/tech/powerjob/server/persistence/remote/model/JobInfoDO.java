@@ -4,9 +4,9 @@ package tech.powerjob.server.persistence.remote.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NativeGenerator;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 /**
@@ -26,8 +26,8 @@ public class JobInfoDO {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @GeneratedValue
+    @NativeGenerator(sequenceForm = @SequenceGenerator(name = "native", sequenceName = "native", allocationSize = 1))
     private Long id;
 
     /* ************************** 任务基本信息 ************************** */
@@ -47,7 +47,7 @@ public class JobInfoDO {
      * 任务自带的参数
      */
     @Lob
-    @Column
+    @Column(length = Integer.MAX_VALUE)
     private String jobParams;
 
     /* ************************** 定时参数 ************************** */

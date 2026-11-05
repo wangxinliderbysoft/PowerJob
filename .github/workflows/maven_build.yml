@@ -13,16 +13,52 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4.11
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: powerjob_upgrade_test
+        ports:
+          - 3306/tcp
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s --health-timeout=5s --health-retries=12
+      postgresql:
+        image: postgres:18.6
+        env:
+          POSTGRES_USER: powerjob
+          POSTGRES_PASSWORD: powerjob_test
+          POSTGRES_DB: powerjob_upgrade_test
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd="pg_isready -U powerjob"
+          --health-interval=10s --health-timeout=5s --health-retries=12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          java-version: '8'
+          java-version: '21'
           distribution: 'temurin'
-      - run: mvn -B clean package -Pdev -DskipTests --file pom.xml
+      - name: Install mvnd 1.0.3
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/mvnd.tar.gz" https://archive.apache.org/dist/maven/mvnd/1.0.3/maven-mvnd-1.0.3-linux-amd64.tar.gz
+          echo "9c9933db7552869c1c4d45d9eaff34291599273929c010086e07dc78b090d7b393467a94fd1d9cc96201856b71723f2501a6ac94907248021f83eb277651cf26  $RUNNER_TEMP/mvnd.tar.gz" | sha512sum --check -
+          tar -xzf "$RUNNER_TEMP/mvnd.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/maven-mvnd-1.0.3-linux-amd64/bin" >> "$GITHUB_PATH"
+      - run: bash .github/scripts/verify-java21.sh
+      - name: Validate legacy schemas on disposable databases
+        run: |
+          mkdir -p "$RUNNER_TEMP/powerjob-migration-home"
+          mvnd -B -Pdev -pl powerjob-server/powerjob-server-persistence -am test \
+            -Dtest=PersistenceMigrationIT -Dsurefire.failIfNoSpecifiedTests=false \
+            "-DargLine=-Duser.home=$RUNNER_TEMP/powerjob-migration-home" \
+            "-Dpowerjob.test.mysql.url=jdbc:mysql://127.0.0.1:${{ job.services.mysql.ports[3306] }}/powerjob_upgrade_test?useSSL=false&allowPublicKeyRetrieval=true" \
+            "-Dpowerjob.test.postgresql.url=jdbc:postgresql://127.0.0.1:${{ job.services.postgresql.ports[5432] }}/powerjob_upgrade_test" \
+            -Dpowerjob.test.postgresql.password=powerjob_test
       - run: mkdir staging && cp powerjob-server/powerjob-server-starter/target/*.jar staging/powerjob-server.jar && cp powerjob-client/target/*.jar staging/powerjob-client.jar && cp powerjob-worker-agent/target/*.jar staging/powerjob-agent.jar && cp powerjob-worker-spring-boot-starter/target/*.jar staging/powerjob-worker-spring-boot-starter.jar
       - uses: actions/upload-artifact@v4
         with:
           name: Package
           path: staging
-

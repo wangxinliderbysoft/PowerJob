@@ -26,8 +26,8 @@ import tech.powerjob.server.core.instance.InstanceService;
 import tech.powerjob.server.web.controller.InstanceController;
 import tech.powerjob.server.web.service.LogDownloadTicketService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -168,7 +168,7 @@ class LegacyInstanceControllerCompatibilityTest {
         PowerJobPermissionService permissions = mock(PowerJobPermissionService.class);
         PowerJobUser user = new PowerJobUser();
         user.setId(1L);
-        when(login.ifLogin(any(javax.servlet.http.HttpServletRequest.class))).thenReturn(loggedIn ? Optional.of(user) : Optional.empty());
+        when(login.ifLogin(any(jakarta.servlet.http.HttpServletRequest.class))).thenReturn(loggedIn ? Optional.of(user) : Optional.empty());
         when(permissions.hasPermission(anyLong(), any(), any(), any())).thenReturn(true);
         PowerJobAuthInterceptor interceptor = new PowerJobAuthInterceptor();
         ReflectionTestUtils.setField(interceptor, "powerJobLoginService", login);

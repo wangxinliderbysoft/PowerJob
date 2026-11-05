@@ -1,5 +1,5 @@
 # 为了便于使用 arthas，agent 也使用 jdk 而不是 jre
-FROM adoptopenjdk:8-jdk-hotspot
+FROM eclipse-temurin:21-jdk-jammy@sha256:4b1a74fbffbe6b4e7b6f0171a472478282fb463790a51edf10e465d578f22b69
 MAINTAINER tengjiqi@gmail.com
 
 ENV APP_NAME=powerjob-worker-agent
@@ -7,9 +7,9 @@ ENV APP_NAME=powerjob-worker-agent
 ENV PARAMS=""
 ENV JVMOPTIONS=""
 
-# 默认安装 python2.7
+# Keep the Python processor's "python" command, now using Python 3.
 RUN apt-get update && \
-    apt-get install -y python \
+    apt-get install -y --no-install-recommends python3 python-is-python3 \
     && apt-get clean \
     && apt-get autoclean \
     && rm -rf /var/lib/apt/lists/*

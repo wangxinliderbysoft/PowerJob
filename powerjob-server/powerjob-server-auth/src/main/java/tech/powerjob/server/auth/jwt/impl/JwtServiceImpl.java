@@ -12,7 +12,7 @@ import tech.powerjob.server.auth.jwt.JwtService;
 import tech.powerjob.server.auth.jwt.ParseResult;
 import tech.powerjob.server.auth.jwt.SecretProvider;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;

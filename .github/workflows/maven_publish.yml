@@ -10,17 +10,24 @@ jobs:
       - name: Set up Maven Central Repository
         uses: actions/setup-java@v4
         with:
-          java-version: '8'
+          java-version: '21'
           distribution: 'temurin'
           server-id: central
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      - name: Install mvnd 1.0.3
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/mvnd.tar.gz" https://archive.apache.org/dist/maven/mvnd/1.0.3/maven-mvnd-1.0.3-linux-amd64.tar.gz
+          echo "9c9933db7552869c1c4d45d9eaff34291599273929c010086e07dc78b090d7b393467a94fd1d9cc96201856b71723f2501a6ac94907248021f83eb277651cf26  $RUNNER_TEMP/mvnd.tar.gz" | sha512sum --check -
+          tar -xzf "$RUNNER_TEMP/mvnd.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/maven-mvnd-1.0.3-linux-amd64/bin" >> "$GITHUB_PATH"
+      - run: bash .github/scripts/verify-java21.sh
       - name: Enable non-interactive signing
         run: printf '%s\n' 'pinentry-mode loopback' >> "$HOME/.gnupg/gpg.conf"
       - name: Publish package
-        run: mvn --batch-mode clean deploy -pl powerjob-worker,powerjob-client,powerjob-worker-spring-boot-starter,powerjob-official-processors,powerjob-worker-agent -DskipTests -Prelease -am -DautoPublish=true -DwaitUntil=published
+        run: mvnd --batch-mode clean deploy -pl powerjob-worker,powerjob-client,powerjob-worker-spring-boot-starter,powerjob-official-processors,powerjob-worker-agent -DskipTests -Prelease -am -DautoPublish=true -DwaitUntil=published
         env:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN }}

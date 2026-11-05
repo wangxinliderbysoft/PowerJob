@@ -1,5 +1,5 @@
-# 基础镜像（支持 amd64 & arm64），based on Ubuntu 18.04.4 LTS
-FROM adoptopenjdk:8-jdk-hotspot
+# Java 21 JDK (amd64 and arm64), Ubuntu 22.04 LTS
+FROM eclipse-temurin:21-jdk-jammy@sha256:4b1a74fbffbe6b4e7b6f0171a472478282fb463790a51edf10e465d578f22b69
 # 维护者
 MAINTAINER dudiao(idudiao@163.com)
 # 设置时区

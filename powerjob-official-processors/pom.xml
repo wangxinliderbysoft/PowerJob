@@ -16,15 +16,11 @@
 
     <properties>
 
-        <mvn.shade.plugin.version>3.2.4</mvn.shade.plugin.version>
+        <mvn.shade.plugin.version>3.6.1</mvn.shade.plugin.version>
 
         <!-- 不会被打包的部分，scope 只能是 test 或 provide -->
-        <junit.version>5.9.1</junit.version>
-        <logback.version>1.2.13</logback.version>
         <powerjob.worker.version>5.1.7</powerjob.worker.version>
-        <h2.db.version>2.2.224</h2.db.version>
         <mysql.version>8.0.28</mysql.version>
-        <spring.version>5.3.31</spring.version>
 
         <!-- 全部 shade 化，避免依赖冲突 -->
         <fastjson.version>1.2.84</fastjson.version>
@@ -80,14 +76,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -95,7 +89,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -103,7 +96,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -111,7 +103,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>${h2.db.version}</version>
             <scope>test</scope>
         </dependency>
 

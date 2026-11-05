@@ -15,12 +15,6 @@
     <packaging>jar</packaging>
 
     <properties>
-        <spring.version>5.3.31</spring.version>
-        <h2.db.version>2.2.224</h2.db.version>
-        <hikaricp.version>4.0.3</hikaricp.version>
-        <junit.version>5.9.1</junit.version>
-
-        <logback.version>1.2.13</logback.version>
 
         <powerjob-common.version>5.1.7</powerjob-common.version>
         <powerjob-remote-framework.version>5.1.7</powerjob-remote-framework.version>
@@ -67,20 +61,17 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>${h2.db.version}</version>
         </dependency>
-        <!-- HikariCP, Java8 只能用 4.X 版本 -->
+        <!-- HikariCP version follows the platform BOM. -->
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>${hikaricp.version}</version>
         </dependency>
 
         <!-- Spring 依赖（非强依赖） -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -88,7 +79,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -96,7 +86,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
 

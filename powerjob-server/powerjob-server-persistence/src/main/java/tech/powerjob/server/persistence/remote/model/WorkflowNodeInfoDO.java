@@ -4,10 +4,10 @@ package tech.powerjob.server.persistence.remote.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NativeGenerator;
 import tech.powerjob.common.enums.WorkflowNodeType;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 /**
@@ -27,8 +27,8 @@ import java.util.Date;
 public class WorkflowNodeInfoDO {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @GeneratedValue
+    @NativeGenerator(sequenceForm = @SequenceGenerator(name = "native", sequenceName = "native", allocationSize = 1))
     private Long id;
 
     @Column(nullable = false)
@@ -53,6 +53,7 @@ public class WorkflowNodeInfoDO {
      * 节点参数
      */
     @Lob
+    @Column(length = Integer.MAX_VALUE)
     private String nodeParams;
     /**
      * 是否启用
@@ -66,6 +67,7 @@ public class WorkflowNodeInfoDO {
     private Boolean skipWhenFailed;
 
     @Lob
+    @Column(length = Integer.MAX_VALUE)
     private String extra;
     /**
      * 创建时间
