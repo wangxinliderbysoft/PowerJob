@@ -1,6 +1,7 @@
 package tech.powerjob.official.processors.impl.sql;
 
-import com.alibaba.fastjson.JSONObject;
+import tech.powerjob.common.serialize.JsonUtils;
+import tools.jackson.core.type.TypeReference;
 import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.official.processors.util.CommonUtils;
 import tech.powerjob.official.processors.util.SecurityUtils;
@@ -10,6 +11,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.List;
+import java.util.Map;
 
 /**
  * execute sql by dynamic datasource, which is very dangerous but can save your life at the critical moment
@@ -29,11 +32,13 @@ public class DynamicDatasourceSqlProcessor extends AbstractSqlProcessor {
     @Override
     Connection getConnection(SqlParams sqlParams, TaskContext taskContext) throws SQLException {
 
-        JSONObject params = JSONObject.parseObject(CommonUtils.parseParams(taskContext));
+        Map<String, Object> params = JsonUtils.parseObjectUnsafe(CommonUtils.parseParams(taskContext),
+                new TypeReference<Map<String, Object>>() {});
         Properties properties = new Properties();
 
         // normally at least a "user" and "password" property should be included
-        params.forEach((k, v) -> properties.setProperty(k, String.valueOf(v)));
+        params.forEach((k, v) -> properties.setProperty(k, v instanceof Map<?, ?> || v instanceof List<?>
+                ? JsonUtils.toJSONStringUnsafe(CommonUtils.omitNullMapValues(v)) : String.valueOf(v)));
 
         return DriverManager.getConnection(sqlParams.getJdbcUrl(), properties);
     }

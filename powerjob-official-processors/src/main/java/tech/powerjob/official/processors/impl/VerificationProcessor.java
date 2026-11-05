@@ -1,6 +1,6 @@
 package tech.powerjob.official.processors.impl;
 
-import com.alibaba.fastjson.JSONObject;
+import tech.powerjob.common.serialize.JsonUtils;
 import com.google.common.collect.Lists;
 import lombok.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -36,7 +36,7 @@ public class VerificationProcessor extends CommonBasicProcessor implements MapRe
         final OmsLogger omsLogger = taskContext.getOmsLogger();
 
         final String paramsStr = CommonUtils.parseParams(taskContext);
-        final VerificationParam verificationParam = StringUtils.isEmpty(paramsStr) ? new VerificationParam() : JSONObject.parseObject(paramsStr, VerificationParam.class);
+        final VerificationParam verificationParam = StringUtils.isEmpty(paramsStr) ? new VerificationParam() : JsonUtils.parseObjectUnsafe(paramsStr, VerificationParam.class);
 
         final Mode mode = Mode.of(verificationParam.getMode());
 

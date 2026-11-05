@@ -1,6 +1,7 @@
 package tech.powerjob.server.core.lock;
 
-import com.alibaba.fastjson.JSON;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
@@ -73,7 +74,7 @@ public class UseCacheLockAspect {
 
                 log.warn("[UseSegmentLockAspect] wait lock for method({}#{}) cost {} ms! key = '{}', args = {}, ", method.getDeclaringClass().getSimpleName(), method.getName(), timeCost,
                         key,
-                        JSON.toJSONString(point.getArgs()));
+                        JsonUtils.toJSONStringUnsafe(point.getArgs()));
             }
             return point.proceed();
         } finally {

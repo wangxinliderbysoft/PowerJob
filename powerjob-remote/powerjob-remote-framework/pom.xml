@@ -15,18 +15,13 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <powerjob-common.version>5.1.7</powerjob-common.version>
-        <reflections.version>0.10.2</reflections.version>
-
-
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-common</artifactId>
-            <version>${powerjob-common.version}</version>
+            <version>${powerjob.version}</version>
         </dependency>
 
         <dependency>

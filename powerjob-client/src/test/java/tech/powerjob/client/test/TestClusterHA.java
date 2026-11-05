@@ -1,6 +1,7 @@
 package tech.powerjob.client.test;
 
-import com.alibaba.fastjson.JSONObject;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import tech.powerjob.common.response.JobInfoDTO;
@@ -25,7 +26,7 @@ public class TestClusterHA extends ClientInitializer {
 
             ResultDTO<JobInfoDTO> jobInfoDTOResultDTO = powerJobClient.fetchJob(1L);
 
-            log.info("[TestClusterHA] response: {}", JSONObject.toJSONString(jobInfoDTOResultDTO));
+            log.info("[TestClusterHA] response: {}", JsonUtils.toJSONStringUnsafe(jobInfoDTOResultDTO));
 
             if (!jobInfoDTOResultDTO.isSuccess()) {
                 throw new RuntimeException("request failed!");

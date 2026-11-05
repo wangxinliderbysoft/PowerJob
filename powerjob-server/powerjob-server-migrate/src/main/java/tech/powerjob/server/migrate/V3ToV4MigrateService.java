@@ -1,7 +1,7 @@
 package tech.powerjob.server.migrate;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import lombok.RequiredArgsConstructor;
 import tech.powerjob.common.exception.PowerJobException;
 import tech.powerjob.common.enums.ProcessorType;
@@ -56,7 +56,7 @@ public class V3ToV4MigrateService {
      * 将其替换为官方提供的 Processor
      */
     @Transactional(rollbackOn = Exception.class)
-    public JSONObject fixDeprecatedProcessType(Long appId) {
+    public Map<String, Object> fixDeprecatedProcessType(Long appId) {
 
         final String lock = String.format(MIGRATE_LOCK_TEMPLATE, "fixDeprecatedProcessType", appId);
         // 120 s
@@ -65,7 +65,7 @@ public class V3ToV4MigrateService {
             throw new PowerJobException("get lock failed, maybe other migrate job is running");
         }
         try {
-            JSONObject resultLog = new JSONObject();
+            Map<String, Object> resultLog = new HashMap<>();
             resultLog.put("docs", "https://www.yuque.com/powerjob/guidence/official_processor");
             resultLog.put("tips", "please add the maven dependency of 'powerjob-official-processors'");
 
@@ -120,7 +120,7 @@ public class V3ToV4MigrateService {
      * 2、修复 DAG 信息（边+节点ID）
      */
     @SuppressWarnings("squid:S1141")
-    public JSONObject fixWorkflowInfoFromV3ToV4(Long appId) {
+    public Map<String, Object> fixWorkflowInfoFromV3ToV4(Long appId) {
 
         final String lock = String.format(MIGRATE_LOCK_TEMPLATE, "fixWorkflowInfoFromV3ToV4", appId);
         // 180 s
@@ -130,7 +130,7 @@ public class V3ToV4MigrateService {
         }
 
         try {
-            JSONObject resultLog = new JSONObject();
+            Map<String, Object> resultLog = new HashMap<>();
             Set<Long> fixedWorkflowIds = Sets.newHashSet();
 
             List<WorkflowInfoDO> workflowInfoList = workflowInfoRepository.findByAppId(appId);
@@ -183,7 +183,7 @@ public class V3ToV4MigrateService {
         String dag = workflowInfo.getPeDAG();
         PEWorkflowDAG peDag;
         try {
-            peDag = JSON.parseObject(dag, PEWorkflowDAG.class);
+            peDag = JsonUtils.parseObjectUnsafe(dag, PEWorkflowDAG.class);
         } catch (Exception e) {
             throw new PowerJobException("invalid DAG!");
         }
@@ -242,7 +242,7 @@ public class V3ToV4MigrateService {
                 edge.setTo(jobId2NodeIdMap.get(edge.getTo()));
             }
         }
-        workflowInfo.setPeDAG(JSON.toJSONString(peDag));
+        workflowInfo.setPeDAG(JsonUtils.toJSONStringUnsafe(peDag));
         workflowInfo.setGmtModified(new Date());
         workflowInfoRepository.saveAndFlush(workflowInfo);
         return true;

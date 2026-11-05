@@ -1,6 +1,7 @@
 package tech.powerjob.server.persistence;
 
-import com.alibaba.fastjson.JSONArray;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -122,7 +123,6 @@ public class QueryConvertUtils {
     }
 
     private static Object[] convertInParams(Object o) {
-        // FastJSON, 永远滴神！
-        return JSONArray.parseArray(JSONArray.toJSONString(o)).toArray();
+        return JsonUtils.toJavaObject(o, Object[].class);
     }
 }

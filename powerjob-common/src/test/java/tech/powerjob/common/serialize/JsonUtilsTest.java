@@ -14,6 +14,8 @@ import java.util.List;
 import tools.jackson.core.type.TypeReference;
 import tech.powerjob.common.model.PEWorkflowDAG;
 import tech.powerjob.common.response.WorkflowInfoDTO;
+import tech.powerjob.common.response.ResultDTO;
+import tech.powerjob.common.response.WorkflowNodeInfoDTO;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +27,61 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 class JsonUtilsTest {
+
+    @Test
+    void parsesGenericResponsesWithoutLosingLargeIdentifiers() {
+        var result = JsonUtils.parseObjectUnsafe(
+                "{'success':true,'data':[{'id':9007199254740993,'nodeName':'legacy','future':true}]}",
+                new TypeReference<ResultDTO<List<WorkflowNodeInfoDTO>>>() {});
+        assertTrue(result.isSuccess());
+        assertEquals(9007199254740993L, result.getData().getFirst().getId());
+        assertEquals("legacy", result.getData().getFirst().getNodeAlias());
+        assertNull(JsonUtils.parseObjectUnsafe(null, new TypeReference<List<String>>() {}));
+        assertNull(JsonUtils.parseObjectUnsafe("  ", new TypeReference<List<String>>() {}));
+        assertNull(JsonUtils.parseObjectUnsafe("  ", Person.class));
+        assertThrows(Exception.class, () -> JsonUtils.parseObjectUnsafe("{", new TypeReference<List<String>>() {}));
+    }
+
+    @Test
+    void validatesExactlyOneJsonValue() {
+        for (String json : List.of("{}", "[]", "{\"nested\":[null,true,1,\"value\"]}", "\"text\"", "42", "true", "null")) {
+            assertTrue(JsonUtils.isValidJson(json), json);
+        }
+        for (String json : List.of("", " ", "{", "{\"x\":}", "{} {}", "null trailing", "{'x':1}")) {
+            assertFalse(JsonUtils.isValidJson(json), json);
+        }
+        assertFalse(JsonUtils.isValidJson(null));
+    }
+
+    @Test
+    void readsHistoricalWorkflowDagWithNumericAndStringInstanceIds() {
+        for (String id : List.of("9007199254740993", "\"9007199254740993\"")) {
+            PEWorkflowDAG dag = JsonUtils.parseObjectUnsafe(
+                    "{\"nodes\":[{\"nodeId\":7,\"instanceId\":" + id
+                            + ",\"enable\":false,\"future\":true}],\"edges\":[]}", PEWorkflowDAG.class);
+            assertEquals(9007199254740993L, dag.getNodes().getFirst().getInstanceId());
+            assertFalse(dag.getNodes().getFirst().getEnable());
+            PEWorkflowDAG restored = JsonUtils.parseObjectUnsafe(JsonUtils.toJSONStringUnsafe(dag), PEWorkflowDAG.class);
+            assertEquals(dag, restored);
+        }
+    }
+
+    @Test
+    void preservesStructuredAndScalarWorkflowContextStrings() {
+        Map<String, String> context = JsonUtils.parseStringMap(
+                "{\"message\":\"quoted \\\"value\\\"\",\"flag\":true,\"id\":9007199254740993,"
+                        + "\"nested\":{\"amount\":0.123456789012345678901234},\"values\":[1,null,2],\"absent\":null}");
+        assertEquals("quoted \"value\"", context.get("message"));
+        assertEquals("true", context.get("flag"));
+        assertEquals("9007199254740993", context.get("id"));
+        assertEquals("{\"amount\":0.123456789012345678901234}", context.get("nested"));
+        assertEquals("[1,null,2]", context.get("values"));
+        assertTrue(context.containsKey("absent"));
+        assertNull(context.get("absent"));
+        assertNull(JsonUtils.parseStringMap(null));
+        assertNull(JsonUtils.parseStringMap("null"));
+        assertThrows(Exception.class, () -> JsonUtils.parseStringMap("[]"));
+    }
 
     @Test
     void preservesEnumNamesInsteadOfCustomToStringValues() throws Exception {

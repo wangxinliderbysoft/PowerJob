@@ -1,6 +1,7 @@
 package tech.powerjob.server.core.workflow;
 
-import com.alibaba.fastjson.JSON;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -87,7 +88,7 @@ public class WorkflowService {
             wf.setNotifyUserIds(SJ.COMMA_JOINER.join(req.getNotifyUserIds()));
         }
         if (req.getLifeCycle() != null) {
-            wf.setLifecycle(JSON.toJSONString(req.getLifeCycle()));
+            wf.setLifecycle(JsonUtils.toJSONStringUnsafe(req.getLifeCycle()));
         }
         if (TimeExpressionType.FREQUENT_TYPES.contains(req.getTimeExpressionType().getV())) {
             // 固定频率类型的任务不计算
@@ -139,7 +140,7 @@ public class WorkflowService {
         dag.setNodes(newNodes);
         int deleteCount = workflowNodeInfoRepository.deleteByWorkflowIdAndIdNotIn(wfId, nodeIdList);
         log.warn("[WorkflowService-{}] delete {} dissociative nodes of workflow", wfId, deleteCount);
-        return JSON.toJSONString(dag);
+        return JsonUtils.toJSONStringUnsafe(dag);
     }
 
 
@@ -171,7 +172,7 @@ public class WorkflowService {
             return copyWorkflow.getId();
         }
 
-        PEWorkflowDAG dag = JSON.parseObject(copyWorkflow.getPeDAG(), PEWorkflowDAG.class);
+        PEWorkflowDAG dag = JsonUtils.parseObjectUnsafe(copyWorkflow.getPeDAG(), PEWorkflowDAG.class);
 
         // 拷贝节点信息，并且更新 DAG 中的节点信息
         if (!CollectionUtils.isEmpty(dag.getNodes())) {
@@ -200,7 +201,7 @@ public class WorkflowService {
                 edge.setTo(nodeIdMap.get(edge.getTo()));
             }
         }
-        copyWorkflow.setPeDAG(JSON.toJSONString(dag));
+        copyWorkflow.setPeDAG(JsonUtils.toJSONStringUnsafe(dag));
         workflowInfoRepository.saveAndFlush(copyWorkflow);
         return copyWorkflow.getId();
     }
@@ -328,7 +329,7 @@ public class WorkflowService {
 
         PEWorkflowDAG dagInfo = null;
         try {
-            dagInfo = JSON.parseObject(wfInfo.getPeDAG(), PEWorkflowDAG.class);
+            dagInfo = JsonUtils.parseObjectUnsafe(wfInfo.getPeDAG(), PEWorkflowDAG.class);
         } catch (Exception e) {
             log.warn("[WorkflowService-{}]illegal DAG : {}", wfInfo.getId(), wfInfo.getPeDAG());
         }
@@ -355,7 +356,7 @@ public class WorkflowService {
                 }
             }
         }
-        wfInfo.setPeDAG(JSON.toJSONString(dagInfo));
+        wfInfo.setPeDAG(JsonUtils.toJSONStringUnsafe(dagInfo));
     }
 
 

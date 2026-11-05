@@ -1,6 +1,5 @@
 package tech.powerjob.server.core.service.impl.job;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -51,15 +50,15 @@ public class JobConverter {
         JobInfoDTO jobInfoDTO = new JobInfoDTO();
         BeanUtils.copyProperties(jobInfoDO, jobInfoDTO);
         if (jobInfoDO.getAlarmConfig() != null) {
-            jobInfoDTO.setAlarmConfig(JSON.parseObject(jobInfoDO.getAlarmConfig(), AlarmConfig.class));
+            jobInfoDTO.setAlarmConfig(JsonUtils.parseObjectUnsafe(jobInfoDO.getAlarmConfig(), AlarmConfig.class));
         }
 
         if (StringUtils.isNotEmpty(jobInfoDO.getLogConfig())) {
-            jobInfoDTO.setLogConfig(JSON.parseObject(jobInfoDO.getLogConfig(), LogConfig.class));
+            jobInfoDTO.setLogConfig(JsonUtils.parseObjectUnsafe(jobInfoDO.getLogConfig(), LogConfig.class));
         }
 
         if (StringUtils.isNotEmpty(jobInfoDO.getAdvancedRuntimeConfig())) {
-            jobInfoDTO.setAdvancedRuntimeConfig(JSON.parseObject(jobInfoDO.getAdvancedRuntimeConfig(), JobAdvancedRuntimeConfig.class));
+            jobInfoDTO.setAdvancedRuntimeConfig(JsonUtils.parseObjectUnsafe(jobInfoDO.getAdvancedRuntimeConfig(), JobAdvancedRuntimeConfig.class));
         }
         return jobInfoDTO;
     }

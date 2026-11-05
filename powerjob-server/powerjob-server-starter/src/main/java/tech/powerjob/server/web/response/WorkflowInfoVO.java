@@ -1,7 +1,8 @@
 package tech.powerjob.server.web.response;
 
+import tech.powerjob.common.serialize.JsonUtils;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.common.enums.TimeExpressionType;
 import tech.powerjob.common.model.LifeCycle;
@@ -83,7 +84,7 @@ public class WorkflowInfoVO {
 
         vo.enable = SwitchableStatus.of(wfDO.getStatus()) == SwitchableStatus.ENABLE;
         vo.setTimeExpressionType(TimeExpressionType.of(wfDO.getTimeExpressionType()).name());
-        vo.setPEWorkflowDAG(JSON.parseObject(wfDO.getPeDAG(), PEWorkflowDAG.class));
+        vo.setPEWorkflowDAG(JsonUtils.parseObjectUnsafe(wfDO.getPeDAG(), PEWorkflowDAG.class));
         if (!StringUtils.isEmpty(wfDO.getNotifyUserIds())) {
             vo.setNotifyUserIds(SJ.COMMA_SPLITTER.splitToList(wfDO.getNotifyUserIds()).stream().map(Long::valueOf).collect(Collectors.toList()));
         }

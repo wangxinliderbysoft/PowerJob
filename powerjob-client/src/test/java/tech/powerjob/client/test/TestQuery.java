@@ -1,6 +1,7 @@
 package tech.powerjob.client.test;
 
-import com.alibaba.fastjson.JSON;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import tech.powerjob.common.request.query.JobInfoQuery;
 import tech.powerjob.common.enums.ExecuteType;
 import tech.powerjob.common.enums.ProcessorType;
@@ -26,7 +27,7 @@ class TestQuery extends ClientInitializer {
     @Test
     void testFetchAllJob() {
         ResultDTO<List<JobInfoDTO>> allJobRes = powerJobClient.fetchAllJob();
-        System.out.println(JSON.toJSONString(allJobRes));
+        System.out.println(JsonUtils.toJSONStringUnsafe(allJobRes));
     }
 
     @Test
@@ -42,7 +43,7 @@ class TestQuery extends ClientInitializer {
                 .setProcessorInfoLike("tech.powerjob");
 
         ResultDTO<List<JobInfoDTO>> jobQueryResult = powerJobClient.queryJob(jobInfoQuery);
-        System.out.println(JSON.toJSONString(jobQueryResult));
+        System.out.println(JsonUtils.toJSONStringUnsafe(jobQueryResult));
         System.out.println(jobQueryResult.getData().size());
     }
 }

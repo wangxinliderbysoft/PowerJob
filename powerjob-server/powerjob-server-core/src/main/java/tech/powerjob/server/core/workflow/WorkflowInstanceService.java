@@ -1,6 +1,7 @@
 package tech.powerjob.server.core.workflow;
 
-import com.alibaba.fastjson.JSON;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -80,7 +81,7 @@ public class WorkflowInstanceService {
             throw new PowerJobException("workflow instance already stopped");
         }
         // 停止所有已启动且未完成的服务
-        PEWorkflowDAG dag = JSON.parseObject(wfInstance.getDag(), PEWorkflowDAG.class);
+        PEWorkflowDAG dag = JsonUtils.parseObjectUnsafe(wfInstance.getDag(), PEWorkflowDAG.class);
         // 遍历所有节点，终止正在运行的
         dag.getNodes().forEach(node -> {
             try {
@@ -98,12 +99,12 @@ public class WorkflowInstanceService {
                     }
                 }
             } catch (Exception e) {
-                log.warn("[WfInstance-{}] stop instance({}) failed.", wfInstanceId, JSON.toJSONString(node), e);
+                log.warn("[WfInstance-{}] stop instance({}) failed.", wfInstanceId, JsonUtils.toJSONStringUnsafe(node), e);
             }
         });
 
         // 修改数据库状态
-        wfInstance.setDag(JSON.toJSONString(dag));
+        wfInstance.setDag(JsonUtils.toJSONStringUnsafe(dag));
         wfInstance.setStatus(WorkflowInstanceStatus.STOPPED.getV());
         wfInstance.setResult(SystemInstanceResult.STOPPED_BY_USER);
         wfInstance.setGmtModified(new Date());
@@ -136,7 +137,7 @@ public class WorkflowInstanceService {
         // 校验 DAG 信息
         PEWorkflowDAG dag;
         try {
-            dag = JSON.parseObject(wfInstance.getDag(), PEWorkflowDAG.class);
+            dag = JsonUtils.parseObjectUnsafe(wfInstance.getDag(), PEWorkflowDAG.class);
             if (!WorkflowDAGUtils.valid(dag)) {
                 throw new PowerJobException(SystemInstanceResult.INVALID_DAG);
             }
@@ -149,7 +150,7 @@ public class WorkflowInstanceService {
             throw new PowerJobException("you can't retry the workflow instance whose metadata is unavailable!");
         }
         WorkflowDAGUtils.resetRetryableNode(dag);
-        wfInstance.setDag(JSON.toJSONString(dag));
+        wfInstance.setDag(JsonUtils.toJSONStringUnsafe(dag));
         // 更新工作流实例状态，不覆盖实际触发时间
         wfInstance.setStatus(WorkflowInstanceStatus.WAITING.getV());
         wfInstance.setGmtModified(new Date());
@@ -197,7 +198,7 @@ public class WorkflowInstanceService {
             throw new PowerJobException("you can't mark the node in a running workflow!");
         }
         // 这里一定能反序列化成功
-        PEWorkflowDAG dag = JSON.parseObject(wfInstance.getDag(), PEWorkflowDAG.class);
+        PEWorkflowDAG dag = JsonUtils.parseObjectUnsafe(wfInstance.getDag(), PEWorkflowDAG.class);
         PEWorkflowDAG.Node targetNode = null;
         for (PEWorkflowDAG.Node node : dag.getNodes()) {
             if (node.getNodeId().equals(nodeId)) {
@@ -218,7 +219,7 @@ public class WorkflowInstanceService {
             targetNode.setStatus(InstanceStatus.SUCCEED.getV())
                     .setResult(SystemInstanceResult.MARK_AS_SUCCESSFUL_NODE);
 
-            wfInstance.setDag(JSON.toJSONString(dag));
+            wfInstance.setDag(JsonUtils.toJSONStringUnsafe(dag));
             wfInstanceInfoRepository.saveAndFlush(wfInstance);
             return;
         }

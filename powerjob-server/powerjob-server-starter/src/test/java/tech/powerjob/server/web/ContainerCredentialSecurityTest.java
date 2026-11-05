@@ -3,7 +3,7 @@ package tech.powerjob.server.web;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import com.alibaba.fastjson.JSON;
+import tools.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +28,8 @@ import tech.powerjob.server.persistence.remote.model.*;
 import tech.powerjob.server.persistence.remote.repository.*;
 import tech.powerjob.server.remote.worker.WorkerClusterQueryService;
 import tech.powerjob.server.web.controller.ContainerController;
+import tech.powerjob.server.web.response.ContainerInfoVO;
+import tech.powerjob.common.response.ResultDTO;
 
 import jakarta.websocket.RemoteEndpoint;
 import jakarta.websocket.Session;
@@ -95,7 +97,8 @@ class ContainerCredentialSecurityTest {
     private String listSource() throws Exception {
         String response = mvc.perform(get("/container/list").header("AppId", "7"))
                 .andExpect(jsonPath("$.success").value(true)).andReturn().getResponse().getContentAsString();
-        return JSON.parseObject(response).getJSONArray("data").getJSONObject(0).getString("sourceInfo");
+        ResultDTO<List<ContainerInfoVO>> result = JsonUtils.parseObjectUnsafe(response, new TypeReference<>() {});
+        return result.getData().getFirst().getSourceInfo();
     }
 
     @AfterEach void cleanLogin() { LoginUserHolder.clean(); }
@@ -122,7 +125,7 @@ class ContainerCredentialSecurityTest {
         mvc.perform(post("/container/save").header("AppId", "7").contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtils.toJSONString(request))).andExpect(jsonPath("$.success").value(true));
         verify(containers).saveAndFlush(argThat(saved -> saved.getContainerName().equals("renamed")
-                && SECRET.equals(JSON.parseObject(saved.getSourceInfo(), GitRepoInfo.class).getPassword())));
+                && SECRET.equals(JsonUtils.parseObjectUnsafe(saved.getSourceInfo(), GitRepoInfo.class).getPassword())));
     }
 
     @Test

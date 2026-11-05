@@ -15,17 +15,13 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <powerjob-remote-framework.version>5.1.7</powerjob-remote-framework.version>
-
-        <akka.version>2.6.13</akka.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-remote-framework</artifactId>
-            <version>${powerjob-remote-framework.version}</version>
+            <version>${powerjob.version}</version>
         </dependency>
 
         <!-- akka remote -->

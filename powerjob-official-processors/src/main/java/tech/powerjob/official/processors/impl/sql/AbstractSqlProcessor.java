@@ -1,6 +1,6 @@
 package tech.powerjob.official.processors.impl.sql;
 
-import com.alibaba.fastjson.JSON;
+import tech.powerjob.common.serialize.JsonUtils;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -62,7 +62,7 @@ public abstract class AbstractSqlProcessor extends CommonBasicProcessor {
         OmsLogger omsLogger = taskContext.getOmsLogger();
         // 解析参数
         SqlParams sqlParams = extractParams(taskContext);
-        omsLogger.info("origin sql params: {}", JSON.toJSON(sqlParams));
+        omsLogger.info("origin sql params: {}", JsonUtils.toJSONStringUnsafe(sqlParams));
         // 校验参数
         validateParams(sqlParams);
 
@@ -84,7 +84,7 @@ public abstract class AbstractSqlProcessor extends CommonBasicProcessor {
 
         // 执行
         stopWatch.start("Execute SQL");
-        omsLogger.info("final sql params: {}", JSON.toJSON(sqlParams));
+        omsLogger.info("final sql params: {}", JsonUtils.toJSONStringUnsafe(sqlParams));
         executeSql(sqlParams, taskContext);
         stopWatch.stop();
 
@@ -173,7 +173,7 @@ public abstract class AbstractSqlProcessor extends CommonBasicProcessor {
      * @return SqlParams
      */
     protected SqlParams extractParams(TaskContext taskContext) {
-        return JSON.parseObject(CommonUtils.parseParams(taskContext), SqlParams.class);
+        return JsonUtils.parseObjectUnsafe(CommonUtils.parseParams(taskContext), SqlParams.class);
     }
 
     /**

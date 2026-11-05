@@ -1,7 +1,7 @@
 package tech.powerjob.server.web.response;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.common.enums.ExecuteType;
 import tech.powerjob.common.enums.ProcessorType;
@@ -187,7 +187,7 @@ public class JobInfoVO {
         jobInfoVO.setNextTriggerTimeStr(CommonUtils.formatTime(jobInfoDO.getNextTriggerTime()));
 
         if (!StringUtils.isEmpty(jobInfoDO.getAlarmConfig())){
-            jobInfoVO.setAlarmConfig(JSON.parseObject(jobInfoDO.getAlarmConfig(),AlarmConfig.class));
+            jobInfoVO.setAlarmConfig(JsonUtils.parseObjectUnsafe(jobInfoDO.getAlarmConfig(),AlarmConfig.class));
         } else {
             jobInfoVO.setAlarmConfig(new AlarmConfig());
         }
@@ -196,7 +196,7 @@ public class JobInfoVO {
         }
 
         if (!StringUtils.isEmpty(jobInfoDO.getLogConfig())) {
-            jobInfoVO.setLogConfig(JSONObject.parseObject(jobInfoDO.getLogConfig(), LogConfig.class));
+            jobInfoVO.setLogConfig(JsonUtils.parseObjectUnsafe(jobInfoDO.getLogConfig(), LogConfig.class));
         } else {
             // 不存在 job 配置时防止前端报错
             jobInfoVO.setLogConfig(new LogConfig());
@@ -205,7 +205,7 @@ public class JobInfoVO {
         if (StringUtils.isEmpty(jobInfoDO.getAdvancedRuntimeConfig())) {
             jobInfoVO.setAdvancedRuntimeConfig(new JobAdvancedRuntimeConfig());
         } else {
-            jobInfoVO.setAdvancedRuntimeConfig(JSONObject.parseObject(jobInfoDO.getAdvancedRuntimeConfig(), JobAdvancedRuntimeConfig.class));
+            jobInfoVO.setAdvancedRuntimeConfig(JsonUtils.parseObjectUnsafe(jobInfoDO.getAdvancedRuntimeConfig(), JobAdvancedRuntimeConfig.class));
         }
 
         return jobInfoVO;

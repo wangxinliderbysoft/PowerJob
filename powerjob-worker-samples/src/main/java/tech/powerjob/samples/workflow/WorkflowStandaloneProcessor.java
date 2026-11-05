@@ -1,6 +1,6 @@
 package tech.powerjob.samples.workflow;
 
-import com.alibaba.fastjson.JSON;
+import tech.powerjob.common.serialize.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import tech.powerjob.worker.core.processor.ProcessResult;
 import tech.powerjob.worker.core.processor.TaskContext;
@@ -26,7 +26,7 @@ public class WorkflowStandaloneProcessor implements BasicProcessor {
         logger.info("current jobParams: {}", context.getJobParams());
         logger.info("current context: {}", context.getWorkflowContext());
         log.info("jobParams:{}", context.getJobParams());
-        log.info("currentContext:{}", JSON.toJSONString(context));
+        log.info("currentContext:{}", JsonUtils.toJSONStringUnsafe(context));
 
         // 尝试获取上游任务
         Map<String, String> workflowContext = context.getWorkflowContext().fetchWorkflowContext();

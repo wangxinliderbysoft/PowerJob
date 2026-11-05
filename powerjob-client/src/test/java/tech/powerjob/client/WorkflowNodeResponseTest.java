@@ -1,6 +1,5 @@
 package tech.powerjob.client;
 
-import com.alibaba.fastjson.JSON;
 import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.Test;
 import tech.powerjob.common.request.http.SaveWorkflowNodeRequest;
@@ -44,10 +43,9 @@ class WorkflowNodeResponseTest {
         WorkflowNodeInfoDTO node = new WorkflowNodeInfoDTO();
         node.setNodeAlias("existing caller");
         assertEquals("existing caller", node.getNodeAlias());
-        for (String json : new String[]{JSON.toJSONString(node), JsonUtils.toJSONStringUnsafe(node)}) {
-            assertEquals("existing caller", JSON.parseObject(json).getString("nodeAlias"));
-            assertFalse(JSON.parseObject(json).containsKey("nodeName"));
-        }
+        var json = JsonUtils.parseMap(JsonUtils.toJSONStringUnsafe(node));
+        assertEquals("existing caller", json.get("nodeAlias"));
+        assertFalse(json.containsKey("nodeName"));
     }
 
     private WorkflowNodeInfoDTO saveNode(String nameField) throws Exception {

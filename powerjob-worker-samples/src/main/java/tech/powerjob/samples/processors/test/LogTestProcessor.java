@@ -1,6 +1,6 @@
 package tech.powerjob.samples.processors.test;
 
-import com.alibaba.fastjson.JSONObject;
+import tech.powerjob.common.serialize.JsonUtils;
 import org.springframework.stereotype.Component;
 import tech.powerjob.official.processors.util.CommonUtils;
 import tech.powerjob.worker.core.processor.ProcessResult;
@@ -9,6 +9,7 @@ import tech.powerjob.worker.core.processor.sdk.BasicProcessor;
 import tech.powerjob.worker.log.OmsLogger;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,9 +26,9 @@ public class LogTestProcessor implements BasicProcessor {
 
         final OmsLogger omsLogger = context.getOmsLogger();
         final String parseParams = CommonUtils.parseParams(context);
-        final JSONObject config = Optional.ofNullable(JSONObject.parseObject(parseParams)).orElse(new JSONObject());
+        final Map<String, Object> config = JsonUtils.parseMap(parseParams);
 
-        final long loopTimes = Optional.ofNullable(config.getLong("loopTimes")).orElse(1000L);
+        final long loopTimes = Optional.ofNullable(JsonUtils.toJavaObject(config == null ? null : config.get("loopTimes"), Long.class)).orElse(1000L);
 
         for (int i = 0; i < loopTimes; i++) {
             omsLogger.debug("[DEBUG] one DEBUG log in {}", new Date());

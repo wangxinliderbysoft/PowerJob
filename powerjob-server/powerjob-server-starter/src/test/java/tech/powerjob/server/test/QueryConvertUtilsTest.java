@@ -1,6 +1,7 @@
 package tech.powerjob.server.test;
 
-import com.alibaba.fastjson.JSONObject;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import org.junit.jupiter.api.Test;
 import tech.powerjob.common.PowerQuery;
 import tech.powerjob.common.response.JobInfoDTO;
@@ -38,7 +39,7 @@ public class QueryConvertUtilsTest {
 
         List<JobInfoDTO> list = jobService.queryJob(jobInfoQuery);
         System.out.println("size: " + list.size());
-        System.out.println(JSONObject.toJSONString(list));
+        System.out.println(JsonUtils.toJSONStringUnsafe(list));
     }
 
     @Getter

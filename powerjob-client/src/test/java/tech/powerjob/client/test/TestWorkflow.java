@@ -1,6 +1,7 @@
 package tech.powerjob.client.test;
 
-import com.alibaba.fastjson.JSONObject;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import tech.powerjob.client.PowerJobClient;
 import tech.powerjob.common.enums.ExecuteType;
 import tech.powerjob.common.enums.ProcessorType;
@@ -41,7 +42,7 @@ class TestWorkflow extends ClientInitializer {
         base.setProcessorInfo("tech.powerjob.samples.workflow.WorkflowStandaloneProcessor");
 
         for (int i = 0; i < 5; i++) {
-            SaveJobInfoRequest request = JSONObject.parseObject(JSONObject.toJSONBytes(base), SaveJobInfoRequest.class);
+            SaveJobInfoRequest request = JsonUtils.copy(base);
             request.setJobName(request.getJobName() + i);
             ResultDTO<Long> res = powerJobClient.saveJob(request);
             System.out.println(res);
@@ -60,7 +61,7 @@ class TestWorkflow extends ClientInitializer {
         req.setEnable(true);
         req.setTimeExpressionType(TimeExpressionType.API);
 
-        System.out.println("req ->" + JSONObject.toJSON(req));
+        System.out.println("req ->" + JsonUtils.toJson(req));
         ResultDTO<Long> res = powerJobClient.saveWorkflow(req);
         System.out.println(res);
         Assertions.assertNotNull(res);

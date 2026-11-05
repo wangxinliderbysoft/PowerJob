@@ -1,6 +1,6 @@
 package tech.powerjob.official.processors.impl.sql;
 
-import com.alibaba.fastjson.JSON;
+import tech.powerjob.common.serialize.JsonUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.helpers.MessageFormatter;
 import tech.powerjob.worker.core.processor.ProcessResult;
@@ -75,7 +75,7 @@ class SqlResultLoggingTest {
             params.setShowResult(showResult);
             TaskContext context = new TaskContext();
             context.setWorkflowContext(new WorkflowContext(null, null));
-            context.setJobParams(JSON.toJSONString(params));
+            context.setJobParams(JsonUtils.toJSONStringUnsafe(params));
             context.setOmsLogger(new OmsLogger() {
                 @Override public void info(String pattern, Object... args) {
                     logs.add(MessageFormatter.arrayFormat(pattern, args).getMessage().trim());

@@ -1,7 +1,5 @@
 package tech.powerjob.server.core.workflow.hanlder.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -41,8 +39,7 @@ public class DecisionNodeHandler implements ControlNodeHandler {
             throw new PowerJobException("decision node's param is blank!");
         }
         // wfContext must be a map
-        HashMap<String, String> wfContext = JSON.parseObject(wfInstanceInfo.getWfContext(), new TypeReference<HashMap<String, String>>() {
-        });
+        Map<String, String> wfContext = JsonUtils.parseStringMap(wfInstanceInfo.getWfContext());
         Object result;
         try {
             result = groovyEvaluator.evaluate(script, wfContext);

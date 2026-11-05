@@ -1,6 +1,6 @@
 package tech.powerjob.server.remote.server.election;
 
-import com.alibaba.fastjson.JSONObject;
+import tools.jackson.core.type.TypeReference;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +19,7 @@ import tech.powerjob.server.remote.transporter.TransportService;
 import tech.powerjob.server.remote.transporter.impl.ServerURLFactory;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -154,10 +155,11 @@ public class ServerElectionService {
                     .get(PING_TIMEOUT_MS, TimeUnit.MILLISECONDS);
             if (response.isSuccess()) {
                 // 检测通过的是远程 server 的暴露地址，需要返回 worker 需要的协议地址
-                final JSONObject protocolInfo = JsonUtils.parseObject(response.getData(), JSONObject.class).getJSONObject(protocol);
-                if (protocolInfo != null) {
+                Map<String, ProtocolInfo> protocols = JsonUtils.parseObject(response.getData(),
+                        new TypeReference<Map<String, ProtocolInfo>>() {});
+                ProtocolInfo remoteProtocol = protocols.get(protocol);
+                if (remoteProtocol != null) {
                     downServerCache.remove(serverAddress);
-                    ProtocolInfo remoteProtocol = protocolInfo.toJavaObject(ProtocolInfo.class);
                     log.info("[ServerElection] server[{}] is active, it will be the master, final protocol={}", serverAddress, remoteProtocol);
                     // 4.3.3 升级 4.3.4 过程中，未升级的 server 还不存在 externalAddress，需要使用 address 兼容
                     return Optional.ofNullable(remoteProtocol.getExternalAddress()).orElse(remoteProtocol.getAddress());

@@ -1,6 +1,7 @@
 package tech.powerjob.server.core.alarm.impl;
 
-import com.alibaba.fastjson.JSONObject;
+import tech.powerjob.common.serialize.JsonUtils;
+
 import tech.powerjob.common.OmsConstant;
 import tech.powerjob.common.utils.HttpUtils;
 import tech.powerjob.server.extension.alarm.AlarmTarget;
@@ -45,7 +46,7 @@ public class WebHookAlarmService implements Alarmable {
             }
 
             MediaType jsonType = MediaType.parse(OmsConstant.JSON_MEDIA_TYPE);
-            RequestBody requestBody = RequestBody.create(jsonType, JSONObject.toJSONString(alarm));
+            RequestBody requestBody = RequestBody.create(jsonType, JsonUtils.toJSONStringUnsafe(alarm));
 
             try {
                 String response = HttpUtils.post(webHook, requestBody);

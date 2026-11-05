@@ -14,27 +14,13 @@
     <version>5.1.7</version>
     <packaging>jar</packaging>
 
-    <properties>
-        <fastjson.version>1.2.84</fastjson.version>
-        <powerjob.common.version>5.1.7</powerjob.common.version>
-
-        <mvn.shade.plugin.version>3.6.1</mvn.shade.plugin.version>
-    </properties>
-
     <dependencies>
-
-        <!-- fastJson -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>${fastjson.version}</version>
-        </dependency>
 
         <!-- oms-common -->
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-common</artifactId>
-            <version>${powerjob.common.version}</version>
+            <version>${powerjob.version}</version>
         </dependency>
 
         <!-- Junit tests -->
@@ -82,10 +68,6 @@
                         <relocation>
                             <pattern>org.apache</pattern>
                             <shadedPattern>shade.powerjob.org.apache</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.alibaba</pattern>
-                            <shadedPattern>shade.powerjob.com.alibaba</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

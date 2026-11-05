@@ -14,29 +14,20 @@
     <version>5.1.7</version>
     <packaging>jar</packaging>
 
-    <properties>
-
-        <powerjob-common.version>5.1.7</powerjob-common.version>
-        <powerjob-remote-framework.version>5.1.7</powerjob-remote-framework.version>
-        <powerjob-remote-impl-akka.version>5.1.7</powerjob-remote-impl-akka.version>
-        <powerjob-remote-impl-http.version>5.1.7</powerjob-remote-impl-http.version>
-        <powerjob-remote-impl-mu.version>5.1.7</powerjob-remote-impl-mu.version>
-    </properties>
-
     <dependencies>
 
         <!-- 仍然手动引入 common 依赖并置顶，保证依赖仲裁时占据上风 -->
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-common</artifactId>
-            <version>${powerjob-common.version}</version>
+            <version>${powerjob.version}</version>
         </dependency>
 
         <!-- PowerJob 通讯框架 -->
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-remote-framework</artifactId>
-            <version>${powerjob-remote-framework.version}</version>
+            <version>${powerjob.version}</version>
         </dependency>
 
         <!-- PowerJob 通讯层具体实现，按需选择自己需要的通讯器即可。如果包冲突可尝试更换通讯器实现，并排除未使用的通讯器包 -->
@@ -44,17 +35,17 @@
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-remote-impl-akka</artifactId>
-            <version>${powerjob-remote-impl-akka.version}</version>
+            <version>${powerjob.version}</version>
         </dependency>
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-remote-impl-http</artifactId>
-            <version>${powerjob-remote-impl-http.version}</version>
+            <version>${powerjob.version}</version>
         </dependency>
         <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-remote-impl-mu</artifactId>
-            <version>${powerjob-remote-impl-mu.version}</version>
+            <version>${powerjob.version}</version>
         </dependency>
 
         <!-- h2 database -->

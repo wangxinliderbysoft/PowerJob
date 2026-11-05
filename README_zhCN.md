@@ -29,6 +29,10 @@ Jackson 集成已统一到 Boot 管理的 **Jackson 3.1.7**，MVC 使用原生 J
 `spring.jackson.use-jackson2-defaults=true`，保留枚举名称等原有默认行为。
 这些是 Jackson 3 的兼容设置，并非使用 Jackson 2 实现或转换器。
 
+已移除 Fastjson 依赖，JSON 转换统一使用 `JsonUtils`。`TypeStore` 常量改用 Jackson 3 的
+`TypeReference`，Server hello 和迁移结果改用 `Map<String, Object>`，不再返回 `JSONObject`。
+使用这些 Java 类型的接入方需要修改导入并重新编译；HTTP 响应包装和历史 DAG/上下文 JSON 仍可读取。
+
 优先检查了组件升级，但 Vert.x 5、JJWT Jackson 扩展、springdoc 和 AWS SDK v2 仍依赖
 Jackson 2 实现（AWS 包含 shaded 副本）。因此保留 Vert.x、JJWT，通过其官方序列化扩展接入
 Jackson 3。HTTP 启动必须选中 PowerJob 注册的 Vert.x `JsonFactory`；嵌入其他应用时需保留

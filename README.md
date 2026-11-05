@@ -32,6 +32,11 @@ Owned Jackson 3 mappers use `configureForJackson2()` and MVC sets
 `spring.jackson.use-jackson2-defaults=true` to preserve enum names and other legacy defaults.
 These are Jackson 3 compatibility settings, not Jackson 2 implementations or converters.
 
+Fastjson is no longer a dependency; use `JsonUtils` for JSON conversion. `TypeStore` constants
+now use Jackson 3 `TypeReference`, and server hello/migration results use `Map<String, Object>`
+instead of `JSONObject`. Java callers using those types must update imports and rebuild;
+HTTP response envelopes and historical DAG/context JSON remain readable.
+
 Published upgrades were checked first, but Vert.x 5, JJWT's Jackson extension, springdoc and AWS SDK v2
 still bring Jackson 2 implementations (AWS includes a shaded copy). Existing Vert.x and JJWT retain
 their supported serialization extensions with Jackson 3. HTTP startup requires PowerJob's registered

@@ -1,7 +1,7 @@
 package tech.powerjob.official.processors.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
+import tech.powerjob.common.serialize.JsonUtils;
+import tools.jackson.core.type.TypeReference;
 import tech.powerjob.official.processors.util.SecurityUtils;
 import tech.powerjob.worker.core.processor.ProcessResult;
 import tech.powerjob.worker.core.processor.TaskContext;
@@ -45,11 +45,11 @@ public class FileCleanupProcessor implements BroadcastProcessor {
         LongAdder cleanNum = new LongAdder();
         Stopwatch sw = Stopwatch.createStarted();
 
-        List<CleanupParams> cleanupParamsList = JSONArray.parseArray(taskContext.getJobParams(), CleanupParams.class);
+        List<CleanupParams> cleanupParamsList = JsonUtils.parseObjectUnsafe(taskContext.getJobParams(), new TypeReference<List<CleanupParams>>() {});
 
         cleanupParamsList.forEach(params -> {
 
-            logger.info("start to process: {}", JSON.toJSON(params));
+            logger.info("start to process: {}", JsonUtils.toJSONStringUnsafe(params));
 
             if (StringUtils.isEmpty(params.filePattern) || StringUtils.isEmpty(params.dirPath)) {
                 logger.warn("skip due to invalid params!");

@@ -1,11 +1,14 @@
 package tech.powerjob.common.serialize;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.SneakyThrows;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.StreamReadFeature;
 import tools.jackson.core.json.JsonReadFeature;
+import tools.jackson.core.json.JsonFactory;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JavaType;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.cfg.DateTimeFeature;
 import tools.jackson.databind.json.JsonMapper;
@@ -17,6 +20,8 @@ import tech.powerjob.common.exception.PowerJobException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,9 +44,11 @@ public class JsonUtils {
             .changeDefaultPropertyInclusion(inclusion -> inclusion.withValueInclusion(JsonInclude.Include.NON_NULL))
             .build();
 
-    private static final TypeReference<Map<String, Object>>  MAP_TYPE_REFERENCE  = new TypeReference<Map<String, Object>> () {};
+    private static final TypeReference<Map<String, Object>> MAP_TYPE_REFERENCE = new TypeReference<Map<String, Object>>() {
+    };
+    private static final JsonFactory JSON_VALIDATOR_FACTORY = JsonFactory.builder().build();
 
-    private JsonUtils(){
+    private JsonUtils() {
 
     }
 
@@ -54,7 +61,7 @@ public class JsonUtils {
         }
         try {
             return JSON_MAPPER.writeValueAsString(obj);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("[PowerJob] toJSONString failed", e);
         }
         return null;
@@ -66,7 +73,7 @@ public class JsonUtils {
         }
         try {
             return JSON_MAPPER.writeValueAsString(obj);
-        }catch (Exception e) {
+        } catch (Exception e) {
             ExceptionUtils.rethrow(e);
         }
         throw new ImpossibleException();
@@ -75,7 +82,7 @@ public class JsonUtils {
     public static byte[] toBytes(Object obj) {
         try {
             return JSON_MAPPER.writeValueAsBytes(obj);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("[PowerJob] serialize failed", e);
         }
         return null;
@@ -105,6 +112,7 @@ public class JsonUtils {
         return JSON_MAPPER.readValue(b, typeReference);
     }
 
+    @SneakyThrows
     public static <T> T parseObject(String json, TypeReference<T> typeReference) throws IOException {
         return JSON_MAPPER.readValue(json, typeReference);
     }
@@ -115,23 +123,57 @@ public class JsonUtils {
         }
         try {
             return JSON_MAPPER.readValue(json, clz);
-        }catch (Exception e) {
-            log.error("unable to parse json string to object,current string:{}",json,e);
+        } catch (Exception e) {
+            log.error("unable to parse json string to object,current string:{}", json, e);
             return null;
         }
 
     }
 
     public static <T> T parseObjectUnsafe(String json, Class<T> clz) {
-        if (json == null) {
+        if (StringUtils.isBlank(json)) {
             return null;
         }
         try {
             return JSON_MAPPER.readValue(json, clz);
-        }catch (Exception e) {
+        } catch (Exception e) {
             ExceptionUtils.rethrow(e);
         }
         throw new PowerJobException("impossible");
+    }
+
+    public static <T> T parseObjectUnsafe(String json, TypeReference<T> typeReference) {
+        if (StringUtils.isBlank(json)) {
+            return null;
+        }
+        return JSON_MAPPER.readerFor(typeReference)
+                .with(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
+                .readValue(json);
+    }
+
+    public static Map<String, String> parseStringMap(String json) {
+        Map<String, Object> values = parseObjectUnsafe(json, MAP_TYPE_REFERENCE);
+        if (values == null) {
+            return null;
+        }
+        Map<String, String> result = new LinkedHashMap<>();
+        values.forEach((key, value) -> result.put(key, value == null ? null : toJSONStringUnsafe(value)));
+        return result;
+    }
+
+    public static boolean isValidJson(String json) {
+        if (StringUtils.isBlank(json)) {
+            return false;
+        }
+        try (var parser = JSON_VALIDATOR_FACTORY.createParser(json)) {
+            if (parser.nextToken() == null) {
+                return false;
+            }
+            parser.skipChildren();
+            return parser.nextToken() == null;
+        } catch (JacksonException e) {
+            return false;
+        }
     }
 
     public static <T> T toJavaObject(Object o, Class<T> clz) {
@@ -143,5 +185,33 @@ public class JsonUtils {
         } catch (JacksonException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+    }
+
+
+    /**
+     * Serializes an object to its JSON string representation.
+     */
+    @SneakyThrows
+    public static String toJson(Object object) {
+        return JSON_MAPPER.writeValueAsString(object);
+    }
+
+    /**
+     * Deserializes a JSON string to an object of the specified class.
+     */
+    @SneakyThrows
+    public static <T> T fromJson(String json, Class<T> clazz) {
+        return JSON_MAPPER.readValue(json, clazz);
+    }
+
+    public static <T> T copy(T source) {
+        String json = toJson(source);
+        return (T) fromJson(json, source.getClass());
+    }
+
+    @SneakyThrows
+    public static <T> List<T> fromJson2List(String json, Class<T> elementClass) {
+        JavaType javaType = JSON_MAPPER.getTypeFactory().constructParametricType(List.class, elementClass);
+        return JSON_MAPPER.readValue(json, javaType);
     }
 }
