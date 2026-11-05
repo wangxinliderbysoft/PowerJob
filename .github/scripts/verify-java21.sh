@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# These tests use mocks or disposable loopback resources, not the legacy shared-service fixtures.
+tests='JsonUtilsTest,SerializerCompatibilityTest,ClientTransportCompatibilityTest,*Legacy*Test,*WorkflowContextTest,ConfiguredJwtSecretTest,TransportLoginTest,JwtJsonCompatibilityTest,Jackson3JsonFactoryTest,MinioOssServiceTest,OpenApiDocumentationTest,AOPUtilsClassLoaderTest,IdentifierCompatibilityTest,PostgreSQLDialectCompatibilityTest,PowerJobAutoConfigurationTest,EmbeddedTomcatContractTest,ContainerTemplateGeneratorTest,CachingRequestBodyFilterTest,LogDownloadTicketServiceTest,PowerJobRemoteEngineCloseTest,ProtocolLoopbackTest,ChannelManagerRegressionTest,MuConnectionReplacementTest,GroovyEvaluatorTest,DailyTimeIntervalBoundaryTest,InstanceRunningTimeoutRetryTest,WorkflowMetadataColdLoadTest,JobNodeDefinitionIsolationTest,DatabaseLockServiceTest'
+mvnd -B -Pdev clean verify "-Dtest=$tests" -Dsurefire.failIfNoSpecifiedTests=false "$@"
