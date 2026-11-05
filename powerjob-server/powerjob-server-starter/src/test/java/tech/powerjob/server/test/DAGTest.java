@@ -1,6 +1,5 @@
 package tech.powerjob.server.test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import tech.powerjob.common.enums.InstanceStatus;
@@ -36,7 +35,7 @@ public class DAGTest {
     }
 
     @Test
-    public void testValidDAG2() throws JsonProcessingException {
+    public void testValidDAG2() {
         // 测试图2： 1 -> 2/3 -> 4
         List<PEWorkflowDAG.Node> nodes = Lists.newLinkedList();
         List<PEWorkflowDAG.Edge> edges = Lists.newLinkedList();

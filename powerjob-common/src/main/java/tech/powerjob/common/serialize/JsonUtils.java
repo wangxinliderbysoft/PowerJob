@@ -1,11 +1,14 @@
 package tech.powerjob.common.serialize;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.core.json.JsonReadFeature;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -26,22 +29,15 @@ import java.util.Map;
 public class JsonUtils {
 
     private static final JsonMapper JSON_MAPPER = JsonMapper.builder()
+            .configureForJackson2()
             .configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true)
-            .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true)
-            .configure(JsonParser.Feature.IGNORE_UNDEFINED, true)
+            .configure(JsonReadFeature.ALLOW_SINGLE_QUOTES, true)
+            .configure(StreamReadFeature.IGNORE_UNDEFINED, true)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, true)
+            .configure(DateTimeFeature.WRITE_DURATIONS_AS_TIMESTAMPS, true)
+            .changeDefaultPropertyInclusion(inclusion -> inclusion.withValueInclusion(JsonInclude.Include.NON_NULL))
             .build();
-
-    static {
-        JSON_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        // 非核心功能可降级，尽可能降低依赖冲突概率
-        try {
-            JSON_MAPPER.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
-        } catch (Exception e) {
-            log.warn("[JsonUtils] registerJavaTimeModule failed, PowerJob can't process Java 8 date/time type now!", e);
-        }
-    }
 
     private static final TypeReference<Map<String, Object>>  MAP_TYPE_REFERENCE  = new TypeReference<Map<String, Object>> () {};
 
@@ -142,6 +138,10 @@ public class JsonUtils {
         if (o == null) {
             return null;
         }
-        return JSON_MAPPER.convertValue(o, clz);
+        try {
+            return JSON_MAPPER.convertValue(o, clz);
+        } catch (JacksonException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
 }

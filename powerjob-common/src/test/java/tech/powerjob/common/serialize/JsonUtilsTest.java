@@ -10,6 +10,12 @@ import org.junit.jupiter.api.Test;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.List;
+import tools.jackson.core.type.TypeReference;
+import tech.powerjob.common.model.PEWorkflowDAG;
+import tech.powerjob.common.response.WorkflowInfoDTO;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * test json utils
@@ -19,6 +25,54 @@ import java.util.Map;
  */
 @Slf4j
 class JsonUtilsTest {
+
+    @Test
+    void preservesEnumNamesInsteadOfCustomToStringValues() throws Exception {
+        assertEquals("\"API\"", JsonUtils.toJSONStringUnsafe(tech.powerjob.common.enums.TimeExpressionType.API));
+        assertEquals(tech.powerjob.common.enums.TimeExpressionType.API,
+                JsonUtils.parseObject("\"API\"", tech.powerjob.common.enums.TimeExpressionType.class));
+    }
+
+    @Test
+    void reportsMalformedJsonFromJackson3InsteadOfCompatibilityBridge() {
+        Exception failure = assertThrows(Exception.class, () -> JsonUtils.parseObject("{", Person.class));
+        assertTrue(failure.getClass().getName().startsWith("tools.jackson."), failure.getClass().getName());
+    }
+
+    @Test
+    void preservesLegacyWorkflowPropertyName() throws Exception {
+        WorkflowInfoDTO workflow = new WorkflowInfoDTO();
+        workflow.setPEWorkflowDAG(new PEWorkflowDAG());
+        Map<String, Object> json = JsonUtils.parseMap(JsonUtils.toJSONStringUnsafe(workflow));
+        assertTrue(json.containsKey("peworkflowDAG"));
+        assertFalse(json.containsKey("pEWorkflowDAG"));
+        assertNotNull(JsonUtils.parseObject("{\"peworkflowDAG\":{}}", WorkflowInfoDTO.class).getPEWorkflowDAG());
+    }
+
+    @Test
+    void preservesTransientAndFixedTimeContracts() throws Exception {
+        TransientPayload payload = new TransientPayload();
+        assertEquals(Map.of("value", "visible"), JsonUtils.parseMap(JsonUtils.toJSONStringUnsafe(payload)));
+        PersonPlus person = new PersonPlus().setBirthDay(LocalDateTime.of(2024, 1, 2, 3, 4, 5));
+        assertEquals(List.of(2024, 1, 2, 3, 4, 5), JsonUtils.parseMap(JsonUtils.toJSONStringUnsafe(person)).get("birthDay"));
+        assertEquals(person, JsonUtils.parseObject(JsonUtils.toJSONStringUnsafe(person), PersonPlus.class));
+    }
+
+    @Test
+    void preservesGenericSingleQuotedAndUnknownFieldInput() throws Exception {
+        List<Person> people = JsonUtils.parseObject("[{'name':'fixture','age':18,'future':true}]",
+                new TypeReference<List<Person>>() {});
+        assertEquals(new Person().setName("fixture").setAge(18), people.getFirst());
+    }
+
+    static class TransientPayload {
+        public String value = "visible";
+        private transient String ignored = "hidden";
+
+        public String getIgnored() {
+            return ignored;
+        }
+    }
 
     @Test
     @SneakyThrows

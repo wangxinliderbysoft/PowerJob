@@ -3,7 +3,13 @@ package tech.powerjob.server.auth.jwt.impl;
 import com.google.common.collect.Maps;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.DeserializationException;
+import io.jsonwebtoken.io.SerializationException;
 import io.jsonwebtoken.security.Keys;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +33,12 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class JwtServiceImpl implements JwtService {
+
+    private static final JsonMapper JSON_MAPPER = JsonMapper.builder()
+            .configureForJackson2()
+            .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, true)
+            .build();
+    private static final TypeReference<Map<String, Object>> CLAIMS_TYPE = new TypeReference<>() {};
 
     @Resource
     private SecretProvider secretProvider;
@@ -56,6 +68,13 @@ public class JwtServiceImpl implements JwtService {
 
     static String innerBuild(String secret, int expireSeconds, Map<String, Object> body) {
         JwtBuilder jwtBuilder = Jwts.builder()
+                .serializeToJsonWith(value -> {
+                    try {
+                        return JSON_MAPPER.writeValueAsBytes(value);
+                    } catch (JacksonException failure) {
+                        throw new SerializationException("Unable to serialize JWT claims", failure);
+                    }
+                })
                 .setHeaderParam("typ", "JWT")
                 .addClaims(body)
                 .setSubject("PowerJob")
@@ -87,6 +106,13 @@ public class JwtServiceImpl implements JwtService {
 
     static Map<String, Object> innerParse(String secret, String jwtStr) {
         final Jws<Claims> claimsJws = Jwts.parserBuilder()
+                .deserializeJsonWith(value -> {
+                    try {
+                        return JSON_MAPPER.readValue(value, CLAIMS_TYPE);
+                    } catch (JacksonException failure) {
+                        throw new DeserializationException("Unable to deserialize JWT claims", failure);
+                    }
+                })
                 .setSigningKey(genSecretKey(secret))
                 .build()
                 .parseClaimsJws(jwtStr);

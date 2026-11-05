@@ -1,7 +1,10 @@
 package tech.powerjob.common.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import tech.powerjob.common.model.PEWorkflowDAG;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -28,6 +31,9 @@ public class WorkflowInfoDTO {
     /**
      * 工作流的DAG图信息（点线式DAG的json）
      */
+    @JsonProperty("peworkflowDAG")
+    @Getter(onMethod_ = @JsonProperty("peworkflowDAG"))
+    @Setter(onMethod_ = @JsonProperty("peworkflowDAG"))
     private PEWorkflowDAG pEWorkflowDAG;
 
     /* ************************** 定时参数 ************************** */

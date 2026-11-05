@@ -43,8 +43,8 @@
             <artifactId>aliyun-sdk-oss</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
+            <groupId>org.apache.jclouds.api</groupId>
+            <artifactId>s3</artifactId>
         </dependency>
     </dependencies>
 

@@ -20,11 +20,27 @@ Starter 不再兼容 Boot 2/3；接入项目和动态处理器项目需要使用
 Servlet、WebSocket、持久化和资源注入接口迁移到 `jakarta.*`。
 Server 的嵌入式容器改为 **Tomcat 11**；独立的 HTTP、AKKA、MU 通讯协议均保留。
 
-公共 JSON 工具和现有 Jackson 注解仍使用 **Jackson 2**。
-Server 有意使用 Boot 已标记弃用的 `spring-boot-jackson2` 兼容模块，并设置
-`spring.http.converters.preferred-json-mapper=jackson2`。
-自定义 Jackson 2 配置需要从 `spring.jackson.*` 迁移到 `spring.jackson2.*`；
-框架组件可能同时使用 Jackson 3。
+Jackson 集成已统一到 Boot 管理的 **Jackson 3.1.7**，MVC 使用原生 Jackson 3 转换器。
+已移除 Jackson 2 兼容模块及转换器偏好配置，MVC 配置使用 `spring.jackson.*`。
+`com.fasterxml.jackson.annotation` 是 Jackson 3 官方共享依赖，保留这些注解不代表保留 Jackson 2 实现。
+`JsonUtils` 泛型重载改用 `tools.jackson.core.type.TypeReference`，接入方需要修改导入并重新编译；
+这是源码和二进制兼容性变更。原有空值、日期、DAG 属性名和字符串实例 ID 约定保留。
+自有 Jackson 3 mapper 使用 `configureForJackson2()`，MVC 配置
+`spring.jackson.use-jackson2-defaults=true`，保留枚举名称等原有默认行为。
+这些是 Jackson 3 的兼容设置，并非使用 Jackson 2 实现或转换器。
+
+优先检查了组件升级，但 Vert.x 5、JJWT Jackson 扩展、springdoc 和 AWS SDK v2 仍依赖
+Jackson 2 实现（AWS 包含 shaded 副本）。因此保留 Vert.x、JJWT，通过其官方序列化扩展接入
+Jackson 3。HTTP 启动必须选中 PowerJob 注册的 Vert.x `JsonFactory`；嵌入其他应用时需保留
+SPI 资源，不能由其他 JSON 编解码器抢占。S3 存储改用 **jclouds 2.7.0**，
+由 SDK 负责 SigV4 签名，保留 `oms.storage.dfs.minio.*` 配置和路径式访问，区分对象不存在与鉴权失败。
+Swagger Core 3 根据实际 MVC 映射生成文档，保留 Swagger UI、`oms.swagger.enable`、
+`/v3/api-docs/PowerJob-ALL`、`/v3/api-docs.yaml/PowerJob-ALL` 及上下文路径支持。
+
+安全筛选的全仓测试、真实 Java 8/21 协议与 JWT 双向互通、嵌套构件 Jackson 审计已通过。
+独立本地 S3 兼容服务验证了签名请求、文件/元数据往返和错误签名拒绝；
+桶策略已通过 HTTP 夹具验证，但实际 MinIO 验收仍待完成。
+Docker 和 Oracle/SQL Server/DB2 验收继续保持待完成状态。
 
 ## 构建与测试
 

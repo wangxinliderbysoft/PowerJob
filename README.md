@@ -22,10 +22,29 @@ the starter is not compatible with Boot 2 or 3. Rebuild consumers and dynamic pr
 Java 21. Servlet, WebSocket, persistence and resource-injection integrations now use `jakarta.*`.
 The server uses embedded **Tomcat 11**, not Undertow; the independent HTTP/AKKA/MU transports remain available.
 
-PowerJob's public JSON utilities and existing Jackson annotations remain on **Jackson 2**.
-The server intentionally uses Boot's deprecated `spring-boot-jackson2` compatibility bridge, with
-`spring.http.converters.preferred-json-mapper=jackson2`. Move custom mapper settings from
-`spring.jackson.*` to `spring.jackson2.*`. Jackson 3 may coexist for framework integrations.
+PowerJob's Jackson integrations now use Boot-managed **Jackson 3.1.7**, including native MVC conversion.
+The Jackson 2 compatibility bridge and converter preference are removed; MVC configuration uses
+`spring.jackson.*`. Shared `com.fasterxml.jackson.annotation` annotations remain an official Jackson 3
+dependency, not a Jackson 2 implementation. `JsonUtils` generic overloads now accept
+`tools.jackson.core.type.TypeReference`: update imports and rebuild consumers; this is a source/binary break.
+Legacy null, date, DAG property names and string instance IDs are preserved.
+Owned Jackson 3 mappers use `configureForJackson2()` and MVC sets
+`spring.jackson.use-jackson2-defaults=true` to preserve enum names and other legacy defaults.
+These are Jackson 3 compatibility settings, not Jackson 2 implementations or converters.
+
+Published upgrades were checked first, but Vert.x 5, JJWT's Jackson extension, springdoc and AWS SDK v2
+still bring Jackson 2 implementations (AWS includes a shaded copy). Existing Vert.x and JJWT retain
+their supported serialization extensions with Jackson 3. HTTP startup requires PowerJob's registered
+Vert.x `JsonFactory`; embedded hosts must preserve service-provider resources and must not select a competing codec.
+S3 storage uses **jclouds 2.7.0** with SDK-owned SigV4 signing, unchanged `oms.storage.dfs.minio.*`
+keys and path-style access; missing objects remain distinct from authorization errors. Swagger Core 3
+generates documentation from actual MVC mappings, retaining Swagger UI, `oms.swagger.enable`,
+`/v3/api-docs/PowerJob-ALL` and `/v3/api-docs.yaml/PowerJob-ALL`, including context-path support.
+
+The curated reactor suite, genuine Java 8/21 transport/JWT exchanges and nested-artifact Jackson audit pass.
+An independent local S3-compatible server verifies signed object/metadata round trips and invalid-signature
+rejection; bucket policies pass the HTTP fixture but still require actual MinIO acceptance.
+Docker and Oracle/SQL Server/DB2 acceptance remains pending.
 
 ## Building and testing
 

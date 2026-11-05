@@ -1,8 +1,9 @@
 package tech.powerjob.server.remote.server.redirector;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +47,10 @@ public class DesignateServerAspect {
     private final TransportService transportService;
     private final AppInfoRepository appInfoRepository;
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
+            .configureForJackson2()
+            .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, true)
+            .build();
 
     @Around(value = "@annotation(designateServer))")
     public Object execute(ProceedingJoinPoint point, DesignateServer designateServer) throws Throwable {
@@ -128,9 +132,9 @@ public class DesignateServerAspect {
                 //泛型也可能带有泛型，递归处理
                 javaTypes[i] = getJavaType(actualTypeArguments[i]);
             }
-            return TypeFactory.defaultInstance().constructParametricType(rowClass, javaTypes);
+            return OBJECT_MAPPER.getTypeFactory().constructParametricType(rowClass, javaTypes);
         } else {
-            return TypeFactory.defaultInstance().constructParametricType((Class<?>) type, new JavaType[0]);
+            return OBJECT_MAPPER.getTypeFactory().constructParametricType((Class<?>) type, new JavaType[0]);
         }
     }
 }

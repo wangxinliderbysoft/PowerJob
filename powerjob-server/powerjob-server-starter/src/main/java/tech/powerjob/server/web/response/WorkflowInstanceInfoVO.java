@@ -1,10 +1,13 @@
 package tech.powerjob.server.web.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.alibaba.fastjson.JSONObject;
 import tech.powerjob.common.OmsConstant;
 import tech.powerjob.common.model.PEWorkflowDAG;
 import tech.powerjob.server.persistence.remote.model.WorkflowInstanceInfoDO;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
 
@@ -42,6 +45,9 @@ public class WorkflowInstanceInfoVO {
      */
     private String wfContext;
 
+    @JsonProperty("peworkflowDAG")
+    @Getter(onMethod_ = @JsonProperty("peworkflowDAG"))
+    @Setter(onMethod_ = @JsonProperty("peworkflowDAG"))
     private PEWorkflowDAG pEWorkflowDAG;
     private String result;
 

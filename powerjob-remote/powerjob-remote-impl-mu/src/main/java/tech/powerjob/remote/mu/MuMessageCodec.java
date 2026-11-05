@@ -1,6 +1,8 @@
 package tech.powerjob.remote.mu;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
@@ -17,7 +19,10 @@ import java.util.List;
 @Slf4j
 public class MuMessageCodec extends ByteToMessageCodec<MuMessage> {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
+            .configureForJackson2()
+            .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, true)
+            .build();
     private static final int MAX_MESSAGE_SIZE = 64 * 1024 * 1024; // 64MB
 
     @Override

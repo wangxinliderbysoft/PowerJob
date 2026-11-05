@@ -6,16 +6,17 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import tech.powerjob.server.common.PowerJobServerConfigKey;
 import tech.powerjob.server.remote.server.self.ServerInfoService;
 
 /**
  * Configuration class for Swagger UI.
- * migrate to <a href="https://springdoc.org/">springdoc</a> from v4.3.1
+ * Uses Swagger Core's Jackson 3 schema engine and the existing Swagger UI WebJar.
  * <a href="http://localhost:7700/swagger-ui/index.html#/">api address</a>
  *
  * @author tjq
@@ -26,7 +27,7 @@ import tech.powerjob.server.remote.server.self.ServerInfoService;
 @Configuration
 @ConditionalOnProperty(name = PowerJobServerConfigKey.SWAGGER_UI_ENABLE, havingValue = "true")
 @RequiredArgsConstructor
-public class SwaggerConfig {
+public class SwaggerConfig implements WebMvcConfigurer {
     
     private final ServerInfoService serverInfoService;
 
@@ -46,16 +47,10 @@ public class SwaggerConfig {
                         .license(new License().name("Apache License 2.0").url("https://github.com/PowerJob/PowerJob/blob/master/LICENSE")));
     }
 
-    @Bean
-    public GroupedOpenApi createRestApi() {
-
-        log.warn("[OpenAPI] openapi has been activated, make sure you want to enable it!");
-
-        return GroupedOpenApi.builder()
-                .group("PowerJob-ALL")
-                .pathsToMatch("/**")
-                .build();
-
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/swagger-ui/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/5.32.2/");
     }
     
 }

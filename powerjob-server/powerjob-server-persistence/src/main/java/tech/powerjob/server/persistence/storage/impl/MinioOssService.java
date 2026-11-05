@@ -1,13 +1,11 @@
 package tech.powerjob.server.persistence.storage.impl;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.*;
+import org.jclouds.ContextBuilder;
+import org.jclouds.Constants;
+import org.jclouds.io.Payload;
+import org.jclouds.s3.domain.S3Object;
+import org.jclouds.s3.reference.S3Constants;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -19,11 +17,16 @@ import org.springframework.core.env.Environment;
 import tech.powerjob.server.common.spring.condition.PropertyAndOneBeanCondition;
 import tech.powerjob.server.extension.dfs.*;
 import tech.powerjob.server.persistence.storage.AbstractDFsService;
+import tech.powerjob.common.exception.PowerJobException;
 
 import jakarta.annotation.Priority;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * MINIO support
@@ -47,35 +50,27 @@ public class MinioOssService extends AbstractDFsService {
     private static final String KEY_BUCKET_NAME = "bucketName";
     private static final String ACCESS_KEY = "accessKey";
     private static final String SECRET_KEY = "secretKey";
-    private AmazonS3 amazonS3;
+    private MinioS3Client s3;
     private String bucket;
-    private static final String NOT_FOUNT = "404 Not Found";
 
     @Override
     public void store(StoreRequest storeRequest) {
-        try {
-
-            String fileName = parseFileName(storeRequest.getFileLocation());
-            // 创建 PutObjectRequest 对象
-            PutObjectRequest request = new PutObjectRequest(this.bucket, fileName, storeRequest.getLocalFile());
-
-            amazonS3.putObject(request);
-        } catch (Throwable t) {
-            ExceptionUtils.rethrow(t);
-        }
+        S3Object object = s3.newS3Object();
+        object.getMetadata().setKey(parseFileName(storeRequest.getFileLocation()));
+        object.setPayload(storeRequest.getLocalFile());
+        s3.putObject(bucket, object);
     }
 
     @Override
+    @SneakyThrows(IOException.class)
     public void download(DownloadRequest downloadRequest) {
-        try {
-            FileUtils.forceMkdirParent(downloadRequest.getTarget());
-
-            String fileName = parseFileName(downloadRequest.getFileLocation());
-            GetObjectRequest getObjectRequest = new GetObjectRequest(this.bucket, fileName);
-            amazonS3.getObject(getObjectRequest, downloadRequest.getTarget());
-
-        } catch (Throwable t) {
-            ExceptionUtils.rethrow(t);
+        FileUtils.forceMkdirParent(downloadRequest.getTarget());
+        S3Object object = s3.getObject(bucket, parseFileName(downloadRequest.getFileLocation()));
+        if (object == null) {
+            throw new PowerJobException("MinIO object does not exist");
+        }
+        try (Payload payload = object.getPayload(); InputStream input = payload.openStream()) {
+            Files.copy(input, downloadRequest.getTarget().toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
@@ -86,32 +81,7 @@ public class MinioOssService extends AbstractDFsService {
      */
     @Override
     public Optional<FileMeta> fetchFileMeta(FileLocation fileLocation) {
-        try {
-
-            String fileName = parseFileName(fileLocation);
-            ObjectMetadata objectMetadata = amazonS3.getObjectMetadata(this.bucket, fileName);
-
-            return Optional.ofNullable(objectMetadata).map(minioStat -> {
-
-                Map<String, Object> metaInfo = Maps.newHashMap();
-
-                if (objectMetadata.getRawMetadata() != null) {
-                    metaInfo.putAll(objectMetadata.getRawMetadata());
-                }
-                return new FileMeta()
-                        .setLastModifiedTime(objectMetadata.getLastModified())
-                        .setLength(objectMetadata.getContentLength())
-                        .setMetaInfo(metaInfo);
-            });
-        } catch (AmazonS3Exception s3Exception) {
-            String errorCode = s3Exception.getErrorCode();
-            if (NOT_FOUNT.equalsIgnoreCase(errorCode)) {
-                return Optional.empty();
-            }
-        } catch (Exception oe) {
-            ExceptionUtils.rethrow(oe);
-        }
-        return Optional.empty();
+        return Optional.ofNullable(s3.headFileMeta(bucket, parseFileName(fileLocation)));
     }
 
     private static String parseFileName(FileLocation fileLocation) {
@@ -135,8 +105,11 @@ public class MinioOssService extends AbstractDFsService {
      * 释放连接
      */
     @Override
+    @SneakyThrows(IOException.class)
     public void destroy() {
-        //minioClient.close();
+        if (s3 != null) {
+            s3.close();
+        }
     }
 
     /**
@@ -174,16 +147,14 @@ public class MinioOssService extends AbstractDFsService {
             throw new IllegalArgumentException("'oms.storage.dfs.minio.bucketName' can't be empty, please creat a bucket in minio oss console then config it to powerjob");
         }
 
-        // 创建凭证对象
-        BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKey, secretKey);
-
-        // 创建AmazonS3客户端并指定终端节点和凭证
-        this.amazonS3 = AmazonS3ClientBuilder.standard()
-                // 当使用 AWS Java SDK 连接到非AWS服务（如MinIO）时，指定区域（Region）是必需的，即使这个区域对于你的MinIO实例并不真正适用。原因在于AWS SDK的客户端构建器需要一个区域来配置其服务端点，即使在连接到本地或第三方S3兼容服务时也是如此。使用 "us-east-1" 作为占位符是很常见的做法，因为它是AWS最常用的区域之一。这不会影响到实际的连接或数据传输，因为真正的服务地址是由你提供的终端节点URL决定的。如果你的代码主要是与MinIO交互，并且不涉及AWS服务，那么这个区域设置只是形式上的要求。
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, "us-east-1"))
-                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-                .withPathStyleAccessEnabled(true) // 重要：启用路径样式访问
-                .build();
+        Properties properties = new Properties();
+        properties.setProperty(S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
+        properties.setProperty(S3Constants.PROPERTY_SIGNER_VERSION, "4");
+        properties.setProperty("jclouds.region.us-east-1.endpoint", endpoint);
+        properties.setProperty(Constants.PROPERTY_CONNECTION_TIMEOUT, "10000");
+        properties.setProperty(Constants.PROPERTY_SO_TIMEOUT, "50000");
+        this.s3 = ContextBuilder.newBuilder(new MinioS3Client.Metadata()).endpoint(endpoint)
+                .credentials(accessKey, secretKey).overrides(properties).buildApi(MinioS3Client.class);
         this.bucket = bucketName;
         createBucket(bucketName);
         log.info("[Minio] initialize OSS successfully!");
@@ -202,8 +173,10 @@ public class MinioOssService extends AbstractDFsService {
            return;
         }
 
-        Bucket createBucketResult = amazonS3.createBucket(bucketName);
-        log.info("[Minio] createBucket successfully, bucketName: {}, createResult: {}", bucketName, createBucketResult);
+        if (!s3.putBucketInRegion("us-east-1", bucketName)) {
+            throw new PowerJobException("Unable to create MinIO bucket");
+        }
+        log.info("[Minio] createBucket successfully, bucketName: {}", bucketName);
 
         String policy = "{\n" +
                 "    \"Version\": \"2012-10-17\",\n" +
@@ -225,7 +198,7 @@ public class MinioOssService extends AbstractDFsService {
                 "    ]\n" +
                 "}";
         try {
-            amazonS3.setBucketPolicy(bucketName, policy);
+            s3.putBucketPolicy(bucketName, policy);
         } catch (Exception e) {
             log.warn("[Minio] setBucketPolicy failed, maybe you need to setBucketPolicy by yourself!", e);
         }
@@ -240,7 +213,7 @@ public class MinioOssService extends AbstractDFsService {
     @SneakyThrows(Exception.class)
     public boolean bucketExists(String bucketName) {
 
-        return amazonS3.doesBucketExistV2(bucketName);
+        return s3.bucketExists(bucketName);
     }
 
     public static class MinioOssCondition extends PropertyAndOneBeanCondition {

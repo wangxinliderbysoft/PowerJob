@@ -1,14 +1,12 @@
 package tech.powerjob.remote.http;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.json.Json;
 import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
@@ -27,6 +25,7 @@ import tech.powerjob.remote.framework.transporter.Transporter;
 import tech.powerjob.remote.framework.utils.RemoteUtils;
 import tech.powerjob.remote.http.vertx.VertxInitializer;
 import tech.powerjob.remote.http.vertx.VertxTransporter;
+import tech.powerjob.remote.http.vertx.Jackson3JsonFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -65,16 +64,8 @@ public class HttpVertxCSInitializer implements CSInitializer {
     public void init(CSInitializerConfig config) {
         this.config = config;
 
-        // 【Vertx 版本升级时必须注意】临时解决 vertx 自带的 jackson 序列化无法支持字段升级问题（默认特性居然是不支持增删字段的序列化方式，外国框架也是一坨...）
-        try {
-            io.vertx.core.json.jackson.DatabindCodec.mapper()
-                    .configure(com.fasterxml.jackson.databind.MapperFeature.PROPAGATE_TRANSIENT_MARKER, true)
-                    .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true)
-                    .configure(JsonParser.Feature.IGNORE_UNDEFINED, true)
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        } catch (Throwable t) {
-            log.warn("[HttpVertxCSInitializer] hack jackson failed!", t);
+        if (!(Json.CODEC instanceof Jackson3JsonFactory)) {
+            throw new PowerJobException("PowerJob HTTP transport requires its Jackson 3 Vert.x JSON provider");
         }
 
         vertx = VertxInitializer.buildVertx();

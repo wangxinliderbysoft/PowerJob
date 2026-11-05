@@ -1,5 +1,6 @@
 package tech.powerjob.server.web.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import tech.powerjob.common.enums.TimeExpressionType;
@@ -9,6 +10,8 @@ import tech.powerjob.server.common.SJ;
 import tech.powerjob.common.enums.SwitchableStatus;
 import tech.powerjob.server.persistence.remote.model.WorkflowInfoDO;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
@@ -38,6 +41,9 @@ public class WorkflowInfoVO {
     /**
      * 点线表示法
      */
+    @JsonProperty("peworkflowDAG")
+    @Getter(onMethod_ = @JsonProperty("peworkflowDAG"))
+    @Setter(onMethod_ = @JsonProperty("peworkflowDAG"))
     private PEWorkflowDAG pEWorkflowDAG;
 
     /* ************************** 定时参数 ************************** */
