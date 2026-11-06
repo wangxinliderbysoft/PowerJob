@@ -87,9 +87,6 @@
         <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
         <db2-jdbc.version>11.5.0.0</db2-jdbc.version>
         <postgresql.version>42.2.14</postgresql.version>
-        <!-- Server drivers intentionally differ from the agent and processors. -->
-        <server.mysql.version>8.0.33</server.mysql.version>
-        <server.postgresql.version>42.6.0</server.postgresql.version>
 
         <mongodb-driver-sync.version>4.10.2</mongodb-driver-sync.version>
         <zip4j.version>2.11.2</zip4j.version>

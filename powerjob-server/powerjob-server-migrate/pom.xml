@@ -11,7 +11,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>powerjob-server-migrate</artifactId>
-    <version>${project.parent.version}</version>
 
     <properties>
     </properties>
