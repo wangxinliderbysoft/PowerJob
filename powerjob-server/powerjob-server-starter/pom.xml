@@ -51,6 +51,13 @@
         </dependency>
 
         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${server.mysql.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>tech.powerjob</groupId>
             <artifactId>powerjob-client</artifactId>
         </dependency>
@@ -65,6 +72,32 @@
                 <version>${springboot.version}</version>
                 <configuration>
                     <mainClass>tech.powerjob.server.PowerJobServerApplication</mainClass>
+                    <excludes>
+                        <exclude>
+                            <groupId>com.oracle.database.jdbc</groupId>
+                            <artifactId>ojdbc8</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>com.oracle.database.nls</groupId>
+                            <artifactId>orai18n</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>com.microsoft.sqlserver</groupId>
+                            <artifactId>mssql-jdbc</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>com.ibm.db2</groupId>
+                            <artifactId>jcc</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>org.postgresql</groupId>
+                            <artifactId>postgresql</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>com.h2database</groupId>
+                            <artifactId>h2</artifactId>
+                        </exclude>
+                    </excludes>
                     <!-- 支持 server 作为 jar 包被外部系统集成 https://gitee.com/KFCFans/PowerJob/issues/I6H8JF ，短期内为了兼容 CI 流程 deploy 阶段关闭注释，推 master 重新打开-->
                     <!-- <classifier>exec</classifier>-->
                 </configuration>
