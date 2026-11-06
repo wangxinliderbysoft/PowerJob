@@ -64,9 +64,7 @@
         <springboot.version>4.0.9</springboot.version>
         <!-- Vert.x 4 and the MU transport share the Netty 4.1 API. -->
         <netty.version>4.1.104.Final</netty.version>
-
         <powerjob.version>5.1.7</powerjob.version>
-
         <commons.lang.version>3.12.0</commons.lang.version>
         <commons.io.version>2.11.0</commons.io.version>
         <guava.version>31.1-jre</guava.version>
@@ -77,17 +75,11 @@
         <akka.version>2.6.13</akka.version>
         <vertx.version>4.3.7</vertx.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
-
-        <!-- Preserve the versions used by the shaded processors. -->
-        <official-processors.guava.version>30.1.1-jre</official-processors.guava.version>
-        <official-processors.commons.lang.version>3.10</official-processors.commons.lang.version>
-
         <mysql.version>8.0.28</mysql.version>
         <ojdbc.version>19.7.0.0</ojdbc.version>
         <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
         <db2-jdbc.version>11.5.0.0</db2-jdbc.version>
         <postgresql.version>42.2.14</postgresql.version>
-
         <mongodb-driver-sync.version>4.10.2</mongodb-driver-sync.version>
         <zip4j.version>2.11.2</zip4j.version>
         <jgit.version>5.13.2.202306221912-r</jgit.version>
