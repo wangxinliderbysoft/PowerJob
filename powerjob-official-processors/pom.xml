@@ -16,12 +16,6 @@
 
     <dependencies>
 
-        <!-- OKHttp -->
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>${okhttp.version}</version>
-        </dependency>
 
         <!-- commons-io -->
         <dependency>

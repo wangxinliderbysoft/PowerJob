@@ -9,13 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>powerjob-server-starter</artifactId>
-    <version>${project.parent.version}</version>
-
-    <properties>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>tech.powerjob</groupId>

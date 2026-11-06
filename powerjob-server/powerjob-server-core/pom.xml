@@ -13,8 +13,7 @@
     <artifactId>powerjob-server-core</artifactId>
     <version>${project.parent.version}</version>
 
-    <properties>
-    </properties>
+
 
     <dependencies>
         <dependency>
