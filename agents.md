@@ -23,7 +23,7 @@ Apply rules proportionally to the task; do not create work merely to satisfy a c
 
 ## Project Overview
 
-DerbySoft backend microservice scaffold built on `gps-boot-starter` 2.3.5.
+DerbySoft backend microservice scaffold.
 
 ### Baseline
 
@@ -35,7 +35,6 @@ DerbySoft backend microservice scaffold built on `gps-boot-starter` 2.3.5.
 | Packaging | Backend WAR → Tomcat; other modules produce JARs |
 | Database | MySQL 8 + Spring Data JPA |
 | Testing | Spock 2.5-groovy-6.0 + Groovy 6 + JUnit 5 |
-| DerbySoft starter | `gps-boot-starter` 2.3.5 |
 | HTTP client | Apache HttpClient 5 |
 | JSON | Jackson configured by `JacksonConfig` |
 | Logging / code generation | Lombok + Logback |
@@ -253,7 +252,7 @@ See [ProviderHttpClientManager](./common/src/main/java/com/derbysoft/gps/backend
 ### Dependencies
 
 - Prefer the JDK, Spring Boot and existing dependencies over new libraries.
-- Do not override managed versions or upgrade Spring Boot, `gps-boot-starter`,
+- Do not override managed versions or upgrade Spring Boot,
   Jackson, Hibernate, Groovy, Spock or HttpClient without a specific requirement.
 - Necessary additions must be compatible with Java 25 and Spring Boot 3.5.16.
 
@@ -471,5 +470,4 @@ work and ask only when a material requirement remains ambiguous.
 - **Version:** v0.6.0
 - **Spring Boot:** 3.5.16
 - **Java:** 25
-- **gps-boot-starter:** 2.3.5
 - **Last Updated:** October 2026

@@ -37,8 +37,7 @@ public class PwjbAccountLoginService implements ThirdPartyLoginService {
     public LoginTypeInfo loginType() {
         return new LoginTypeInfo()
                 .setType(AuthConstants.ACCOUNT_TYPE_POWER_JOB)
-                .setName("PowerJob Account")
-                ;
+                .setName("PowerJob Account");
     }
 
     @Override

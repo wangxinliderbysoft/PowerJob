@@ -32,7 +32,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * PowerJob 登录服务
@@ -63,7 +62,11 @@ public class PowerJobLoginServiceImpl implements PowerJobLoginService {
 
     @Override
     public List<LoginTypeInfo> fetchSupportLoginTypes() {
-        return Lists.newArrayList(code2ThirdPartyLoginService.values()).stream().map(ThirdPartyLoginService::loginType).collect(Collectors.toList());
+        ThirdPartyLoginService powerJobLoginService = code2ThirdPartyLoginService.get(AuthConstants.ACCOUNT_TYPE_POWER_JOB);
+        if (powerJobLoginService == null) {
+            return Lists.newArrayList();
+        }
+        return Lists.newArrayList(powerJobLoginService.loginType());
     }
 
     @Override
@@ -191,6 +194,10 @@ public class PowerJobLoginServiceImpl implements PowerJobLoginService {
     }
 
     private ThirdPartyLoginService fetchBizLoginService(String loginType) {
+        if (!AuthConstants.ACCOUNT_TYPE_POWER_JOB.equals(loginType)) {
+            throw new PowerJobAuthException(ErrorCodes.INVALID_REQUEST, "unsupported login type: " + loginType);
+        }
+
         final ThirdPartyLoginService loginService = code2ThirdPartyLoginService.get(loginType);
         if (loginService == null) {
             throw new PowerJobAuthException(ErrorCodes.INVALID_REQUEST, "can't find ThirdPartyLoginService by type: " + loginType);

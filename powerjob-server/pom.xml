@@ -91,6 +91,7 @@
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongodb-driver-sync</artifactId>
                 <version>${mongodb-driver-sync.version}</version>
+                <scope>provided</scope>
             </dependency>
             <!-- 存储扩展-阿里云OSS，未使用可移除 -->
             <dependency>

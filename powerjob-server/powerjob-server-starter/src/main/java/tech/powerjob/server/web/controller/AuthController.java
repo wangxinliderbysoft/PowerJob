@@ -48,27 +48,6 @@ public class AuthController {
     }
 
     /**
-     * 第三方账号体系回调登录接口，eg, 接受钉钉登录回调
-     * @param httpServletRequest 请求
-     * @param httpServletResponse 响应
-     * @return 登录结果
-     */
-    @RequestMapping(value = "/thirdPartyLoginCallback", method = {RequestMethod.GET, RequestMethod.POST})
-    public ResultDTO<PowerJobUser> loginCallback(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-
-        LoginRequest loginContext = new LoginRequest().setHttpServletRequest(httpServletRequest);
-
-        // 常见登录组件的标准规范（钉钉、企业微信、飞书），第三方原样透传。开发者在对接第三方登录体系时，可能需要修改此处，将 type 回填
-        final String state = httpServletRequest.getParameter("state");
-        loginContext.setLoginType(state);
-
-        final PowerJobUser powerJobUser = powerJobLoginService.doLogin(loginContext);
-        fillJwt4LoginUser(powerJobUser, httpServletResponse);
-
-        return ResultDTO.success(powerJobUser);
-    }
-
-    /**
      * 第三方账号体系直接登录接口，eg, 接受 PowerJob 自带账号密码体系的登录请求
      * @param loginRequest 登录请求
      * @param httpServletResponse 响应
